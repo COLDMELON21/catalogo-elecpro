@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo ELECPRO | En Línea</title>
-    <!-- Fuentes e Iconos -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
     <style>
         /* --- ESTILOS VISUALES --- */
@@ -20,43 +19,35 @@
         * { box-sizing: border-box; }
         body { font-family: 'Roboto', sans-serif; background: var(--light); color: var(--dark); margin: 0; padding-bottom: 80px; }
         
-        /* HEADER */
         header { background: var(--white); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; padding: 10px 0; }
         .header-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .logo-text { font-family: 'Oswald', sans-serif; color: var(--primary); margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
         .contact-btn { background: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s; }
         .contact-btn:hover { transform: scale(1.05); }
 
-        /* NAVEGACIÓN */
         .categories-wrapper { background: var(--primary); padding: 10px 0; overflow-x: auto; position: sticky; top: 60px; z-index: 90; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .categories-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; gap: 10px; }
         .cat-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; font-size: 0.9rem; }
         .cat-btn:hover, .cat-btn.active { background: var(--highlight); color: var(--dark); border-color: var(--highlight); font-weight: bold; }
 
-        /* GRID PRODUCTOS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
         @media (min-width: 600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; } }
 
         .card { background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); display: flex; flex-direction: column; transition: transform 0.2s; position: relative; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        
         .card-img-container { width: 100%; aspect-ratio: 1/1; background: #fff; display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid #eee; }
         .card-img-container img { width: 90%; height: 90%; object-fit: contain; }
-        
         .card-badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; z-index: 2; }
-        
         .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
         .product-brand { font-size: 0.8rem; color: #6b7280; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
         .product-title { font-family: 'Oswald', sans-serif; font-size: 1.1rem; margin: 0 0 5px 0; color: var(--dark); line-height: 1.2; }
         .product-desc { font-size: 0.85rem; color: #666; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1; }
-        
         .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f3f3; padding-top: 10px; }
         .price { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
         .buy-btn { background: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
         .buy-btn:hover { background: #128C7E; }
 
-        /* --- ADMIN INTERFACE --- */
-        #admin-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; transition: transform 0.2s; }
+        #admin-fab { position: fixed; bottom: 80px; right: 20px; width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; transition: transform 0.2s; }
         #admin-fab:hover { transform: scale(1.1); }
         
         .admin-controls { display: none; position: absolute; top: 5px; left: 5px; gap: 5px; z-index: 10; }
@@ -64,12 +55,10 @@
         .btn-edit { background: #f59e0b; }
         .btn-del { background: #ef4444; }
 
-        /* Estilos cuando eres Admin */
         body.is-admin #admin-fab { display: flex; }
         body.is-admin .admin-controls { display: flex; }
         body.is-admin .card { border: 2px dashed var(--highlight); }
 
-        /* MODALES */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
         .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -80,20 +69,22 @@
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; transition: 0.3s; }
         .form-group input:focus { border-color: var(--primary); outline: none; }
 
-        /* LOGIN LINK */
-        .admin-link { position: fixed; bottom: 10px; left: 10px; font-size: 0.8rem; color: #ccc; cursor: pointer; z-index: 50; text-decoration: none; }
-        .admin-link:hover { color: #333; }
+        #admin-panel { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; padding: 12px; z-index: 2000; display: flex; justify-content: space-around; gap: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); }
+        .btn-panel { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; font-size: 0.85rem; flex: 1; max-width: 200px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-login-main { background: #444; width: 100%; }
         
-        /* BARRA DE ESTADO */
+        .admin-only-btn { display: none; }
+        body.is-admin .admin-only-btn { display: flex; }
+        body.is-admin .btn-login-main { display: none; }
+        .btn-add { background: var(--primary); }
+
         #status-bar { background: #333; color: white; text-align: center; font-size: 0.8rem; padding: 5px; position: relative; z-index: 101; font-weight: bold; }
-        #cloud-btn { background: #444; border: 1px solid #666; color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; margin-left: 10px; display: none; }
     </style>
 </head>
 <body>
 
     <div id="status-bar">
-        <span id="status-text">Iniciando...</span>
-        <button id="cloud-btn" onclick="openConfigModal()">⚙️ Configurar Nube</button>
+        <span id="status-text">Conectando...</span>
     </div>
 
     <header>
@@ -109,9 +100,7 @@
     </header>
 
     <nav class="categories-wrapper">
-        <div class="categories-container" id="cat-nav">
-            <!-- Botones generados por JS -->
-        </div>
+        <div class="categories-container" id="cat-nav"></div>
     </nav>
 
     <main class="grid" id="catalog-grid">
@@ -120,50 +109,27 @@
         </div>
     </main>
 
-    <!-- Botón Flotante para Agregar (Solo Admin) -->
     <div id="admin-fab" onclick="openNewProduct()">+</div>
-    
-    <!-- Acceso Oculto -->
-    <a onclick="login()" class="admin-link">🔒 Admin</a>
+
+    <!-- Panel Inferior -->
+    <div id="admin-panel">
+        <button class="btn-panel btn-login-main" onclick="login()">🔒 Iniciar Sesión (Admin)</button>
+        <button class="btn-panel admin-only-btn btn-add" onclick="openNewProduct()">➕ Nuevo Producto</button>
+    </div>
 
     <!-- Modal Formulario Producto -->
     <div id="product-modal" class="modal">
         <div class="modal-content">
             <h3 style="margin-top:0; color:var(--primary)" id="modal-title">📦 Gestión de Producto</h3>
             <input type="hidden" id="edit-id">
-            
             <div class="form-row">
-                <div class="form-group">
-                    <label>Categoría</label>
-                    <select id="edit-category"></select>
-                </div>
-                <div class="form-group">
-                    <label>Marca</label>
-                    <input id="edit-brand" placeholder="Ej: DONG CHENG">
-                </div>
+                <div class="form-group"><label>Categoría</label><select id="edit-category"></select></div>
+                <div class="form-group"><label>Marca</label><input id="edit-brand" placeholder="Ej: DONG CHENG"></div>
             </div>
-
-            <div class="form-group">
-                <label>Nombre del Producto</label>
-                <input id="edit-title" placeholder="Ej: Taladro Percutor">
-            </div>
-
-            <div class="form-group">
-                <label>Precio (C$)</label>
-                <input id="edit-price" type="number" placeholder="0.00">
-            </div>
-
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea id="edit-desc" rows="3" placeholder="Detalles técnicos..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Foto del Producto</label>
-                <input type="file" id="edit-image" accept="image/*">
-                <small style="color:#666; display:block; margin-top:5px">Si no subes una nueva, se mantiene la anterior.</small>
-            </div>
-
+            <div class="form-group"><label>Nombre</label><input id="edit-title" placeholder="Ej: Taladro Percutor"></div>
+            <div class="form-group"><label>Precio (C$)</label><input id="edit-price" type="number" placeholder="0.00"></div>
+            <div class="form-group"><label>Descripción</label><textarea id="edit-desc" rows="3"></textarea></div>
+            <div class="form-group"><label>Foto</label><input type="file" id="edit-image" accept="image/*"></div>
             <div style="display:flex; gap:10px; margin-top:20px">
                 <button onclick="closeModal('product-modal')" style="background:#f3f4f6; color:#333; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Cancelar</button>
                 <button onclick="saveProduct()" id="btn-save" style="background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Guardar</button>
@@ -171,150 +137,74 @@
         </div>
     </div>
 
-    <!-- Modal Configuración Nube -->
-    <div id="config-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top:0; color:var(--dark)">☁️ Conectar a la Nube (Sincronización)</h3>
-            <p style="font-size:0.9rem; color:#666">Para que los cambios se vean en TODOS los dispositivos, pega aquí la configuración de tu proyecto de Firebase.</p>
-            
-            <div class="form-group">
-                <label>Configuración JSON (firebaseConfig)</label>
-                <textarea id="firebase-config-input" rows="8" placeholder='{ "apiKey": "...", "authDomain": "...", ... }' style="font-family:monospace; font-size:0.8rem;"></textarea>
-            </div>
-
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button onclick="closeModal('config-modal')" style="background:#f3f4f6; color:#333; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer;">Cancelar</button>
-                <button onclick="saveCloudConfig()" style="background:var(--success); color:white; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Conectar</button>
-            </div>
-            <button onclick="clearCloudConfig()" style="width:100%; margin-top:10px; background:none; border:none; color:red; cursor:pointer; font-size:0.8rem;">Desconectar / Volver a Local</button>
-        </div>
-    </div>
-
     <script type="module">
-        // ==========================================
-        //  1. CONFIGURACIÓN Y DATOS
-        // ==========================================
         const CATEGORIES = [
-            { id: 'all', label: 'Todo' },
-            { id: 'herramientas', label: 'Herramientas' },
-            { id: 'iluminacion', label: 'Iluminación' },
-            { id: 'hogar', label: 'Hogar' },
-            { id: 'ferreteria', label: 'Ferretería' },
-            { id: 'electronica', label: 'Electrónica' },
-            { id: 'industrial', label: 'Industrial' },
-            { id: 'construccion', label: 'Construcción' },
-            { id: 'pinturas', label: 'Pinturas' },
-            { id: 'fontaneria', label: 'Fontanería' },
-            { id: 'electricidad', label: 'Electricidad' }
+            { id: 'all', label: 'Todo' }, { id: 'herramientas', label: 'Herramientas' }, { id: 'iluminacion', label: 'Iluminación' },
+            { id: 'hogar', label: 'Hogar' }, { id: 'ferreteria', label: 'Ferretería' }, { id: 'electronica', label: 'Electrónica' },
+            { id: 'industrial', label: 'Industrial' }, { id: 'construccion', label: 'Construcción' }, { id: 'pinturas', label: 'Pinturas' },
+            { id: 'fontaneria', label: 'Fontanería' }, { id: 'electricidad', label: 'Electricidad' }
         ];
 
-        const INITIAL_DATA = [
-            { id: '1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro DZJ16', price: '2450', desc: 'Taladro de impacto 16mm (5/8"). Potente motor para uso industrial continuo.' },
-            { id: '2', category: 'hogar', brand: 'ORIX', title: 'Extractor 10"', price: '850', desc: 'Ventilador extractor eficiente para cocinas y baños.' },
-            { id: '3', category: 'ferreteria', brand: 'ELECPRO', title: 'Protector V199', price: '420', desc: 'Protector de voltaje 1000W para equipos electrónicos.' },
-            { id: '4', category: 'ferreteria', brand: 'EPICA STAR', title: 'Cerradura 398', price: '680', desc: 'Cerradura de sobreponer, máxima seguridad.' }
-        ];
+        // --- TUS LLAVES CONFIGURADAS ---
+        const MY_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4",
+            authDomain: "catalogoelecpro.firebaseapp.com",
+            projectId: "catalogoelecpro",
+            storageBucket: "catalogoelecpro.firebasestorage.app",
+            messagingSenderId: "847606996266",
+            appId: "1:847606996266:web:7e46736011c7b77afb9253"
+        };
 
         let products = [];
         let currentFilter = 'all';
         let db = null;
         let productsCollection = null;
         let useCloud = false;
+        let fbFirestore = null;
 
-        // Importaciones de Firebase (Dinámicas)
-        let fbApp, fbFirestore, fbAuth;
-
-        // ==========================================
-        //  2. INICIALIZACIÓN
-        // ==========================================
         async function init() {
             renderNav();
             populateCategorySelect();
             
-            // 1. Revisar si hay configuración guardada por el usuario (localStorage)
-            const savedConfig = localStorage.getItem('elecpro_firebase_config');
-            let configToUse = null;
-
-            if (savedConfig) {
-                try {
-                    configToUse = JSON.parse(savedConfig);
-                } catch(e) { console.error("Error config guardada", e); }
-            } else if (typeof __firebase_config !== 'undefined') {
-                // Fallback: Si estamos en el chat, usamos la del chat
-                configToUse = JSON.parse(__firebase_config);
-            }
-
-            if (configToUse) {
-                await connectToCloud(configToUse);
-            } else {
-                useLocalMode();
-            }
-        }
-
-        async function connectToCloud(config) {
             try {
-                // Importar módulos solo si se necesitan
-                fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                // Importación dinámica de módulos
+                const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
                 fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                fbAuth = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                const fbAuth = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
 
-                const app = fbApp.initializeApp(config);
+                // Inicializar con TU configuración
+                const app = fbApp.initializeApp(MY_FIREBASE_CONFIG);
                 db = fbFirestore.getFirestore(app);
                 const auth = fbAuth.getAuth(app);
+                
+                // Autenticación anónima para poder leer/escribir
                 await fbAuth.signInAnonymously(auth);
 
-                // Usamos una ID fija para que todos vean lo mismo
-                const appId = 'elecpro-production'; 
-                productsCollection = fbFirestore.collection(db, 'artifacts', appId, 'public', 'products');
-                
+                productsCollection = fbFirestore.collection(db, 'products');
                 useCloud = true;
-                updateStatus("🟢 En Línea (Sincronizado)", true);
+                updateStatus("🟢 Catálogo En Línea");
 
                 // Escuchar cambios
                 fbFirestore.onSnapshot(productsCollection, (snapshot) => {
-                    if (snapshot.empty && products.length === 0) {
-                        // Si está vacío, subir iniciales
-                        INITIAL_DATA.forEach(p => fbFirestore.addDoc(productsCollection, p));
-                    } else {
-                        products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                        renderGrid();
-                    }
+                    products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                    renderGrid();
+                    if(products.length === 0) updateStatus("⚪ Base de datos vacía (Agrega productos)");
+                }, (error) => {
+                    console.error(error);
+                    updateStatus("🔴 Error de Permisos: Revisa Firestore Rules");
                 });
+
             } catch (e) {
-                console.error("Error conexión nube", e);
-                alert("Error al conectar con la Nube. Verifique la configuración.");
-                useLocalMode();
+                console.error("Error cargando Firebase", e);
+                updateStatus("🔴 Error de Conexión");
             }
         }
 
-        function useLocalMode() {
-            useCloud = false;
-            updateStatus("🟠 Modo Local (Solo este dispositivo)", false);
-            const stored = localStorage.getItem('elecpro_db');
-            if (stored) {
-                products = JSON.parse(stored);
-            } else {
-                products = [...INITIAL_DATA];
-                saveLocal();
-            }
-            renderGrid();
+        function updateStatus(msg) {
+            document.getElementById('status-text').innerText = msg;
+            document.getElementById('status-bar').style.backgroundColor = msg.includes("Error") ? '#b91c1c' : '#064e3b';
         }
 
-        function updateStatus(msg, isCloud) {
-            const bar = document.getElementById('status-text');
-            const btn = document.getElementById('cloud-btn');
-            bar.innerText = msg;
-            bar.parentElement.style.backgroundColor = isCloud ? '#064e3b' : '#b45309'; // Verde oscuro o Naranja oscuro
-            
-            // El botón de configurar nube solo se ve si eres admin
-            if (document.body.classList.contains('is-admin')) {
-                btn.style.display = 'inline-block';
-            }
-        }
-
-        // ==========================================
-        //  3. FUNCIONES VISUALES
-        // ==========================================
         function renderNav() {
             const nav = document.getElementById('cat-nav');
             nav.innerHTML = '';
@@ -346,7 +236,6 @@
         function renderGrid() {
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
-            
             const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
             
             if(filtered.length === 0) {
@@ -354,13 +243,12 @@
                 return;
             }
 
-            // Ordenar por nombre o fecha si existiera
+            // Ordenar por nombre (o fecha si existiera)
             filtered.sort((a,b) => (b.updated || "").localeCompare(a.updated || ""));
 
             filtered.forEach(p => {
                 const card = document.createElement('article');
                 card.className = 'card';
-                
                 const msg = `Hola, me interesa el ${p.title} (C$ ${p.price})`;
                 const waLink = `https://wa.me/50587600225?text=${encodeURIComponent(msg)}`;
 
@@ -379,10 +267,7 @@
                         <div class="product-desc">${p.desc || ''}</div>
                         <div class="card-footer">
                             <div class="price">C$ ${p.price}</div>
-                            <a href="${waLink}" target="_blank" class="buy-btn">
-                                <span>Pedir</span>
-                                <span style="font-size:1.1rem">✆</span>
-                            </a>
+                            <a href="${waLink}" target="_blank" class="buy-btn"><span>Pedir</span></a>
                         </div>
                     </div>
                 `;
@@ -395,9 +280,6 @@
             return c ? c.label : id;
         }
 
-        // ==========================================
-        //  4. GESTIÓN DE PRODUCTOS (CRUD)
-        // ==========================================
         window.saveProduct = async function() {
             const btn = document.getElementById('btn-save');
             btn.textContent = "Guardando...";
@@ -420,31 +302,15 @@
                 updated: new Date().toISOString()
             };
 
-            if (useCloud) {
-                try {
-                    if (id) {
-                        if (imageBase64) newItem.image = imageBase64;
-                        await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), newItem);
-                    } else {
-                        if (imageBase64) newItem.image = imageBase64;
-                        await fbFirestore.addDoc(productsCollection, newItem);
-                    }
-                } catch (e) { alert("Error nube: " + e.message); }
-            } else {
+            try {
                 if (id) {
-                    const idx = products.findIndex(p => p.id === id);
-                    if (idx !== -1) {
-                        if (!imageBase64) newItem.image = products[idx].image;
-                        else newItem.image = imageBase64;
-                        products[idx] = { ...products[idx], ...newItem, id: id };
-                    }
-                } else {
-                    newItem.id = Date.now().toString();
                     if (imageBase64) newItem.image = imageBase64;
-                    products.unshift(newItem);
+                    await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), newItem);
+                } else {
+                    if (imageBase64) newItem.image = imageBase64;
+                    await fbFirestore.addDoc(productsCollection, newItem);
                 }
-                saveLocal();
-            }
+            } catch (e) { alert("Error: " + e.message); }
 
             btn.textContent = "Guardar";
             btn.disabled = false;
@@ -453,22 +319,11 @@
 
         window.deleteItem = async function(id) {
             if(!confirm("¿Borrar producto?")) return;
-            if (useCloud) {
+            try {
                 await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id));
-            } else {
-                products = products.filter(p => p.id !== id);
-                saveLocal();
-            }
+            } catch(e) { alert("Error: " + e.message); }
         }
 
-        function saveLocal() {
-            localStorage.setItem('elecpro_db', JSON.stringify(products));
-            renderGrid();
-        }
-
-        // ==========================================
-        //  5. INTERACCIÓN UI
-        // ==========================================
         window.openNewProduct = function() {
             document.getElementById('edit-id').value = '';
             document.getElementById('edit-brand').value = '';
@@ -494,49 +349,13 @@
             document.getElementById('product-modal').style.display = 'flex';
         }
 
-        window.closeModal = function(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
+        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
+        
         window.login = function() {
-            const pass = prompt("Contraseña de Administrador:");
-            if (pass === "elecpro50") {
+            if (prompt("Contraseña:") === "elecpro50") {
                 document.body.classList.add('is-admin');
-                alert("✅ Modo Admin Activado");
-                // Mostrar botón de configuración si ya cargó
-                if (document.getElementById('cloud-btn')) {
-                    document.getElementById('cloud-btn').style.display = 'inline-block';
-                }
-            } else {
-                alert("Incorrecto");
-            }
-        }
-
-        // --- CONFIGURACIÓN DE NUBE ---
-        window.openConfigModal = function() {
-            document.getElementById('config-modal').style.display = 'flex';
-            const saved = localStorage.getItem('elecpro_firebase_config');
-            if (saved) document.getElementById('firebase-config-input').value = saved;
-        }
-
-        window.saveCloudConfig = function() {
-            const val = document.getElementById('firebase-config-input').value;
-            try {
-                // Validar que sea JSON
-                JSON.parse(val);
-                localStorage.setItem('elecpro_firebase_config', val);
-                alert("Configuración guardada. Recargando...");
-                location.reload();
-            } catch(e) {
-                alert("Error: El texto no es un JSON válido.");
-            }
-        }
-
-        window.clearCloudConfig = function() {
-            if(confirm("¿Desconectar de la nube y volver a modo local?")) {
-                localStorage.removeItem('elecpro_firebase_config');
-                location.reload();
-            }
+                alert("Modo Admin Activado");
+            } else alert("Incorrecto");
         }
 
         function compressImage(file) {
