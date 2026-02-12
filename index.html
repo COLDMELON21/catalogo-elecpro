@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo ELECPRO</title>
+    <title>Catálogo ELECPRO | En Línea</title>
     <!-- Fuentes e Iconos -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
     <style>
@@ -15,6 +15,7 @@
             --dark: #1f2937; 
             --light: #f3f4f6; 
             --white: #ffffff; 
+            --success: #10b981;
         }
         * { box-sizing: border-box; }
         body { font-family: 'Roboto', sans-serif; background: var(--light); color: var(--dark); margin: 0; padding-bottom: 80px; }
@@ -68,7 +69,7 @@
         body.is-admin .admin-controls { display: flex; }
         body.is-admin .card { border: 2px dashed var(--highlight); }
 
-        /* MODAL DE EDICIÓN */
+        /* MODALES */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
         .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -83,13 +84,17 @@
         .admin-link { position: fixed; bottom: 10px; left: 10px; font-size: 0.8rem; color: #ccc; cursor: pointer; z-index: 50; text-decoration: none; }
         .admin-link:hover { color: #333; }
         
-        /* AVISO DE ESTADO */
-        #status-bar { background: #333; color: white; text-align: center; font-size: 0.75rem; padding: 4px; display: none; }
+        /* BARRA DE ESTADO */
+        #status-bar { background: #333; color: white; text-align: center; font-size: 0.8rem; padding: 5px; position: relative; z-index: 101; font-weight: bold; }
+        #cloud-btn { background: #444; border: 1px solid #666; color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; margin-left: 10px; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="status-bar">Iniciando sistema...</div>
+    <div id="status-bar">
+        <span id="status-text">Iniciando...</span>
+        <button id="cloud-btn" onclick="openConfigModal()">⚙️ Configurar Nube</button>
+    </div>
 
     <header>
         <div class="header-container">
@@ -111,7 +116,7 @@
 
     <main class="grid" id="catalog-grid">
         <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
-            <p>Cargando catálogo...</p>
+            <p>Cargando productos...</p>
         </div>
     </main>
 
@@ -121,7 +126,7 @@
     <!-- Acceso Oculto -->
     <a onclick="login()" class="admin-link">🔒 Admin</a>
 
-    <!-- Modal Formulario -->
+    <!-- Modal Formulario Producto -->
     <div id="product-modal" class="modal">
         <div class="modal-content">
             <h3 style="margin-top:0; color:var(--primary)" id="modal-title">📦 Gestión de Producto</h3>
@@ -160,15 +165,35 @@
             </div>
 
             <div style="display:flex; gap:10px; margin-top:20px">
-                <button onclick="closeModal()" style="background:#f3f4f6; color:#333; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Cancelar</button>
-                <button onclick="saveProduct()" id="btn-save" style="background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Guardar Producto</button>
+                <button onclick="closeModal('product-modal')" style="background:#f3f4f6; color:#333; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Cancelar</button>
+                <button onclick="saveProduct()" id="btn-save" style="background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Guardar</button>
             </div>
         </div>
     </div>
 
-    <!-- Lógica de la Aplicación -->
+    <!-- Modal Configuración Nube -->
+    <div id="config-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color:var(--dark)">☁️ Conectar a la Nube (Sincronización)</h3>
+            <p style="font-size:0.9rem; color:#666">Para que los cambios se vean en TODOS los dispositivos, pega aquí la configuración de tu proyecto de Firebase.</p>
+            
+            <div class="form-group">
+                <label>Configuración JSON (firebaseConfig)</label>
+                <textarea id="firebase-config-input" rows="8" placeholder='{ "apiKey": "...", "authDomain": "...", ... }' style="font-family:monospace; font-size:0.8rem;"></textarea>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px">
+                <button onclick="closeModal('config-modal')" style="background:#f3f4f6; color:#333; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer;">Cancelar</button>
+                <button onclick="saveCloudConfig()" style="background:var(--success); color:white; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Conectar</button>
+            </div>
+            <button onclick="clearCloudConfig()" style="width:100%; margin-top:10px; background:none; border:none; color:red; cursor:pointer; font-size:0.8rem;">Desconectar / Volver a Local</button>
+        </div>
+    </div>
+
     <script type="module">
-        // 1. CONFIGURACIÓN
+        // ==========================================
+        //  1. CONFIGURACIÓN Y DATOS
+        // ==========================================
         const CATEGORIES = [
             { id: 'all', label: 'Todo' },
             { id: 'herramientas', label: 'Herramientas' },
@@ -183,7 +208,6 @@
             { id: 'electricidad', label: 'Electricidad' }
         ];
 
-        // Datos de ejemplo para arranque
         const INITIAL_DATA = [
             { id: '1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro DZJ16', price: '2450', desc: 'Taladro de impacto 16mm (5/8"). Potente motor para uso industrial continuo.' },
             { id: '2', category: 'hogar', brand: 'ORIX', title: 'Extractor 10"', price: '850', desc: 'Ventilador extractor eficiente para cocinas y baños.' },
@@ -197,56 +221,75 @@
         let productsCollection = null;
         let useCloud = false;
 
-        // 2. INICIALIZACIÓN
+        // Importaciones de Firebase (Dinámicas)
+        let fbApp, fbFirestore, fbAuth;
+
+        // ==========================================
+        //  2. INICIALIZACIÓN
+        // ==========================================
         async function init() {
             renderNav();
             populateCategorySelect();
             
-            // Intentar conectar a Firebase (Nube)
-            let firebaseConfig = null;
-            if (typeof __firebase_config !== 'undefined') {
-                firebaseConfig = JSON.parse(__firebase_config); // Config del Chat
-            } 
-            
-            if (firebaseConfig) {
+            // 1. Revisar si hay configuración guardada por el usuario (localStorage)
+            const savedConfig = localStorage.getItem('elecpro_firebase_config');
+            let configToUse = null;
+
+            if (savedConfig) {
                 try {
-                    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-                    const { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    const { getAuth, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                    configToUse = JSON.parse(savedConfig);
+                } catch(e) { console.error("Error config guardada", e); }
+            } else if (typeof __firebase_config !== 'undefined') {
+                // Fallback: Si estamos en el chat, usamos la del chat
+                configToUse = JSON.parse(__firebase_config);
+            }
 
-                    const app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    const auth = getAuth(app);
-                    await signInAnonymously(auth);
-
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-elecpro-app';
-                    productsCollection = collection(db, 'artifacts', appId, 'public', 'products');
-                    useCloud = true;
-                    
-                    showStatus("🟢 Conectado a la Nube (Tiempo Real)");
-
-                    // Escuchar cambios en tiempo real
-                    onSnapshot(productsCollection, (snapshot) => {
-                        if (snapshot.empty && products.length === 0) {
-                            // Si la nube está vacía, subir datos iniciales
-                            INITIAL_DATA.forEach(p => addDoc(productsCollection, p));
-                        } else {
-                            products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                            renderGrid();
-                        }
-                    });
-                } catch (e) {
-                    console.error("Error nube", e);
-                    useLocalMode();
-                }
+            if (configToUse) {
+                await connectToCloud(configToUse);
             } else {
+                useLocalMode();
+            }
+        }
+
+        async function connectToCloud(config) {
+            try {
+                // Importar módulos solo si se necesitan
+                fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                fbAuth = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+
+                const app = fbApp.initializeApp(config);
+                db = fbFirestore.getFirestore(app);
+                const auth = fbAuth.getAuth(app);
+                await fbAuth.signInAnonymously(auth);
+
+                // Usamos una ID fija para que todos vean lo mismo
+                const appId = 'elecpro-production'; 
+                productsCollection = fbFirestore.collection(db, 'artifacts', appId, 'public', 'products');
+                
+                useCloud = true;
+                updateStatus("🟢 En Línea (Sincronizado)", true);
+
+                // Escuchar cambios
+                fbFirestore.onSnapshot(productsCollection, (snapshot) => {
+                    if (snapshot.empty && products.length === 0) {
+                        // Si está vacío, subir iniciales
+                        INITIAL_DATA.forEach(p => fbFirestore.addDoc(productsCollection, p));
+                    } else {
+                        products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                        renderGrid();
+                    }
+                });
+            } catch (e) {
+                console.error("Error conexión nube", e);
+                alert("Error al conectar con la Nube. Verifique la configuración.");
                 useLocalMode();
             }
         }
 
         function useLocalMode() {
             useCloud = false;
-            showStatus("🟠 Modo Local (Sin Nube Configurada)");
+            updateStatus("🟠 Modo Local (Solo este dispositivo)", false);
             const stored = localStorage.getItem('elecpro_db');
             if (stored) {
                 products = JSON.parse(stored);
@@ -257,12 +300,21 @@
             renderGrid();
         }
 
-        function saveLocal() {
-            localStorage.setItem('elecpro_db', JSON.stringify(products));
-            renderGrid();
+        function updateStatus(msg, isCloud) {
+            const bar = document.getElementById('status-text');
+            const btn = document.getElementById('cloud-btn');
+            bar.innerText = msg;
+            bar.parentElement.style.backgroundColor = isCloud ? '#064e3b' : '#b45309'; // Verde oscuro o Naranja oscuro
+            
+            // El botón de configurar nube solo se ve si eres admin
+            if (document.body.classList.contains('is-admin')) {
+                btn.style.display = 'inline-block';
+            }
         }
 
-        // 3. RENDERIZADO (VISUAL)
+        // ==========================================
+        //  3. FUNCIONES VISUALES
+        // ==========================================
         function renderNav() {
             const nav = document.getElementById('cat-nav');
             nav.innerHTML = '';
@@ -302,11 +354,13 @@
                 return;
             }
 
+            // Ordenar por nombre o fecha si existiera
+            filtered.sort((a,b) => (b.updated || "").localeCompare(a.updated || ""));
+
             filtered.forEach(p => {
                 const card = document.createElement('article');
                 card.className = 'card';
                 
-                // Link de WhatsApp personalizado
                 const msg = `Hola, me interesa el ${p.title} (C$ ${p.price})`;
                 const waLink = `https://wa.me/50587600225?text=${encodeURIComponent(msg)}`;
 
@@ -341,7 +395,9 @@
             return c ? c.label : id;
         }
 
-        // 4. FUNCIONES DE ADMIN (AGREGAR/EDITAR/BORRAR)
+        // ==========================================
+        //  4. GESTIÓN DE PRODUCTOS (CRUD)
+        // ==========================================
         window.saveProduct = async function() {
             const btn = document.getElementById('btn-save');
             btn.textContent = "Guardando...";
@@ -350,7 +406,6 @@
             const id = document.getElementById('edit-id').value;
             const fileInput = document.getElementById('edit-image');
             
-            // Procesar Imagen
             let imageBase64 = null;
             if (fileInput.files[0]) {
                 imageBase64 = await compressImage(fileInput.files[0]);
@@ -365,27 +420,21 @@
                 updated: new Date().toISOString()
             };
 
-            // Lógica Nube vs Local
             if (useCloud) {
-                const { addDoc, updateDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
                 try {
                     if (id) {
-                        // Si hay ID, es edición. Si no subió foto nueva, no enviamos el campo imagen para no borrar la vieja
                         if (imageBase64) newItem.image = imageBase64;
-                        await updateDoc(doc(productsCollection, id), newItem);
+                        await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), newItem);
                     } else {
                         if (imageBase64) newItem.image = imageBase64;
-                        await addDoc(productsCollection, newItem);
+                        await fbFirestore.addDoc(productsCollection, newItem);
                     }
-                } catch (e) {
-                    alert("Error al guardar en la nube: " + e.message);
-                }
+                } catch (e) { alert("Error nube: " + e.message); }
             } else {
-                // Modo Local
                 if (id) {
                     const idx = products.findIndex(p => p.id === id);
                     if (idx !== -1) {
-                        if (!imageBase64) newItem.image = products[idx].image; // Mantener foto
+                        if (!imageBase64) newItem.image = products[idx].image;
                         else newItem.image = imageBase64;
                         products[idx] = { ...products[idx], ...newItem, id: id };
                     }
@@ -397,58 +446,99 @@
                 saveLocal();
             }
 
-            btn.textContent = "Guardar Producto";
+            btn.textContent = "Guardar";
             btn.disabled = false;
-            closeModal();
+            closeModal('product-modal');
         }
 
         window.deleteItem = async function(id) {
-            if(!confirm("¿Seguro que quieres borrar este producto?")) return;
-            
+            if(!confirm("¿Borrar producto?")) return;
             if (useCloud) {
-                const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                await deleteDoc(doc(productsCollection, id));
+                await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id));
             } else {
                 products = products.filter(p => p.id !== id);
                 saveLocal();
             }
         }
 
-        // FUNCIONES DE MODAL MEJORADAS PARA TU PEDIDO:
-        
-        // Abrir modal vacío para crear NUEVO
+        function saveLocal() {
+            localStorage.setItem('elecpro_db', JSON.stringify(products));
+            renderGrid();
+        }
+
+        // ==========================================
+        //  5. INTERACCIÓN UI
+        // ==========================================
         window.openNewProduct = function() {
-            // Limpiar campos manualmente
             document.getElementById('edit-id').value = '';
             document.getElementById('edit-brand').value = '';
             document.getElementById('edit-title').value = '';
             document.getElementById('edit-price').value = '';
             document.getElementById('edit-desc').value = '';
-            document.getElementById('edit-image').value = ''; // Limpiar input file
-            
+            document.getElementById('edit-image').value = ''; 
             document.getElementById('modal-title').innerText = "📦 Nuevo Producto";
             document.getElementById('product-modal').style.display = 'flex';
         }
 
-        // Abrir modal con datos para EDITAR
         window.editItem = function(id) {
             const p = products.find(p => p.id === id);
             if (!p) return;
-            
-            // Rellenar campos con los datos existentes
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-brand').value = p.brand;
             document.getElementById('edit-title').value = p.title;
             document.getElementById('edit-price').value = p.price;
             document.getElementById('edit-category').value = p.category;
             document.getElementById('edit-desc').value = p.desc;
-            document.getElementById('edit-image').value = ''; // Imagen no se puede precargar en input, pero se respeta en save
-            
+            document.getElementById('edit-image').value = '';
             document.getElementById('modal-title').innerText = "✏️ Editar Producto";
             document.getElementById('product-modal').style.display = 'flex';
         }
 
-        // Utilidad: Comprimir imagen
+        window.closeModal = function(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        window.login = function() {
+            const pass = prompt("Contraseña de Administrador:");
+            if (pass === "elecpro50") {
+                document.body.classList.add('is-admin');
+                alert("✅ Modo Admin Activado");
+                // Mostrar botón de configuración si ya cargó
+                if (document.getElementById('cloud-btn')) {
+                    document.getElementById('cloud-btn').style.display = 'inline-block';
+                }
+            } else {
+                alert("Incorrecto");
+            }
+        }
+
+        // --- CONFIGURACIÓN DE NUBE ---
+        window.openConfigModal = function() {
+            document.getElementById('config-modal').style.display = 'flex';
+            const saved = localStorage.getItem('elecpro_firebase_config');
+            if (saved) document.getElementById('firebase-config-input').value = saved;
+        }
+
+        window.saveCloudConfig = function() {
+            const val = document.getElementById('firebase-config-input').value;
+            try {
+                // Validar que sea JSON
+                JSON.parse(val);
+                localStorage.setItem('elecpro_firebase_config', val);
+                alert("Configuración guardada. Recargando...");
+                location.reload();
+            } catch(e) {
+                alert("Error: El texto no es un JSON válido.");
+            }
+        }
+
+        window.clearCloudConfig = function() {
+            if(confirm("¿Desconectar de la nube y volver a modo local?")) {
+                localStorage.removeItem('elecpro_firebase_config');
+                location.reload();
+            }
+        }
+
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -462,35 +552,12 @@
                         const scale = 600 / img.width;
                         const w = scale < 1 ? 600 : img.width;
                         const h = scale < 1 ? img.height * scale : img.height;
-                        canvas.width = w;
-                        canvas.height = h;
+                        canvas.width = w; canvas.height = h;
                         ctx.drawImage(img, 0, 0, w, h);
                         resolve(canvas.toDataURL('image/jpeg', 0.7)); 
                     };
                 };
             });
-        }
-
-        // 5. SISTEMA DE LOGIN
-        window.login = function() {
-            const pass = prompt("Contraseña de Administrador:");
-            if (pass === "elecpro50") {
-                document.body.classList.add('is-admin');
-                alert("✅ Modo Administrador Activado\nAhora puedes editar, borrar y agregar productos.");
-            } else {
-                alert("❌ Contraseña incorrecta");
-            }
-        }
-
-        window.closeModal = function() {
-            document.getElementById('product-modal').style.display = 'none';
-        }
-        
-        function showStatus(msg) {
-            const bar = document.getElementById('status-bar');
-            bar.innerText = msg;
-            bar.style.display = 'block';
-            setTimeout(() => bar.style.display = 'none', 5000);
         }
 
         init();
