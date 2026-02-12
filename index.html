@@ -116,7 +116,7 @@
     </main>
 
     <!-- Botón Flotante para Agregar (Solo Admin) -->
-    <div id="admin-fab" onclick="openModal()">+</div>
+    <div id="admin-fab" onclick="openNewProduct()">+</div>
     
     <!-- Acceso Oculto -->
     <a onclick="login()" class="admin-link">🔒 Admin</a>
@@ -124,7 +124,7 @@
     <!-- Modal Formulario -->
     <div id="product-modal" class="modal">
         <div class="modal-content">
-            <h3 style="margin-top:0; color:var(--primary)">📦 Gestión de Producto</h3>
+            <h3 style="margin-top:0; color:var(--primary)" id="modal-title">📦 Gestión de Producto</h3>
             <input type="hidden" id="edit-id">
             
             <div class="form-row">
@@ -203,19 +203,11 @@
             populateCategorySelect();
             
             // Intentar conectar a Firebase (Nube)
-            // IMPORTANTE: Si subes esto a Netlify, necesitas poner TU propia configuración aquí abajo.
-            // Si no lo haces, funcionará en "Modo Local" (los cambios solo los verás tú).
-            
             let firebaseConfig = null;
             if (typeof __firebase_config !== 'undefined') {
                 firebaseConfig = JSON.parse(__firebase_config); // Config del Chat
             } 
             
-            // --- ESPACIO PARA TUS LLAVES DE FIREBASE (Opcional para Netlify) ---
-            // const myFirebaseConfig = { apiKey: "...", authDomain: "...", projectId: "..." };
-            // if (!firebaseConfig) firebaseConfig = myFirebaseConfig;
-            // ------------------------------------------------------------------
-
             if (firebaseConfig) {
                 try {
                     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
@@ -309,9 +301,6 @@
                 grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:#999">No hay productos en esta categoría.</div>';
                 return;
             }
-
-            // Ordenar: Nuevos primero (opcional)
-            // filtered.sort((a, b) => (b.updated || 0) - (a.updated || 0));
 
             filtered.forEach(p => {
                 const card = document.createElement('article');
@@ -425,20 +414,41 @@
             }
         }
 
+        // FUNCIONES DE MODAL MEJORADAS PARA TU PEDIDO:
+        
+        // Abrir modal vacío para crear NUEVO
+        window.openNewProduct = function() {
+            // Limpiar campos manualmente
+            document.getElementById('edit-id').value = '';
+            document.getElementById('edit-brand').value = '';
+            document.getElementById('edit-title').value = '';
+            document.getElementById('edit-price').value = '';
+            document.getElementById('edit-desc').value = '';
+            document.getElementById('edit-image').value = ''; // Limpiar input file
+            
+            document.getElementById('modal-title').innerText = "📦 Nuevo Producto";
+            document.getElementById('product-modal').style.display = 'flex';
+        }
+
+        // Abrir modal con datos para EDITAR
         window.editItem = function(id) {
             const p = products.find(p => p.id === id);
             if (!p) return;
+            
+            // Rellenar campos con los datos existentes
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-brand').value = p.brand;
             document.getElementById('edit-title').value = p.title;
             document.getElementById('edit-price').value = p.price;
             document.getElementById('edit-category').value = p.category;
             document.getElementById('edit-desc').value = p.desc;
-            document.getElementById('edit-image').value = '';
-            openModal();
+            document.getElementById('edit-image').value = ''; // Imagen no se puede precargar en input, pero se respeta en save
+            
+            document.getElementById('modal-title').innerText = "✏️ Editar Producto";
+            document.getElementById('product-modal').style.display = 'flex';
         }
 
-        // Utilidad: Comprimir imagen para que la base de datos no explote
+        // Utilidad: Comprimir imagen
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -449,15 +459,13 @@
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        // Max 600px ancho
                         const scale = 600 / img.width;
                         const w = scale < 1 ? 600 : img.width;
                         const h = scale < 1 ? img.height * scale : img.height;
-                        
                         canvas.width = w;
                         canvas.height = h;
                         ctx.drawImage(img, 0, 0, w, h);
-                        resolve(canvas.toDataURL('image/jpeg', 0.7)); // Calidad 70%
+                        resolve(canvas.toDataURL('image/jpeg', 0.7)); 
                     };
                 };
             });
@@ -474,23 +482,8 @@
             }
         }
 
-        window.openModal = function() {
-            if (document.getElementById('edit-id').value !== '') {
-                // Si había un ID, es que estábamos editando. Limpiamos para agregar nuevo.
-                document.getElementById('edit-id').value = '';
-                document.getElementById('edit-brand').value = '';
-                document.getElementById('edit-title').value = '';
-                document.getElementById('edit-price').value = '';
-                document.getElementById('edit-desc').value = '';
-                document.getElementById('edit-image').value = '';
-            }
-            document.getElementById('product-modal').style.display = 'flex';
-        }
-
         window.closeModal = function() {
             document.getElementById('product-modal').style.display = 'none';
-            // Limpiar ID al cerrar para evitar confusiones
-            document.getElementById('edit-id').value = '';
         }
         
         function showStatus(msg) {
@@ -504,5 +497,3 @@
     </script>
 </body>
 </html>
-
-
