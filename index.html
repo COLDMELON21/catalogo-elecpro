@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo ELECPRO</title>
+    <!-- Fuentes e Iconos -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
     <style>
-        /* COLORES Y ESTILOS */
+        /* --- ESTILOS VISUALES --- */
         :root { 
             --primary: #1e40af; 
             --accent: #dc2626; 
@@ -16,31 +17,32 @@
             --white: #ffffff; 
         }
         * { box-sizing: border-box; }
-        body { font-family: 'Roboto', sans-serif; background: var(--light); color: var(--dark); margin: 0; padding-bottom: 40px; }
+        body { font-family: 'Roboto', sans-serif; background: var(--light); color: var(--dark); margin: 0; padding-bottom: 80px; }
         
         /* HEADER */
         header { background: var(--white); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; padding: 10px 0; }
         .header-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .logo-text { font-family: 'Oswald', sans-serif; color: var(--primary); margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
-        .contact-btn { background: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .contact-btn { background: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s; }
+        .contact-btn:hover { transform: scale(1.05); }
 
         /* NAVEGACIÓN */
-        .categories-wrapper { background: var(--primary); padding: 10px 0; overflow-x: auto; position: sticky; top: 60px; z-index: 90; }
+        .categories-wrapper { background: var(--primary); padding: 10px 0; overflow-x: auto; position: sticky; top: 60px; z-index: 90; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .categories-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; gap: 10px; }
-        .cat-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .cat-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; font-size: 0.9rem; }
         .cat-btn:hover, .cat-btn.active { background: var(--highlight); color: var(--dark); border-color: var(--highlight); font-weight: bold; }
 
         /* GRID PRODUCTOS */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
         @media (min-width: 600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; } }
 
-        .card { background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); display: flex; flex-direction: column; transition: transform 0.2s; }
+        .card { background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); display: flex; flex-direction: column; transition: transform 0.2s; position: relative; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         
         .card-img-container { width: 100%; aspect-ratio: 1/1; background: #fff; display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid #eee; }
         .card-img-container img { width: 90%; height: 90%; object-fit: contain; }
         
-        .card-badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .card-badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; z-index: 2; }
         
         .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
         .product-brand { font-size: 0.8rem; color: #6b7280; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
@@ -49,10 +51,45 @@
         
         .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f3f3; padding-top: 10px; }
         .price { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
-        .buy-btn { background: #25D366; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; text-decoration: none;}
+        .buy-btn { background: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .buy-btn:hover { background: #128C7E; }
+
+        /* --- ADMIN INTERFACE --- */
+        #admin-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; transition: transform 0.2s; }
+        #admin-fab:hover { transform: scale(1.1); }
+        
+        .admin-controls { display: none; position: absolute; top: 5px; left: 5px; gap: 5px; z-index: 10; }
+        .btn-icon { width: 32px; height: 32px; border-radius: 50%; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .btn-edit { background: #f59e0b; }
+        .btn-del { background: #ef4444; }
+
+        /* Estilos cuando eres Admin */
+        body.is-admin #admin-fab { display: flex; }
+        body.is-admin .admin-controls { display: flex; }
+        body.is-admin .card { border: 2px dashed var(--highlight); }
+
+        /* MODAL DE EDICIÓN */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .form-row { display: flex; gap: 15px; }
+        .form-group { margin-bottom: 15px; flex: 1; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 0.9rem; color: #555; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; transition: 0.3s; }
+        .form-group input:focus { border-color: var(--primary); outline: none; }
+
+        /* LOGIN LINK */
+        .admin-link { position: fixed; bottom: 10px; left: 10px; font-size: 0.8rem; color: #ccc; cursor: pointer; z-index: 50; text-decoration: none; }
+        .admin-link:hover { color: #333; }
+        
+        /* AVISO DE ESTADO */
+        #status-bar { background: #333; color: white; text-align: center; font-size: 0.75rem; padding: 4px; display: none; }
     </style>
 </head>
 <body>
+
+    <div id="status-bar">Iniciando sistema...</div>
 
     <header>
         <div class="header-container">
@@ -61,78 +98,77 @@
                 <p style="margin:0; color: #666; font-size: 0.8rem;">Especialistas en Materiales Eléctricos</p>
             </div>
             <a href="https://wa.me/50587600225" target="_blank" class="contact-btn">
-                <span>Whatsapp</span>
+                <span>✆ Pedir por WhatsApp</span>
             </a>
         </div>
     </header>
 
     <nav class="categories-wrapper">
         <div class="categories-container" id="cat-nav">
-            <!-- JS Generará los botones -->
+            <!-- Botones generados por JS -->
         </div>
     </nav>
 
     <main class="grid" id="catalog-grid">
-        <!-- JS Generará los productos -->
+        <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+            <p>Cargando catálogo...</p>
+        </div>
     </main>
 
-    <script>
-        // ==========================================
-        //  TU BASE DE DATOS ESTÁ AQUÍ (EDITAR AQUÍ)
-        // ==========================================
-        const products = [
-            // Categoria: herramientas, iluminacion, hogar, ferreteria, electronica, industrial, construccion, pinturas, fontaneria, electricidad
-            
-            { 
-                category: 'herramientas', 
-                brand: 'DONG CHENG', 
-                title: 'Taladro de Impacto DZJ16', 
-                price: '1,500', 
-                desc: 'Taladro de 16mm (5/8"). Potente motor para uso industrial continuo.',
-                image: 'https://via.placeholder.com/300?text=Taladro' // Cambia esto por tu link de foto
-            },
-            { 
-                category: 'hogar', 
-                brand: 'ORIX', 
-                title: 'Extractor de Aire 10"', 
-                price: '850', 
-                desc: 'Ventilador extractor eficiente y silencioso para cocinas y baños.',
-                image: 'https://via.placeholder.com/300?text=Extractor'
-            },
-            { 
-                category: 'ferreteria', 
-                brand: 'ELECPRO', 
-                title: 'Protector de Voltaje V199', 
-                price: '420', 
-                desc: 'Protege refrigeradores y equipos. 1000 Watts max. 110V.',
-                image: 'https://via.placeholder.com/300?text=Protector'
-            },
-            { 
-                category: 'ferreteria', 
-                brand: 'EPICA STAR', 
-                title: 'Cerradura Sobreponer 398', 
-                price: '680', 
-                desc: 'Cerradura de alta seguridad, doble pasador, llave de puntos.',
-                image: 'https://via.placeholder.com/300?text=Cerradura'
-            },
-            
-            // AGREGA NUEVOS PRODUCTOS COPIANDO Y PEGANDO ESTE BLOQUE:
-            /*
-            { 
-                category: 'pinturas', 
-                brand: 'MODELO', 
-                title: 'Cubeta Pintura Blanca', 
-                price: '1,200', 
-                desc: 'Pintura acrílica de alta cobertura.',
-                image: ''
-            },
-            */
-        ];
+    <!-- Botón Flotante para Agregar (Solo Admin) -->
+    <div id="admin-fab" onclick="openModal()">+</div>
+    
+    <!-- Acceso Oculto -->
+    <a onclick="login()" class="admin-link">🔒 Admin</a>
 
-        // ==========================================
-        //  NO TOCAR NADA DEBAJO DE ESTA LÍNEA
-        // ==========================================
-        
+    <!-- Modal Formulario -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color:var(--primary)">📦 Gestión de Producto</h3>
+            <input type="hidden" id="edit-id">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="edit-category"></select>
+                </div>
+                <div class="form-group">
+                    <label>Marca</label>
+                    <input id="edit-brand" placeholder="Ej: DONG CHENG">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Nombre del Producto</label>
+                <input id="edit-title" placeholder="Ej: Taladro Percutor">
+            </div>
+
+            <div class="form-group">
+                <label>Precio (C$)</label>
+                <input id="edit-price" type="number" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="edit-desc" rows="3" placeholder="Detalles técnicos..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Foto del Producto</label>
+                <input type="file" id="edit-image" accept="image/*">
+                <small style="color:#666; display:block; margin-top:5px">Si no subes una nueva, se mantiene la anterior.</small>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px">
+                <button onclick="closeModal()" style="background:#f3f4f6; color:#333; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Cancelar</button>
+                <button onclick="saveProduct()" id="btn-save" style="background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Guardar Producto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lógica de la Aplicación -->
+    <script type="module">
+        // 1. CONFIGURACIÓN
         const CATEGORIES = [
             { id: 'all', label: 'Todo' },
             { id: 'herramientas', label: 'Herramientas' },
@@ -147,13 +183,94 @@
             { id: 'electricidad', label: 'Electricidad' }
         ];
 
-        let currentFilter = 'all';
+        // Datos de ejemplo para arranque
+        const INITIAL_DATA = [
+            { id: '1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro DZJ16', price: '2450', desc: 'Taladro de impacto 16mm (5/8"). Potente motor para uso industrial continuo.' },
+            { id: '2', category: 'hogar', brand: 'ORIX', title: 'Extractor 10"', price: '850', desc: 'Ventilador extractor eficiente para cocinas y baños.' },
+            { id: '3', category: 'ferreteria', brand: 'ELECPRO', title: 'Protector V199', price: '420', desc: 'Protector de voltaje 1000W para equipos electrónicos.' },
+            { id: '4', category: 'ferreteria', brand: 'EPICA STAR', title: 'Cerradura 398', price: '680', desc: 'Cerradura de sobreponer, máxima seguridad.' }
+        ];
 
-        function init() {
+        let products = [];
+        let currentFilter = 'all';
+        let db = null;
+        let productsCollection = null;
+        let useCloud = false;
+
+        // 2. INICIALIZACIÓN
+        async function init() {
             renderNav();
+            populateCategorySelect();
+            
+            // Intentar conectar a Firebase (Nube)
+            // IMPORTANTE: Si subes esto a Netlify, necesitas poner TU propia configuración aquí abajo.
+            // Si no lo haces, funcionará en "Modo Local" (los cambios solo los verás tú).
+            
+            let firebaseConfig = null;
+            if (typeof __firebase_config !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config); // Config del Chat
+            } 
+            
+            // --- ESPACIO PARA TUS LLAVES DE FIREBASE (Opcional para Netlify) ---
+            // const myFirebaseConfig = { apiKey: "...", authDomain: "...", projectId: "..." };
+            // if (!firebaseConfig) firebaseConfig = myFirebaseConfig;
+            // ------------------------------------------------------------------
+
+            if (firebaseConfig) {
+                try {
+                    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                    const { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    const { getAuth, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    const auth = getAuth(app);
+                    await signInAnonymously(auth);
+
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-elecpro-app';
+                    productsCollection = collection(db, 'artifacts', appId, 'public', 'products');
+                    useCloud = true;
+                    
+                    showStatus("🟢 Conectado a la Nube (Tiempo Real)");
+
+                    // Escuchar cambios en tiempo real
+                    onSnapshot(productsCollection, (snapshot) => {
+                        if (snapshot.empty && products.length === 0) {
+                            // Si la nube está vacía, subir datos iniciales
+                            INITIAL_DATA.forEach(p => addDoc(productsCollection, p));
+                        } else {
+                            products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                            renderGrid();
+                        }
+                    });
+                } catch (e) {
+                    console.error("Error nube", e);
+                    useLocalMode();
+                }
+            } else {
+                useLocalMode();
+            }
+        }
+
+        function useLocalMode() {
+            useCloud = false;
+            showStatus("🟠 Modo Local (Sin Nube Configurada)");
+            const stored = localStorage.getItem('elecpro_db');
+            if (stored) {
+                products = JSON.parse(stored);
+            } else {
+                products = [...INITIAL_DATA];
+                saveLocal();
+            }
             renderGrid();
         }
 
+        function saveLocal() {
+            localStorage.setItem('elecpro_db', JSON.stringify(products));
+            renderGrid();
+        }
+
+        // 3. RENDERIZADO (VISUAL)
         function renderNav() {
             const nav = document.getElementById('cat-nav');
             nav.innerHTML = '';
@@ -171,6 +288,17 @@
             });
         }
 
+        function populateCategorySelect() {
+            const select = document.getElementById('edit-category');
+            select.innerHTML = '';
+            CATEGORIES.filter(c => c.id !== 'all').forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.label;
+                select.appendChild(opt);
+            });
+        }
+
         function renderGrid() {
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = '';
@@ -182,25 +310,36 @@
                 return;
             }
 
+            // Ordenar: Nuevos primero (opcional)
+            // filtered.sort((a, b) => (b.updated || 0) - (a.updated || 0));
+
             filtered.forEach(p => {
                 const card = document.createElement('article');
                 card.className = 'card';
-                // Generar mensaje de whatsapp
-                const msg = `Hola, me interesa el producto: ${p.title} (Precio: ${p.price})`;
+                
+                // Link de WhatsApp personalizado
+                const msg = `Hola, me interesa el ${p.title} (C$ ${p.price})`;
                 const waLink = `https://wa.me/50587600225?text=${encodeURIComponent(msg)}`;
 
                 card.innerHTML = `
+                    <div class="admin-controls">
+                        <button class="btn-icon btn-edit" onclick="window.editItem('${p.id}')">✏️</button>
+                        <button class="btn-icon btn-del" onclick="window.deleteItem('${p.id}')">🗑️</button>
+                    </div>
                     <div class="card-img-container">
-                        ${p.image && p.image.length > 5 ? `<img src="${p.image}" alt="${p.title}">` : '<span style="font-size:3rem; color:#ccc">📷</span>'}
-                        <div class="card-badge">${p.category}</div>
+                        ${p.image ? `<img src="${p.image}" alt="${p.title}">` : '<span style="font-size:3rem; color:#eee">📷</span>'}
+                        <div class="card-badge">${getCategoryLabel(p.category)}</div>
                     </div>
                     <div class="card-body">
-                        <div class="product-brand">${p.brand}</div>
+                        <div class="product-brand">${p.brand || ''}</div>
                         <h3 class="product-title">${p.title}</h3>
-                        <p class="product-desc">${p.desc}</p>
+                        <div class="product-desc">${p.desc || ''}</div>
                         <div class="card-footer">
                             <div class="price">C$ ${p.price}</div>
-                            <a href="${waLink}" target="_blank" class="buy-btn">Pedir ✆</a>
+                            <a href="${waLink}" target="_blank" class="buy-btn">
+                                <span>Pedir</span>
+                                <span style="font-size:1.1rem">✆</span>
+                            </a>
                         </div>
                     </div>
                 `;
@@ -208,8 +347,162 @@
             });
         }
 
+        function getCategoryLabel(id) {
+            const c = CATEGORIES.find(cat => cat.id === id);
+            return c ? c.label : id;
+        }
+
+        // 4. FUNCIONES DE ADMIN (AGREGAR/EDITAR/BORRAR)
+        window.saveProduct = async function() {
+            const btn = document.getElementById('btn-save');
+            btn.textContent = "Guardando...";
+            btn.disabled = true;
+
+            const id = document.getElementById('edit-id').value;
+            const fileInput = document.getElementById('edit-image');
+            
+            // Procesar Imagen
+            let imageBase64 = null;
+            if (fileInput.files[0]) {
+                imageBase64 = await compressImage(fileInput.files[0]);
+            }
+
+            const newItem = {
+                brand: document.getElementById('edit-brand').value,
+                title: document.getElementById('edit-title').value,
+                price: document.getElementById('edit-price').value,
+                category: document.getElementById('edit-category').value,
+                desc: document.getElementById('edit-desc').value,
+                updated: new Date().toISOString()
+            };
+
+            // Lógica Nube vs Local
+            if (useCloud) {
+                const { addDoc, updateDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                try {
+                    if (id) {
+                        // Si hay ID, es edición. Si no subió foto nueva, no enviamos el campo imagen para no borrar la vieja
+                        if (imageBase64) newItem.image = imageBase64;
+                        await updateDoc(doc(productsCollection, id), newItem);
+                    } else {
+                        if (imageBase64) newItem.image = imageBase64;
+                        await addDoc(productsCollection, newItem);
+                    }
+                } catch (e) {
+                    alert("Error al guardar en la nube: " + e.message);
+                }
+            } else {
+                // Modo Local
+                if (id) {
+                    const idx = products.findIndex(p => p.id === id);
+                    if (idx !== -1) {
+                        if (!imageBase64) newItem.image = products[idx].image; // Mantener foto
+                        else newItem.image = imageBase64;
+                        products[idx] = { ...products[idx], ...newItem, id: id };
+                    }
+                } else {
+                    newItem.id = Date.now().toString();
+                    if (imageBase64) newItem.image = imageBase64;
+                    products.unshift(newItem);
+                }
+                saveLocal();
+            }
+
+            btn.textContent = "Guardar Producto";
+            btn.disabled = false;
+            closeModal();
+        }
+
+        window.deleteItem = async function(id) {
+            if(!confirm("¿Seguro que quieres borrar este producto?")) return;
+            
+            if (useCloud) {
+                const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                await deleteDoc(doc(productsCollection, id));
+            } else {
+                products = products.filter(p => p.id !== id);
+                saveLocal();
+            }
+        }
+
+        window.editItem = function(id) {
+            const p = products.find(p => p.id === id);
+            if (!p) return;
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-brand').value = p.brand;
+            document.getElementById('edit-title').value = p.title;
+            document.getElementById('edit-price').value = p.price;
+            document.getElementById('edit-category').value = p.category;
+            document.getElementById('edit-desc').value = p.desc;
+            document.getElementById('edit-image').value = '';
+            openModal();
+        }
+
+        // Utilidad: Comprimir imagen para que la base de datos no explote
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        // Max 600px ancho
+                        const scale = 600 / img.width;
+                        const w = scale < 1 ? 600 : img.width;
+                        const h = scale < 1 ? img.height * scale : img.height;
+                        
+                        canvas.width = w;
+                        canvas.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7)); // Calidad 70%
+                    };
+                };
+            });
+        }
+
+        // 5. SISTEMA DE LOGIN
+        window.login = function() {
+            const pass = prompt("Contraseña de Administrador:");
+            if (pass === "elecpro50") {
+                document.body.classList.add('is-admin');
+                alert("✅ Modo Administrador Activado\nAhora puedes editar, borrar y agregar productos.");
+            } else {
+                alert("❌ Contraseña incorrecta");
+            }
+        }
+
+        window.openModal = function() {
+            if (document.getElementById('edit-id').value !== '') {
+                // Si había un ID, es que estábamos editando. Limpiamos para agregar nuevo.
+                document.getElementById('edit-id').value = '';
+                document.getElementById('edit-brand').value = '';
+                document.getElementById('edit-title').value = '';
+                document.getElementById('edit-price').value = '';
+                document.getElementById('edit-desc').value = '';
+                document.getElementById('edit-image').value = '';
+            }
+            document.getElementById('product-modal').style.display = 'flex';
+        }
+
+        window.closeModal = function() {
+            document.getElementById('product-modal').style.display = 'none';
+            // Limpiar ID al cerrar para evitar confusiones
+            document.getElementById('edit-id').value = '';
+        }
+        
+        function showStatus(msg) {
+            const bar = document.getElementById('status-bar');
+            bar.innerText = msg;
+            bar.style.display = 'block';
+            setTimeout(() => bar.style.display = 'none', 5000);
+        }
+
         init();
     </script>
 </body>
 </html>
+
 
