@@ -170,16 +170,13 @@
                 // Importación dinámica de módulos
                 const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
                 fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                const fbAuth = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                // NOTA: Eliminamos la dependencia de AUTH para evitar errores si no se activó.
+                // En modo prueba de Firestore, no es estrictamente necesaria.
 
                 // Inicializar con TU configuración
                 const app = fbApp.initializeApp(MY_FIREBASE_CONFIG);
                 db = fbFirestore.getFirestore(app);
-                const auth = fbAuth.getAuth(app);
                 
-                // Autenticación anónima para poder leer/escribir
-                await fbAuth.signInAnonymously(auth);
-
                 productsCollection = fbFirestore.collection(db, 'products');
                 useCloud = true;
                 updateStatus("🟢 Catálogo En Línea");
@@ -191,12 +188,15 @@
                     if(products.length === 0) updateStatus("⚪ Base de datos vacía (Agrega productos)");
                 }, (error) => {
                     console.error(error);
-                    updateStatus("🔴 Error de Permisos: Revisa Firestore Rules");
+                    // Si falla, mostramos el error real para depurar
+                    alert("Error de Permisos en la Nube: " + error.message + "\n\nAsegúrate de haber creado la base de datos en 'Modo Prueba'.");
+                    useLocalMode();
                 });
 
             } catch (e) {
                 console.error("Error cargando Firebase", e);
-                updateStatus("🔴 Error de Conexión");
+                alert("Error de Conexión: " + e.message);
+                useLocalMode();
             }
         }
 
@@ -322,6 +322,17 @@
             try {
                 await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id));
             } catch(e) { alert("Error: " + e.message); }
+        }
+
+        // MODO LOCAL (Solo si falla la nube)
+        function useLocalMode() {
+            useCloud = false;
+            updateStatus("🟠 MODO LOCAL (Error de Conexión)");
+            const stored = localStorage.getItem('elecpro_db');
+            if (stored) {
+                products = JSON.parse(stored);
+                renderGrid();
+            }
         }
 
         window.openNewProduct = function() {
