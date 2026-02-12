@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo ELECPRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1e40af; --accent: #dc2626; --highlight: #facc15; --dark: #1f2937; --light: #f3f4f6; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background: var(--light); color: var(--dark); margin: 0; padding-bottom: 80px; }
+        
+        /* HEADER */
+        header { background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; padding: 10px 0; }
+        .header-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { max-height: 60px; object-fit: contain; }
+        .contact-phone { color: var(--accent); font-weight: bold; font-family: 'Oswald', sans-serif; font-size: 1.2rem; }
+
+        /* NAVEGACIÓN */
+        .categories-bar { background: var(--primary); padding: 15px 0; overflow-x: auto; white-space: nowrap; }
+        .categories-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; gap: 10px; }
+        .cat-btn { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; cursor: pointer; }
+        .cat-btn.active { background: var(--highlight); color: var(--dark); }
+
+        /* GRID */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); position: relative; border-top: 4px solid var(--primary); }
+        .card-img-container { width: 100%; height: 220px; background: #f9fafb; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .card-badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+        .card-body { padding: 20px; }
+        .product-brand { font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; }
+        .product-title { font-family: 'Oswald', sans-serif; font-size: 1.3rem; margin: 5px 0; color: var(--dark); }
+        .price { font-size: 1.5rem; font-weight: bold; color: var(--primary); margin-top: 10px; }
+
+        /* ADMIN */
+        #admin-panel { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; padding: 15px; z-index: 1000; display: flex; justify-content: center; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-login { background: #333; }
+        .btn-add { background: var(--primary); display: none; }
+        .btn-save-local { background: #10b981; display: none; } /* Botón para guardar cambios locales */
+        .is-admin .btn-add, .is-admin .btn-save-local { display: block; }
+        .is-admin .btn-login { display: none; }
+        .admin-controls { display: none; position: absolute; top: 10px; left: 10px; gap: 5px; }
+        .is-admin .admin-controls { display: flex; }
+        
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+
+        /* AVISO MODO */
+        #mode-badge { position: fixed; bottom: 70px; right: 20px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-area">
+                <!-- LOGO DEFAULT -->
+                <img src="https://via.placeholder.com/180x60?text=ELECPRO" alt="Logo" class="logo-img">
+                <div>
+                    <h2 style="margin:0; font-family:'Oswald', sans-serif; color: var(--primary);">FERRETERÍA ELECPRO</h2>
+                    <p style="margin:0; color: #666; font-size: 0.9rem;">Especialistas en Materiales Eléctricos</p>
+                </div>
+            </div>
+            <div class="contact-phone">+505 8760-0225</div>
+        </div>
+    </header>
+
+    <nav class="categories-bar">
+        <div class="categories-container">
+            <button class="cat-btn active" onclick="filter('all', this)">Todo</button>
+            <button class="cat-btn" onclick="filter('herramientas', this)">Herramientas</button>
+            <button class="cat-btn" onclick="filter('iluminacion', this)">Iluminación</button>
+            <button class="cat-btn" onclick="filter('hogar', this)">Hogar</button>
+            <button class="cat-btn" onclick="filter('ferreteria', this)">Ferretería</button>
+            <button class="cat-btn" onclick="filter('electronica', this)">Electrónica</button>
+            <button class="cat-btn" onclick="filter('industrial', this)">Industrial</button>
+            <button class="cat-btn" onclick="filter('construccion', this)">Construcción</button>
+            <button class="cat-btn" onclick="filter('pinturas', this)">Pinturas</button>
+            <button class="cat-btn" onclick="filter('fontaneria', this)">Fontanería</button>
+            <button class="cat-btn" onclick="filter('electricidad', this)">Electricidad</button>
+        </div>
+    </nav>
+
+    <main class="grid" id="catalog-grid"></main>
+    
+    <div id="mode-badge">Modo: Cargando...</div>
+
+    <div id="admin-panel">
+        <button class="btn btn-login" onclick="login()">🔒 Admin</button>
+        <button class="btn btn-add" onclick="openModal()">➕ Producto</button>
+        <button class="btn btn-save-local" onclick="downloadBackup()">💾 Descargar Copia</button>
+    </div>
+
+    <!-- Modal Formulario -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <h3>Gestión de Producto</h3>
+            <input type="hidden" id="edit-id">
+            <div class="form-group"><input id="edit-brand" placeholder="Marca"></div>
+            <div class="form-group"><input id="edit-title" placeholder="Nombre Producto"></div>
+            <div class="form-group"><input id="edit-price" type="number" placeholder="Precio"></div>
+            <div class="form-group">
+                <select id="edit-category">
+                    <option value="herramientas">Herramientas</option>
+                    <option value="iluminacion">Iluminación</option>
+                    <option value="hogar">Hogar</option>
+                    <option value="ferreteria">Ferretería</option>
+                    <option value="electronica">Electrónica</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="construccion">Construcción</option>
+                    <option value="pinturas">Pinturas</option>
+                    <option value="fontaneria">Fontanería</option>
+                    <option value="electricidad">Electricidad</option>
+                </select>
+            </div>
+            <div class="form-group"><textarea id="edit-desc" placeholder="Descripción"></textarea></div>
+            <div class="form-group"><input type="file" id="edit-image" accept="image/*"></div>
+            <button class="btn" style="background:var(--primary); width:100%" onclick="saveProduct()">Guardar</button>
+            <br><br>
+            <button class="btn" style="background:#999; width:100%" onclick="document.getElementById('product-modal').style.display='none'">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- LÓGICA HÍBRIDA (NUBE + LOCAL) -->
+    <script type="module">
+        // Intentamos cargar Firebase solo si estamos en el entorno de chat
+        let useCloud = false;
+        let db = null;
+        let productsCollection = null;
+        let products = [];
+
+        // Datos iniciales de ejemplo
+        const initialData = [
+            { id: '1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro DZJ16', price: '2450', desc: 'Taladro de impacto 16mm.' },
+            { id: '2', category: 'hogar', brand: 'ORIX', title: 'Extractor 10"', price: '850', desc: 'Ventilador eficiente.' },
+            { id: '3', category: 'ferreteria', brand: 'ELECPRO', title: 'Protector V199', price: '420', desc: 'Protector de voltaje 1000W.' }
+        ];
+
+        async function init() {
+            // Verificar si tenemos configuración de Firebase (Entorno Chat)
+            if (typeof __firebase_config !== 'undefined') {
+                try {
+                    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                    const { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    const { getAuth, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+
+                    const app = initializeApp(JSON.parse(__firebase_config));
+                    db = getFirestore(app);
+                    const auth = getAuth(app);
+                    await signInAnonymously(auth);
+                    
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default';
+                    productsCollection = collection(db, 'artifacts', appId, 'public', 'products');
+                    useCloud = true;
+                    document.getElementById('mode-badge').innerText = "🟢 Modo: Nube Activa";
+
+                    // Escuchar cambios en la nube
+                    onSnapshot(productsCollection, (snapshot) => {
+                        if (snapshot.empty) {
+                            // Si está vacío, cargar ejemplos
+                            initialData.forEach(p => addDoc(productsCollection, p));
+                        } else {
+                            products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                            render();
+                        }
+                    });
+                } catch (e) {
+                    console.warn("Fallo conexión nube, usando local", e);
+                    useLocal();
+                }
+            } else {
+                useLocal();
+            }
+        }
+
+        function useLocal() {
+            useCloud = false;
+            document.getElementById('mode-badge').innerText = "🟠 Modo: Local (Sin Internet)";
+            // Cargar de memoria del navegador
+            const stored = localStorage.getItem('elecpro_catalog');
+            if (stored) {
+                products = JSON.parse(stored);
+            } else {
+                products = initialData;
+                localStorage.setItem('elecpro_catalog', JSON.stringify(products));
+            }
+            render();
+        }
+
+        // --- RENDERIZADO ---
+        window.render = function(filterCat = 'all') {
+            const grid = document.getElementById('catalog-grid');
+            grid.innerHTML = '';
+            
+            const filtered = filterCat === 'all' ? products : products.filter(p => p.category === filterCat);
+            
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <div class="admin-controls">
+                        <button onclick="editItem('${p.id}')">✏️</button>
+                        <button onclick="deleteItem('${p.id}')">🗑️</button>
+                    </div>
+                    <div class="card-img-container">
+                        ${p.image ? `<img src="${p.image}">` : '<span style="font-size:30px">📷</span>'}
+                        <div class="card-badge">${p.category}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-brand">${p.brand}</div>
+                        <h3 class="product-title">${p.title}</h3>
+                        <p style="color:#666; font-size:0.9rem">${p.desc}</p>
+                        <div class="price">C$ ${p.price}</div>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        window.filter = function(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render(cat);
+        }
+
+        // --- GESTIÓN ---
+        window.saveProduct = async function() {
+            const id = document.getElementById('edit-id').value;
+            const fileInput = document.getElementById('edit-image');
+            let imgData = null;
+
+            if (fileInput.files[0]) {
+                imgData = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.readAsDataURL(fileInput.files[0]);
+                });
+            }
+
+            const newItem = {
+                brand: document.getElementById('edit-brand').value,
+                title: document.getElementById('edit-title').value,
+                price: document.getElementById('edit-price').value,
+                category: document.getElementById('edit-category').value,
+                desc: document.getElementById('edit-desc').value,
+            };
+            if (imgData) newItem.image = imgData;
+
+            if (useCloud) {
+                // Guardar en Firebase
+                const { addDoc, updateDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                if (id) await updateDoc(doc(productsCollection, id), newItem);
+                else await addDoc(productsCollection, newItem);
+            } else {
+                // Guardar en LocalStorage
+                if (id) {
+                    const idx = products.findIndex(p => p.id === id);
+                    products[idx] = { ...products[idx], ...newItem };
+                } else {
+                    newItem.id = Date.now().toString();
+                    products.push(newItem);
+                }
+                localStorage.setItem('elecpro_catalog', JSON.stringify(products));
+                render();
+            }
+            document.getElementById('product-modal').style.display = 'none';
+        }
+
+        window.deleteItem = async function(id) {
+            if(!confirm('¿Borrar?')) return;
+            if (useCloud) {
+                const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                await deleteDoc(doc(productsCollection, id));
+            } else {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('elecpro_catalog', JSON.stringify(products));
+                render();
+            }
+        }
+
+        window.editItem = function(id) {
+            const p = products.find(p => p.id === id);
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-brand').value = p.brand;
+            document.getElementById('edit-title').value = p.title;
+            document.getElementById('edit-price').value = p.price;
+            document.getElementById('edit-category').value = p.category;
+            document.getElementById('edit-desc').value = p.desc;
+            document.getElementById('product-modal').style.display = 'flex';
+        }
+
+        // --- UTILIDADES ---
+        window.login = function() {
+            if (prompt("Contraseña:") === "admin123") {
+                document.body.classList.add('is-admin');
+            } else alert("Incorrecto");
+        }
+        window.openModal = function() {
+            document.getElementById('edit-id').value = "";
+            document.getElementById('edit-brand').value = "";
+            document.getElementById('edit-title').value = "";
+            document.getElementById('edit-price').value = "";
+            document.getElementById('edit-desc').value = "";
+            document.getElementById('product-modal').style.display = 'flex';
+        }
+        
+        // Función para descargar copia de seguridad (Útil si usas modo local)
+        window.downloadBackup = function() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(products));
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", dataStr);
+            anchor.setAttribute("download", "catalogo_backup.json");
+            anchor.click();
+            alert("Copia descargada. Guárdala bien.");
+        }
+
+        init();
+    </script>
+</body>
+</html>
