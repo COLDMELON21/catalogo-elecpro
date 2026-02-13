@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ELECPRO | Catálogo 2026</title>
-    <!-- Fuentes Modernas -->
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&family=Teko:wght@500;700&display=swap" rel="stylesheet">
-    <!-- Iconos -->
+    
+    <!-- Fuentes: Manrope (Textos) y Teko (Títulos) -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Teko:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Librerías -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Configuración Visual -->
     <script>
         tailwind.config = {
             theme: {
@@ -22,7 +24,8 @@
                             red: '#e62222',  
                             yellow: '#ffcc00', 
                             dark: '#0f172a',
-                            light: '#f8fafc'
+                            light: '#f8fafc',
+                            gray: '#f1f5f9'
                         }
                     },
                     fontFamily: {
@@ -30,215 +33,353 @@
                         display: ['Teko', 'sans-serif'], 
                     },
                     animation: {
-                        'fade-up': 'fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                        'float': 'float 3s ease-in-out infinite'
+                        'fade-in': 'fadeIn 0.4s ease-out',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s infinite'
                     },
                     keyframes: {
-                        fadeUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-5px)' },
-                        }
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-5px)' } }
                     }
                 }
             }
         }
     </script>
+
     <style>
-        body { -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
-        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,68,204,0.1); }
-        .hide-scroll::-webkit-scrollbar { display: none; } .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        #loader { position: fixed; inset: 0; background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-        .product-card { background: white; border-radius: 16px; transition: all 0.3s ease; position: relative; overflow: hidden; border: 1px solid #e2e8f0; }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px -5px rgba(0, 68, 204, 0.15); border-color: #3b82f6; }
-        .btn-gradient { background: linear-gradient(135deg, #0044cc 0%, #002a80 100%); color: white; }
-        .btn-gradient:hover { background: linear-gradient(135deg, #0055ff 0%, #003399 100%); box-shadow: 0 10px 20px -5px rgba(0, 68, 204, 0.4); }
-        .coming-soon-bg { background-image: radial-gradient(#0044cc 1px, transparent 1px); background-size: 20px 20px; opacity: 0.05; }
-        .btn-press:active { transform: scale(0.95); }
+        /* Ajustes Globales */
+        body { 
+            -webkit-tap-highlight-color: transparent; 
+            background-color: #f8fafc;
+            overscroll-behavior-y: none; /* Evita rebote en móviles */
+        }
+        
+        /* Barra de navegación de vidrio */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Ocultar scrollbar pero permitir scroll */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Tarjetas de Producto Optimizadas */
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Importante para alinear alturas */
+        }
+        
+        /* Efecto Hover solo en PC */
+        @media (min-width: 768px) {
+            .product-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 30px -5px rgba(0, 68, 204, 0.15);
+                border-color: #3b82f6;
+            }
+        }
+        
+        .product-card:active { transform: scale(0.98); }
+
+        /* Botones Gradient */
+        .btn-gradient {
+            background: linear-gradient(135deg, #0044cc 0%, #002a80 100%);
+            color: white;
+            transition: 0.3s;
+        }
+        .btn-gradient:active { transform: scale(0.96); opacity: 0.9; }
+
+        /* Modal Backdrop */
+        .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.6); /* Brand Dark con transparencia */
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        /* Banner Background */
+        .hero-gradient {
+            background: radial-gradient(circle at top right, #0044cc, #002a80);
+        }
+
+        /* Loader siempre encima */
+        #loader { z-index: 99999; }
     </style>
 </head>
-<body class="text-gray-800 antialiased pb-10">
+<body class="text-brand-dark antialiased pb-24 md:pb-10">
 
-    <!-- PANTALLA DE CARGA -->
-    <div id="loader">
-        <div class="text-center relative">
-            <div class="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50 animate-pulse"></div>
-            <h1 class="relative font-display text-8xl font-bold text-brand-blue tracking-tighter select-none" style="line-height: 0.8;">ELEC<br><span class="text-brand-red">PRO</span></h1>
-            <div class="mt-4 text-sm font-bold tracking-[0.5em] text-gray-400">2026</div>
+    <!-- 1. PANTALLA DE CARGA -->
+    <div id="loader" class="fixed inset-0 bg-white flex flex-col justify-center items-center transition-opacity duration-500">
+        <div class="relative">
+            <h1 class="font-display text-8xl font-bold text-brand-blue leading-none tracking-tighter animate-pulse">ELEC<br><span class="text-brand-red">PRO</span></h1>
+            <div class="absolute -right-4 -top-4">
+                <i data-lucide="zap" class="w-12 h-12 text-brand-yellow animate-bounce"></i>
+            </div>
         </div>
+        <div class="mt-4 text-sm font-bold tracking-[0.4em] text-gray-400">CARGANDO...</div>
     </div>
 
-    <!-- HEADER -->
+    <!-- 2. HEADER FIJO -->
     <header class="fixed top-0 w-full z-40 glass-nav shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center cursor-pointer group" onclick="window.scrollTo(0,0)">
-                <div class="w-10 h-10 bg-gradient-to-br from-brand-blue to-brand-darkblue rounded-lg flex items-center justify-center text-white shadow-lg group-hover:rotate-3 transition-transform">
+        <div class="max-w-7xl mx-auto px-4 py-2 md:py-3 flex justify-between items-center">
+            
+            <!-- Logo -->
+            <div class="flex items-center cursor-pointer gap-2 group" onclick="window.scrollTo(0,0)">
+                <div class="w-10 h-10 bg-brand-blue rounded-xl flex items-center justify-center text-white shadow-lg group-hover:rotate-3 transition-transform">
                     <span class="font-display font-bold text-2xl mt-1">E</span>
                 </div>
-                <div class="ml-2 leading-none">
+                <div class="leading-none">
                     <span class="block font-display font-bold text-2xl text-brand-blue tracking-tight">ELECPRO</span>
                     <span class="block text-[10px] font-bold text-gray-400 tracking-widest uppercase">Catálogo 2026</span>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl hover:bg-blue-50 transition btn-press group">
-                    <i data-lucide="shopping-cart" class="w-6 h-6 text-brand-dark group-hover:text-brand-blue"></i>
-                    <span id="header-cart-count" class="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-md scale-0 transition-transform duration-300">0</span>
-                </button>
-            </div>
+
+            <!-- Botón Carrito Header -->
+            <button onclick="toggleCart()" class="relative p-2.5 rounded-xl hover:bg-brand-light transition group">
+                <i data-lucide="shopping-cart" class="w-6 h-6 text-brand-dark group-hover:text-brand-blue"></i>
+                <span id="header-cart-count" class="absolute top-0 right-0 bg-brand-red text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm scale-0 transition-transform">0</span>
+            </button>
         </div>
-        <div class="pb-3 pt-1">
+
+        <!-- Categorías (Scroll Horizontal) -->
+        <div class="pb-2 pt-1 border-t border-gray-100">
             <nav class="max-w-7xl mx-auto px-4 overflow-x-auto hide-scroll flex gap-2" id="cat-nav"></nav>
         </div>
     </header>
 
-    <!-- TOAST -->
-    <div id="status-bar" class="hidden fixed top-0 w-full z-[100] text-center py-2 text-white text-xs font-bold shadow-lg transform -translate-y-full transition-transform duration-500"></div>
-
-    <!-- MAIN -->
+    <!-- 3. CONTENIDO PRINCIPAL -->
     <main class="max-w-7xl mx-auto px-4 pt-36 md:pt-40 min-h-screen">
         
-        <!-- Hero Banner -->
-        <div class="relative bg-brand-darkblue rounded-3xl p-8 md:p-12 mb-10 text-white shadow-2xl overflow-hidden">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-brand-blue rounded-full blur-[100px] opacity-50 transform translate-x-1/2 -translate-y-1/2"></div>
-            <div class="absolute bottom-0 left-0 w-64 h-64 bg-brand-red rounded-full blur-[80px] opacity-20 transform -translate-x-1/3 translate-y-1/3"></div>
-            <div class="relative z-10 max-w-2xl">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 mb-4 animate-float">
-                    <span class="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></span>
-                    <span class="text-xs font-bold tracking-wide uppercase text-brand-yellow">Nuevo Stock</span>
+        <!-- Hero Banner (Diseño Nuevo Stock) -->
+        <div class="relative hero-gradient rounded-3xl p-8 md:p-12 mb-8 text-white shadow-2xl overflow-hidden animate-fade-in">
+            <!-- Decoración fondo -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-brand-red opacity-20 rounded-full blur-2xl transform -translate-x-1/3 translate-y-1/3"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="max-w-lg">
+                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 mb-4 animate-float">
+                        <span class="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></span>
+                        <span class="text-xs font-bold tracking-wide uppercase text-brand-yellow">Nuevo Stock</span>
+                    </div>
+                    <h2 class="font-display text-5xl md:text-7xl font-bold mb-2 leading-[0.9] tracking-tight">
+                        EQUIPA TU <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">PROYECTO</span>
+                    </h2>
+                    <p class="text-blue-100 text-sm md:text-lg mb-6 leading-relaxed opacity-90">Herramientas profesionales y material eléctrico de alta calidad.</p>
                 </div>
-                <h2 class="font-display text-5xl md:text-7xl font-bold mb-4 leading-none tracking-tight">
-                    EQUIPA TU <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">PROYECTO</span>
-                </h2>
-                <p class="text-blue-100 text-lg mb-8 max-w-lg leading-relaxed">Las mejores marcas en herramientas y material eléctrico.</p>
-                <button onclick="window.scrollTo({top: 500, behavior: 'smooth'})" class="bg-brand-red hover:bg-red-600 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-lg shadow-red-600/30 flex items-center gap-2 btn-press">
-                    Ver Catálogo <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
+                <!-- Icono grande decorativo -->
+                <i data-lucide="package-check" class="w-32 h-32 text-white opacity-10 hidden md:block rotate-12"></i>
             </div>
         </div>
 
-        <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-4">
-            <h3 class="font-display text-3xl font-bold text-brand-dark">Productos</h3>
-            <span class="text-xs font-bold text-brand-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100" id="product-count">...</span>
-        </div>
-
-        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"></div>
-
-        <div class="mt-24 mb-12 relative overflow-hidden rounded-3xl bg-white border border-gray-100 p-12 text-center shadow-lg">
-            <div class="absolute inset-0 coming-soon-bg"></div>
-            <div class="relative z-10">
-                <div class="inline-block p-4 rounded-full bg-brand-dark text-brand-yellow mb-4 shadow-lg shadow-gray-500/20">
-                    <i data-lucide="sparkles" class="w-8 h-8 animate-pulse"></i>
-                </div>
-                <h3 class="font-display text-5xl font-bold text-brand-dark mb-3">PRÓXIMAMENTE</h3>
-                <p class="text-gray-500 max-w-md mx-auto text-lg">Estamos preparando nuevas líneas de materiales eléctricos y herramientas para el 2026.</p>
+        <!-- Título de Sección -->
+        <div class="flex justify-between items-end mb-5 border-b border-gray-200 pb-3">
+            <div>
+                <h3 class="font-display text-3xl font-bold text-brand-dark">Productos</h3>
+                <p class="text-xs text-gray-500 font-medium">Selección disponible</p>
             </div>
+            <span class="text-xs font-bold text-brand-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100" id="product-count">0 Items</span>
         </div>
+
+        <!-- GRID DE PRODUCTOS (Optimizada) -->
+        <!-- Móvil: 2 columnas, Tablet: 3, PC: 4 o 5 -->
+        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 pb-12">
+            <!-- JS inyecta aquí -->
+        </div>
+
+        <!-- Mensaje Final -->
+        <div class="text-center py-10 opacity-60">
+            <p class="font-display text-xl text-brand-dark">PRÓXIMAMENTE MÁS PRODUCTOS</p>
+        </div>
+
     </main>
 
-    <footer class="mt-20 border-t border-gray-200 bg-white py-10">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="text-center md:text-left">
-                <h4 class="font-display text-2xl font-bold text-brand-blue">ELECPRO</h4>
-                <p class="text-xs text-gray-400">© 2026 Ferretería Elecpro.</p>
-            </div>
-            <div class="flex flex-col items-center md:items-end gap-2">
-                <button onclick="login()" class="text-gray-300 hover:text-brand-blue transition p-2" title="Acceso Administrativo">
-                    <i data-lucide="lock" class="w-4 h-4"></i>
-                </button>
-            </div>
+    <!-- 4. FOOTER -->
+    <footer class="mt-10 border-t border-gray-200 bg-white py-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-3">
+            <h4 class="font-display text-2xl font-bold text-brand-blue">ELECPRO</h4>
+            <p class="text-xs text-gray-400">© 2026 Ferretería Elecpro. Nicaragua.</p>
+            <button onclick="login()" class="text-gray-300 hover:text-brand-blue transition p-2 mt-2" title="Admin">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+            </button>
         </div>
     </footer>
 
-    <!-- BOTONES -->
-    <button id="cart-fab" onclick="toggleCart()" class="fixed bottom-6 right-5 w-16 h-16 bg-brand-red text-white rounded-2xl shadow-2xl shadow-red-500/40 flex items-center justify-center hover:scale-105 transition-all z-50 btn-press group hidden">
-        <i data-lucide="shopping-bag" class="w-7 h-7 group-hover:rotate-12 transition-transform"></i>
-        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-brand-dark text-white text-xs font-bold w-7 h-7 flex items-center justify-center rounded-full border-2 border-white">0</span>
+    <!-- 5. FABs (Botones Flotantes) -->
+    
+    <!-- Carrito -->
+    <button id="cart-fab" onclick="toggleCart()" class="fixed bottom-6 right-5 w-14 h-14 md:w-16 md:h-16 bg-brand-red text-white rounded-2xl shadow-2xl shadow-red-600/40 flex items-center justify-center z-30 hidden transition-transform active:scale-95 animate-fade-in group">
+        <i data-lucide="shopping-bag" class="w-6 h-6 md:w-7 md:h-7 group-hover:-rotate-12 transition-transform"></i>
+        <span id="fab-cart-count" class="absolute -top-1 -right-1 bg-brand-dark text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white">0</span>
     </button>
 
-    <div id="admin-fab-group" class="hidden fixed bottom-6 left-6 z-40 flex flex-col gap-3">
-        <button onclick="openNewProduct()" class="w-14 h-14 bg-brand-blue text-white rounded-full shadow-xl flex items-center justify-center hover:bg-blue-600 transition tooltip-btn" title="Nuevo Producto">
-            <i data-lucide="plus" class="w-7 h-7"></i>
-        </button>
+    <!-- Admin Añadir -->
+    <button id="admin-add-btn" onclick="openNewProduct()" class="hidden fixed bottom-6 left-6 w-14 h-14 bg-brand-blue text-white rounded-full shadow-xl items-center justify-center z-30 active:scale-95 transition-transform">
+        <i data-lucide="plus" class="w-7 h-7"></i>
+    </button>
+
+    <!-- NOTIFICACIÓN TOAST -->
+    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-brand-dark text-white px-6 py-3 rounded-full shadow-2xl z-[100] text-sm font-bold transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px] flex items-center gap-2 border border-gray-700">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i> <span id="toast-msg">Mensaje</span>
     </div>
 
-    <!-- MODALES -->
-    <div id="modal-overlay" class="fixed inset-0 bg-brand-dark/60 z-[60] hidden backdrop-blur-sm transition-opacity opacity-0" onclick="closeAllModals()"></div>
+    <!-- ================= SISTEMA DE MODALES (ESTABLE) ================= -->
 
-    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
-        <div class="p-5 border-b flex justify-between items-center bg-gray-50/50 backdrop-blur">
-            <h2 class="font-display text-2xl font-bold text-brand-dark">Tu Pedido</h2>
-            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- FONDO OSCURO COMPARTIDO -->
+    <div id="modal-overlay" onclick="closeAllModals()" class="fixed inset-0 modal-backdrop z-[50] hidden transition-opacity duration-300 opacity-0"></div>
+
+    <!-- 1. MODAL DETALLES (RESPONSIVO: HOJA EN MÓVIL / VENTANA EN PC) -->
+    <div id="details-modal" class="fixed z-[60] hidden transition-all duration-300 
+        inset-x-0 bottom-0 transform translate-y-full rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] 
+        md:inset-0 md:flex md:items-center md:justify-center md:translate-y-0 md:scale-95 md:opacity-0 md:shadow-2xl md:pointer-events-none">
+        
+        <div class="bg-white w-full md:max-w-4xl md:rounded-3xl pointer-events-auto flex flex-col md:flex-row max-h-[85vh] md:max-h-[600px] overflow-hidden">
+            
+            <!-- Imagen Grande (Izquierda PC / Arriba Móvil) -->
+            <div class="relative bg-brand-gray h-64 md:h-auto md:w-1/2 flex items-center justify-center p-6 md:p-10">
+                <img id="detail-img" src="" class="w-full h-full object-contain mix-blend-multiply">
+                
+                <!-- Botón cerrar flotante -->
+                <button onclick="closeAllModals()" class="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md text-gray-500 hover:text-red-500 z-10 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Categoría Badge -->
+                <div id="detail-category" class="absolute bottom-4 left-4 bg-white/90 backdrop-blur border border-gray-200 text-brand-dark text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm"></div>
+            </div>
+
+            <!-- Información (Derecha PC / Abajo Móvil) -->
+            <div class="flex flex-col md:w-1/2 bg-white relative">
+                <div class="p-6 md:p-8 overflow-y-auto flex-grow hide-scroll">
+                    <div id="detail-brand" class="text-xs font-bold text-brand-red uppercase tracking-widest mb-2 bg-red-50 inline-block px-2 py-1 rounded"></div>
+                    
+                    <h2 id="detail-title" class="font-display text-3xl md:text-4xl font-bold text-brand-dark leading-tight mb-4"></h2>
+                    
+                    <div class="flex items-center gap-3 mb-6">
+                        <div id="detail-price" class="font-display text-4xl font-bold text-brand-blue"></div>
+                        <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-100 uppercase">Disponible</span>
+                    </div>
+                    
+                    <div class="h-px bg-gray-100 w-full mb-4"></div>
+                    
+                    <h4 class="text-sm font-bold text-brand-dark mb-2 flex items-center gap-2">
+                        <i data-lucide="info" class="w-4 h-4 text-brand-yellow"></i> Descripción
+                    </h4>
+                    <p id="detail-desc" class="text-gray-600 text-sm md:text-base leading-relaxed whitespace-pre-line"></p>
+                    
+                    <div class="h-20 md:h-0"></div> <!-- Espacio extra móvil -->
+                </div>
+                
+                <!-- Botón Agregar (Fijo abajo en móvil) -->
+                <div class="p-5 border-t border-gray-100 bg-white md:static absolute bottom-0 left-0 w-full">
+                    <button id="detail-add-btn" class="w-full btn-gradient py-4 rounded-xl font-bold text-white shadow-lg flex items-center justify-center gap-2 text-lg">
+                        <span>Agregar al Carrito</span>
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- 2. MODAL CARRITO (Lateral Derecho) -->
+    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+        <div class="p-5 border-b flex justify-between items-center bg-gray-50/80 backdrop-blur">
+            <div>
+                <h2 class="font-display text-2xl font-bold text-brand-dark">Tu Pedido</h2>
+                <p class="text-xs text-gray-500 font-medium">Cotización Instantánea</p>
+            </div>
+            <button onclick="toggleCart()" class="p-2 hover:bg-gray-200 rounded-full transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+        </div>
+        
         <div id="cart-items-container" class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#f8fafc]"></div>
-        <div class="p-6 border-t bg-white shadow-up">
+        
+        <div class="p-6 border-t bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
             <div class="flex justify-between items-end mb-4">
-                <span class="text-gray-500 font-medium">Total</span>
+                <span class="text-gray-500 font-medium">Total Estimado</span>
                 <span id="cart-total" class="font-display text-3xl font-bold text-brand-blue">C$ 0</span>
             </div>
-            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-xl shadow-lg shadow-green-500/30 hover:brightness-105 transition flex justify-center items-center gap-2 btn-press">
-                <span>Enviar Pedido</span> <i data-lucide="send" class="w-5 h-5"></i>
+            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-xl shadow-lg shadow-green-500/30 hover:bg-green-600 transition flex justify-center items-center gap-2 btn-press">
+                <span>Enviar a WhatsApp</span> <i data-lucide="send" class="w-5 h-5"></i>
             </button>
         </div>
     </div>
 
-    <div id="product-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 pointer-events-none">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl pointer-events-auto transform scale-95 opacity-0 transition-all duration-300 overflow-hidden" id="product-modal-content">
-            <div class="p-6 bg-gradient-to-r from-brand-blue to-brand-darkblue text-white flex justify-between items-center">
-                <h3 class="font-display text-2xl font-bold" id="modal-title">Producto</h3>
-                <button onclick="closeAllModals()" class="text-white/70 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <!-- 3. MODAL EDITOR (Admin) -->
+    <div id="product-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col max-h-[90vh] animate-slide-up">
+            <div class="p-5 bg-brand-dark text-white flex justify-between items-center rounded-t-2xl">
+                <h3 class="font-bold flex items-center gap-2"><i data-lucide="package" class="w-5 h-5"></i> Editor</h3>
+                <button onclick="closeAllModals()" class="hover:text-red-400"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <div class="p-5 space-y-4 overflow-y-auto bg-gray-50">
                 <input type="hidden" id="edit-id">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1"><label class="text-xs font-bold text-gray-400">CATEGORÍA</label><select id="edit-category" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border"></select></div>
-                    <div class="space-y-1"><label class="text-xs font-bold text-gray-400">MARCA</label><input id="edit-brand" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border" placeholder="Marca"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <select id="edit-category" class="w-full p-3 border rounded-xl bg-white text-sm outline-none focus:border-brand-blue"></select>
+                    <input id="edit-brand" class="w-full p-3 border rounded-xl bg-white text-sm outline-none focus:border-brand-blue" placeholder="Marca">
                 </div>
-                <div class="space-y-1"><label class="text-xs font-bold text-gray-400">NOMBRE</label><input id="edit-title" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border font-bold"></div>
-                <div class="space-y-1"><label class="text-xs font-bold text-gray-400">PRECIO (C$)</label><input id="edit-price" type="number" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border font-bold text-brand-blue text-lg"></div>
-                <div class="space-y-1"><label class="text-xs font-bold text-gray-400">DESCRIPCIÓN</label><textarea id="edit-desc" rows="3" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border"></textarea></div>
-                <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 border-dashed"><input type="file" id="edit-image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-blue file:text-white hover:file:bg-blue-700"></div>
+                <input id="edit-title" class="w-full p-3 border rounded-xl bg-white font-bold outline-none focus:border-brand-blue" placeholder="Nombre Producto">
+                <input id="edit-price" type="number" class="w-full p-3 border rounded-xl bg-white font-bold text-brand-blue outline-none focus:border-brand-blue" placeholder="Precio">
+                <textarea id="edit-desc" rows="3" class="w-full p-3 border rounded-xl bg-white text-sm outline-none focus:border-brand-blue" placeholder="Descripción detallada..."></textarea>
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 bg-white text-center">
+                    <input type="file" id="edit-image" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-blue file:text-white hover:file:bg-blue-600 cursor-pointer">
+                </div>
             </div>
-            <div class="p-5 border-t bg-gray-50 flex gap-3">
-                <button onclick="closeAllModals()" class="flex-1 py-3.5 font-bold text-gray-500 hover:bg-gray-200 rounded-xl">Cancelar</button>
-                <button onclick="saveProduct()" id="btn-save" class="flex-1 py-3.5 font-bold btn-gradient text-white rounded-xl shadow-lg">Guardar</button>
+            <div class="p-5 border-t bg-white flex gap-3">
+                <button onclick="closeAllModals()" class="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl">Cancelar</button>
+                <button onclick="saveProduct()" id="btn-save" class="flex-1 btn-gradient py-3 rounded-xl font-bold text-white shadow-lg">Guardar</button>
             </div>
         </div>
     </div>
 
+    <!-- LÓGICA JAVASCRIPT -->
     <script type="module">
         lucide.createIcons();
 
+        // --- CONFIGURACIÓN ---
+        const GLOBAL_CONFIG = { apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4", authDomain: "catalogoelecpro.firebaseapp.com", projectId: "catalogoelecpro", storageBucket: "catalogoelecpro.firebasestorage.app", messagingSenderId: "847606996266", appId: "1:847606996266:web:7e46736011c7b77afb9253" };
         const CATEGORIES = [
-            { id: 'all', label: 'Todo' }, { id: 'herramientas', label: 'Herramientas' }, { id: 'iluminacion', label: 'Iluminación' },
-            { id: 'hogar', label: 'Hogar' }, { id: 'ferreteria', label: 'Ferretería' }, { id: 'electronica', label: 'Electrónica' },
-            { id: 'industrial', label: 'Industrial' }, { id: 'construccion', label: 'Construcción' }, { id: 'pinturas', label: 'Pinturas' },
-            { id: 'fontaneria', label: 'Fontanería' }, { id: 'electricidad', label: 'Electricidad' }
+            {id:'all',label:'Todo'},{id:'herramientas',label:'Herramientas'},{id:'iluminacion',label:'Iluminación'},
+            {id:'hogar',label:'Hogar'},{id:'ferreteria',label:'Ferretería'},{id:'electronica',label:'Electrónica'},
+            {id:'industrial',label:'Industrial'},{id:'construccion',label:'Construcción'},{id:'pinturas',label:'Pinturas'},
+            {id:'fontaneria',label:'Fontanería'},{id:'electricidad',label:'Electricidad'}
         ];
 
-        // --- LLAVE INCRUSTADA (GLOBAL) ---
-        const GLOBAL_CONFIG = {
-            apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4",
-            authDomain: "catalogoelecpro.firebaseapp.com",
-            projectId: "catalogoelecpro",
-            storageBucket: "catalogoelecpro.firebasestorage.app",
-            messagingSenderId: "847606996266",
-            appId: "1:847606996266:web:7e46736011c7b77afb9253"
-        };
+        // DATOS INICIALES (PDF) - Se muestran mientras carga Firebase
+        const PDF_PRODUCTS = [
+            { id: 'p1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro Impacto DZJ16', price: '2450', desc: '16mm (5/8"). Potencia 600W. Uso Industrial.', image: '' },
+            { id: 'p2', category: 'hogar', brand: 'ORIX', title: 'Extractor Aire 10"', price: '850', desc: 'Alta eficiencia. Ideal para baños y cocinas.', image: '' },
+            { id: 'p3', category: 'electricidad', brand: 'ELECPRO', title: 'Protector V199', price: '450', desc: '1000W. Para microondas y refrigeradores.', image: '' },
+            { id: 'p4', category: 'fontaneria', brand: 'ZLHF', title: 'Válvula Lujo 104', price: '320', desc: 'Cromada. Calidad Premium.', image: '' },
+            { id: 'p5', category: 'ferreteria', brand: 'LOCK', title: 'Cerradura Max 398', price: '580', desc: 'Sobreponer. Doble pestillo de seguridad.', image: '' }
+        ];
 
         let products = [], cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [], currentFilter = 'all';
-        let db, productsCollection, fbFirestore;
+        let db, productsCollection, fbFirestore, modalTimer;
 
         async function init() {
-            renderNav();
-            updateCartUI();
+            renderNav(); updateCartUI();
             
-            // Animacion carga
-            setTimeout(() => { document.getElementById('loader').style.opacity = '0'; setTimeout(() => document.getElementById('loader').remove(), 500); }, 1000);
+            // 1. Mostrar datos de respaldo inmediatamente
+            products = PDF_PRODUCTS;
+            renderGrid();
 
+            // 2. Quitar loader (Timeout de seguridad)
+            setTimeout(() => {
+                const l = document.getElementById('loader');
+                if(l) { l.style.opacity = '0'; setTimeout(() => l.remove(), 500); }
+            }, 1000);
+
+            // 3. Conectar a Firebase
             try {
                 const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
                 fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
@@ -246,149 +387,318 @@
                 db = fbFirestore.getFirestore(app);
                 productsCollection = fbFirestore.collection(db, 'products');
                 
-                showToast("Conectado (Global)", "success");
-                fbFirestore.onSnapshot(productsCollection, (snapshot) => {
-                    products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                    renderGrid();
+                showToast("Conexión Exitosa");
+                
+                fbFirestore.onSnapshot(productsCollection, (s) => {
+                    const fetched = s.docs.map(d => ({id: d.id, ...d.data()}));
+                    if(fetched.length > 0) {
+                        products = fetched; // Reemplazar con datos reales de la nube
+                        renderGrid();
+                    }
                 });
             } catch (e) {
-                console.error(e);
-                alert("Error crítico: No se pudo conectar a la base de datos.");
+                console.log("Modo Offline activo");
             }
         }
 
-        // --- RENDER ---
+        // --- RENDERIZADO UI ---
         function renderNav() {
-            document.getElementById('cat-nav').innerHTML = CATEGORIES.map(cat => `
-                <button onclick="window.setFilter('${cat.id}')" id="btn-cat-${cat.id}" class="px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${cat.id === 'all' ? 'bg-brand-blue text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100'}">${cat.label}</button>
-            `).join('');
-            document.getElementById('edit-category').innerHTML = CATEGORIES.filter(c => c.id !== 'all').map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+            document.getElementById('cat-nav').innerHTML = CATEGORIES.map(c => `
+                <button onclick="setFilter('${c.id}')" id="btn-cat-${c.id}" class="px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${c.id==='all'?'bg-brand-blue text-white shadow-md':'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'}">
+                    ${c.label}
+                </button>`).join('');
+            document.getElementById('edit-category').innerHTML = CATEGORIES.filter(c=>c.id!=='all').map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
         }
 
-        window.setFilter = function(id) {
+        window.setFilter = (id) => {
             currentFilter = id;
-            document.querySelectorAll('#cat-nav button').forEach(b => b.className = "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 bg-white text-gray-500 border border-gray-100");
-            document.getElementById(`btn-cat-${id}`).className = "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 bg-brand-blue text-white shadow-lg transform scale-105";
+            document.querySelectorAll('#cat-nav button').forEach(b => b.className = "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-100 hover:bg-gray-50");
+            document.getElementById(`btn-cat-${id}`).className = "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap bg-brand-blue text-white shadow-md transform scale-105";
             renderGrid();
         }
 
         function renderGrid() {
             const grid = document.getElementById('catalog-grid');
             const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
-            document.getElementById('product-count').innerText = `${filtered.length}`;
-
-            if(filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-24 opacity-40"><i data-lucide="box" class="w-12 h-12 mx-auto mb-2"></i><p>Cargando productos...</p></div>`;
+            document.getElementById('product-count').innerText = `${filtered.length} Items`;
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-40"><i data-lucide="package-search" class="w-12 h-12 mx-auto mb-2 text-gray-400"></i><p>Sin resultados.</p></div>`;
                 lucide.createIcons(); return;
             }
+            
+            filtered.sort((a,b)=>(b.updated||"").localeCompare(a.updated||""));
 
-            filtered.sort((a,b) => (b.updated || "").localeCompare(a.updated || ""));
-
-            grid.innerHTML = filtered.map((p, i) => {
+            grid.innerHTML = filtered.map((p,i) => {
                 const inCart = cart.find(x => x.id === p.id);
+                // NOTA: Textos ajustados para que no se corten en móvil
                 return `
-                <article class="product-card animate-fade-up" style="animation-delay: ${i * 50}ms">
-                    ${p.image ? `<a href="${p.image}" download class="absolute top-3 left-3 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-600 hover:text-brand-blue shadow-sm transition btn-press" onclick="event.stopPropagation()"><i data-lucide="download" class="w-4 h-4"></i></a>` : ''}
-                    <div class="w-full aspect-[4/3] bg-white flex items-center justify-center relative p-6 border-b border-gray-50 group">
-                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-lg" loading="lazy">` : `<i data-lucide="image" class="w-12 h-12 text-gray-200"></i>`}
-                        <div class="absolute top-3 right-3 bg-white/90 border border-gray-100 text-brand-dark text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase shadow-sm">${getCategoryLabel(p.category)}</div>
+                <article class="product-card animate-slide-up group cursor-pointer" style="animation-delay: ${i*50}ms" onclick="openDetails('${p.id}')">
+                    <div class="w-full aspect-square bg-white relative border-b border-gray-50 flex items-center justify-center p-4">
+                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110" loading="lazy">` : `<i data-lucide="image" class="w-10 h-10 text-gray-200"></i>`}
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur border border-gray-100 text-brand-dark text-[9px] font-extrabold px-2 py-0.5 rounded-lg uppercase tracking-wider shadow-sm z-10">${getCategoryLabel(p.category)}</div>
                     </div>
-                    <div class="p-5 flex flex-col h-[180px]">
-                        <div class="text-[10px] font-bold text-brand-red uppercase tracking-widest mb-1">${p.brand || 'GENERICO'}</div>
-                        <h3 class="font-display text-xl font-bold text-gray-800 leading-none mb-2 line-clamp-2">${p.title}</h3>
-                        <p class="text-xs text-gray-400 font-medium line-clamp-2 mb-auto">${p.desc || ''}</p>
-                        <div class="pt-4 mt-2 flex items-center justify-between">
-                            <div><span class="text-[10px] text-gray-400 block font-bold uppercase">Precio</span><span class="font-display text-2xl font-bold text-brand-blue">C$ ${p.price}</span></div>
-                            <button onclick="addToCart('${p.id}')" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg ${inCart ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-blue'} btn-press"><i data-lucide="${inCart ? 'check' : 'shopping-cart'}" class="w-5 h-5"></i></button>
+                    
+                    <div class="p-4 flex flex-col flex-grow">
+                        <div class="text-[9px] font-bold text-brand-red uppercase tracking-widest mb-1 truncate">${p.brand || 'GENERICO'}</div>
+                        <h3 class="font-display text-lg md:text-xl font-bold text-brand-dark leading-tight mb-2 line-clamp-2 h-[2.4em]">${p.title}</h3>
+                        
+                        <!-- Precio y Botón -->
+                        <div class="mt-auto pt-2 flex items-center justify-between">
+                            <div class="font-display text-xl md:text-2xl font-bold text-brand-blue">C$ ${p.price}</div>
+                            <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-all shadow-sm active:scale-90 ${inCart ? 'bg-green-500 text-white shadow-green-200' : 'bg-brand-gray text-brand-dark hover:bg-brand-blue hover:text-white'}">
+                                <i data-lucide="${inCart ? 'check' : 'plus'}" class="w-4 h-4 md:w-5 md:h-5"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="admin-controls hidden absolute top-3 right-3 flex-col gap-2 z-20">
-                         <button onclick="window.editItem('${p.id}')" class="w-9 h-9 bg-brand-yellow text-brand-dark rounded-full flex items-center justify-center shadow-lg hover:scale-110"><i data-lucide="pencil" class="w-4 h-4"></i></button>
-                         <button onclick="window.deleteItem('${p.id}')" class="w-9 h-9 bg-brand-red text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
-                </article>
-            `}).join('');
+                </article>`;
+            }).join('');
             lucide.createIcons();
-            if(document.body.classList.contains('is-admin')) document.querySelectorAll('.admin-controls').forEach(el => { el.classList.remove('hidden'); el.style.display = 'flex'; });
         }
 
-        // --- CART ---
-        window.addToCart = function(id) {
-            const p = products.find(x => x.id === id); if(!p) return;
-            if(!cart.find(x => x.id === id)) { cart.push({...p, qty: 1}); saveCart(); renderGrid(); } else toggleCart();
+        // --- SISTEMA DE MODALES (CORE) ---
+        window.openDetails = function(id) {
+            const p = products.find(x => x.id === id); if (!p) return;
+            
+            // Prevenir conflictos
+            if(modalTimer) clearTimeout(modalTimer);
+            document.getElementById('cart-modal').classList.add('hidden'); 
+            document.getElementById('product-modal').classList.add('hidden');
+
+            // Llenar datos
+            document.getElementById('detail-img').src = p.image || '';
+            document.getElementById('detail-brand').innerText = p.brand || 'GENERICO';
+            document.getElementById('detail-category').innerText = getCategoryLabel(p.category);
+            document.getElementById('detail-title').innerText = p.title;
+            document.getElementById('detail-price').innerText = 'C$ ' + p.price;
+            document.getElementById('detail-desc').innerText = p.desc || 'Sin descripción detallada disponible.';
+            document.getElementById('detail-add-btn').onclick = () => { addToCart(p.id); closeAllModals(); };
+
+            // Mostrar
+            const overlay = document.getElementById('modal-overlay');
+            const modal = document.getElementById('details-modal');
+
+            overlay.classList.remove('hidden');
+            modal.classList.remove('hidden');
+
+            // Animación dependiente del dispositivo
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                if (window.innerWidth >= 768) {
+                    modal.classList.remove('opacity-0', 'scale-95'); // PC Fade
+                } else {
+                    modal.classList.remove('translate-y-full'); // Móvil Slide
+                }
+            }, 10);
         }
-        window.updateQty = function(id, chg) {
-            const idx = cart.findIndex(x => x.id === id); if(idx === -1) return;
-            cart[idx].qty += chg; if(cart[idx].qty <= 0) cart.splice(idx, 1);
-            saveCart(); renderCartItems(); renderGrid();
+
+        window.closeAllModals = function() {
+            const overlay = document.getElementById('modal-overlay');
+            const details = document.getElementById('details-modal');
+            const cartM = document.getElementById('cart-modal');
+            const prodM = document.getElementById('product-modal');
+
+            // Animación Salida
+            overlay.classList.add('opacity-0');
+            details.classList.add('translate-y-full', 'opacity-0', 'scale-95');
+            cartM.classList.add('translate-x-full');
+            prodM.classList.add('hidden'); 
+
+            // Ocultar Real
+            modalTimer = setTimeout(() => {
+                overlay.classList.add('hidden');
+                details.classList.add('hidden');
+                cartM.classList.add('hidden');
+            }, 300);
         }
-        function saveCart() { localStorage.setItem('elecpro_cart', JSON.stringify(cart)); updateCartUI(); }
-        function updateCartUI() {
-            const cnt = cart.reduce((a,b) => a + b.qty, 0);
-            document.getElementById('header-cart-count').innerText = cnt;
-            document.getElementById('fab-cart-count').innerText = cnt;
-            [document.getElementById('header-cart-count'), document.getElementById('fab-cart-count')].forEach(el => cnt > 0 ? el.classList.remove('scale-0') : el.classList.add('scale-0'));
-            const fab = document.getElementById('cart-fab'); cnt > 0 ? fab.classList.remove('hidden') : fab.classList.add('hidden');
-        }
+
         window.toggleCart = function() {
-            const m = document.getElementById('cart-modal');
-            const o = document.getElementById('modal-overlay');
-            if(m.classList.contains('translate-x-full')) { o.classList.remove('hidden'); setTimeout(()=>o.classList.remove('opacity-0'),10); m.classList.remove('translate-x-full'); renderCartItems(); }
-            else closeAllModals();
+            const cartM = document.getElementById('cart-modal');
+            const overlay = document.getElementById('modal-overlay');
+
+            if (cartM.classList.contains('hidden') || cartM.classList.contains('translate-x-full')) {
+                if(modalTimer) clearTimeout(modalTimer);
+                document.getElementById('details-modal').classList.add('hidden');
+                document.getElementById('product-modal').classList.add('hidden');
+
+                overlay.classList.remove('hidden');
+                cartM.classList.remove('hidden');
+
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    cartM.classList.remove('translate-x-full');
+                }, 10);
+                renderCartItems();
+            } else {
+                closeAllModals();
+            }
         }
+
+        // --- LÓGICA CARRITO ---
+        window.addToCart = (id) => { 
+            const p = products.find(x => x.id === id); 
+            if(!p) return; 
+            if (!cart.find(x => x.id === id)) {
+                cart.push({...p, qty: 1}); 
+                saveCart(); 
+                renderGrid(); 
+                showToast("Producto agregado");
+            } else {
+                toggleCart();
+            }
+        }
+        
+        window.updateQty = (id, change) => {
+            const idx = cart.findIndex(x => x.id === id);
+            if (idx === -1) return;
+            cart[idx].qty += change;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            saveCart();
+            renderCartItems();
+            renderGrid();
+        }
+
+        function saveCart() {
+            localStorage.setItem('elecpro_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((a, b) => a + b.qty, 0);
+            const badge = document.getElementById('header-cart-count');
+            const fabBadge = document.getElementById('fab-cart-count');
+            
+            [badge, fabBadge].forEach(el => {
+                if(el) {
+                    el.innerText = count;
+                    count > 0 ? el.classList.remove('scale-0') : el.classList.add('scale-0');
+                }
+            });
+
+            const fab = document.getElementById('cart-fab');
+            if(fab) count > 0 ? fab.classList.remove('hidden') : fab.classList.add('hidden');
+        }
+
         function renderCartItems() {
-            const c = document.getElementById('cart-items-container');
-            let t = 0;
-            if(cart.length === 0) { c.innerHTML = `<div class="text-center py-20 text-gray-400"><i data-lucide="shopping-bag" class="w-10 h-10 mx-auto mb-2 opacity-50"></i><p>Vacío</p></div>`; document.getElementById('cart-total').innerText = '0'; lucide.createIcons(); return; }
-            c.innerHTML = cart.map(i => {
-                t += (parseFloat(i.price.replace(/,/g,''))||0) * i.qty;
-                return `<div class="flex gap-4 bg-white p-3 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1"><img src="${i.image||''}" class="w-full h-full object-contain"></div><div class="flex-grow"><h4 class="font-bold text-sm line-clamp-1">${i.title}</h4><div class="text-brand-blue font-bold text-sm">C$ ${i.price}</div></div><div class="flex flex-col items-center gap-1"><button onclick="updateQty('${i.id}',1)" class="w-6 h-6 bg-gray-100 rounded text-xs">+</button><span class="font-bold text-xs">${i.qty}</span><button onclick="updateQty('${i.id}',-1)" class="w-6 h-6 bg-gray-100 rounded text-xs">-</button></div></div>`
+            const container = document.getElementById('cart-items-container');
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-16 opacity-40"><i data-lucide="shopping-bag" class="w-16 h-16 mx-auto mb-3"></i><p>Tu carrito está vacío</p></div>`;
+                document.getElementById('cart-total').innerText = 'C$ 0';
+                lucide.createIcons();
+                return;
+            }
+            
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                total += (parseFloat(item.price) || 0) * item.qty;
+                return `
+                <div class="flex gap-4 bg-white p-3 rounded-xl border border-gray-100 shadow-sm animate-fade-in">
+                    <div class="w-16 h-16 bg-gray-50 rounded-lg p-1 flex-shrink-0"><img src="${item.image}" class="w-full h-full object-contain"></div>
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-sm line-clamp-1">${item.title}</h4>
+                        <div class="text-brand-blue font-bold text-sm">C$ ${item.price}</div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center bg-gray-50 rounded-lg px-1">
+                        <button onclick="updateQty('${item.id}', 1)" class="p-1 hover:text-blue-600"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>
+                        <span class="font-bold text-xs">${item.qty}</span>
+                        <button onclick="updateQty('${item.id}', -1)" class="p-1 hover:text-red-600"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
+                    </div>
+                </div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = 'C$ ' + t.toLocaleString(); lucide.createIcons();
+            document.getElementById('cart-total').innerText = 'C$ ' + total.toLocaleString();
+            lucide.createIcons();
         }
-        window.checkoutWhatsApp = function() {
-            if(cart.length===0)return;
-            let m = "*PEDIDO ELECPRO 2026:*\n\n", t=0;
-            cart.forEach(i=>{ const s=(parseFloat(i.price)||0)*i.qty; t+=s; m+=`📦 ${i.qty}x ${i.title}\n   (C$ ${i.price}) = C$ ${s.toLocaleString()}\n`; });
-            m+=`\n*TOTAL: C$ ${t.toLocaleString()}*`;
-            window.open(`https://wa.me/50587600225?text=${encodeURIComponent(m)}`, '_blank');
+
+        window.checkoutWhatsApp = () => {
+            if (cart.length === 0) return;
+            let msg = "*HOLA ELECPRO, QUIERO COTIZAR ESTO:*\n\n";
+            let total = 0;
+            cart.forEach(i => {
+                const sub = (parseFloat(i.price) || 0) * i.qty;
+                total += sub;
+                msg += `📦 (${i.qty}) ${i.title}\n`;
+            });
+            msg += `\n*TOTAL APROX: C$ ${total.toLocaleString()}*`;
+            window.open(`https://wa.me/50587600225?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         // --- ADMIN ---
-        window.login = function() {
-            if(prompt("Clave Admin:") === "elecpro50") {
-                document.body.classList.add('is-admin');
-                document.getElementById('admin-fab-group').classList.remove('hidden'); document.getElementById('admin-fab-group').classList.add('flex');
-                renderGrid(); showToast("Admin Activado", "success");
+        window.login = () => {
+            if (prompt("Contraseña Admin:") === "elecpro50") {
+                document.getElementById('admin-add-btn').classList.remove('hidden');
+                document.body.classList.add('is-admin'); // Helper para CSS si fuera necesario
+                showToast("Admin Activado");
             }
         }
-        window.openNewProduct = () => { openModal('product-modal'); document.getElementById('modal-title').innerText="Nuevo"; ['edit-id','edit-brand','edit-title','edit-price','edit-desc','edit-image'].forEach(i=>document.getElementById(i).value=''); }
-        window.editItem = (id) => { const p=products.find(x=>x.id===id); if(!p)return; openModal('product-modal'); document.getElementById('modal-title').innerText="Editar"; document.getElementById('edit-id').value=id; document.getElementById('edit-brand').value=p.brand; document.getElementById('edit-title').value=p.title; document.getElementById('edit-price').value=p.price; document.getElementById('edit-category').value=p.category; document.getElementById('edit-desc').value=p.desc; }
-        window.saveProduct = async () => {
-            const btn = document.getElementById('btn-save'); btn.innerText="..."; btn.disabled=true;
-            const id = document.getElementById('edit-id').value, file = document.getElementById('edit-image').files[0];
-            let img = null; if(file) img = await compressImage(file);
-            const item = { brand: document.getElementById('edit-brand').value, title: document.getElementById('edit-title').value, price: document.getElementById('edit-price').value, category: document.getElementById('edit-category').value, desc: document.getElementById('edit-desc').value, updated: new Date().toISOString() };
-            try {
-                if(id) { if(img) item.image=img; await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), item); }
-                else { if(img) item.image=img; await fbFirestore.addDoc(productsCollection, item); }
-                closeAllModals(); showToast("Guardado", "success");
-            } catch(e) { alert(e.message); }
-            btn.innerText="Guardar"; btn.disabled=false;
+        
+        window.openNewProduct = () => {
+            const m = document.getElementById('product-modal');
+            m.classList.remove('hidden');
+            ['edit-id', 'edit-brand', 'edit-title', 'edit-price', 'edit-desc', 'edit-image'].forEach(i => document.getElementById(i).value = '');
         }
-        window.deleteItem = async (id) => { if(confirm("¿Eliminar?")) { await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id)); } }
-        
+
+        window.saveProduct = async () => {
+            const btn = document.getElementById('btn-save');
+            btn.innerText = "Guardando..."; btn.disabled = true;
+            
+            const id = document.getElementById('edit-id').value;
+            const file = document.getElementById('edit-image').files[0];
+            let img = null;
+            if (file) img = await compressImage(file);
+
+            const item = {
+                brand: document.getElementById('edit-brand').value,
+                title: document.getElementById('edit-title').value,
+                price: document.getElementById('edit-price').value,
+                category: document.getElementById('edit-category').value,
+                desc: document.getElementById('edit-desc').value,
+                updated: new Date().toISOString()
+            };
+
+            if (id) {
+                if (img) item.image = img;
+                await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), item);
+            } else {
+                if (img) item.image = img;
+                await fbFirestore.addDoc(productsCollection, item);
+            }
+            
+            document.getElementById('product-modal').classList.add('hidden');
+            btn.innerText = "Guardar"; btn.disabled = false;
+            showToast("Producto Guardado");
+        }
+
         // --- UTILS ---
-        window.openModal = (id) => { const o=document.getElementById('modal-overlay'), m=document.getElementById(id), c=document.getElementById(id+'-content'); o.classList.remove('hidden'); setTimeout(()=>o.classList.remove('opacity-0'),10); m.classList.remove('hidden'); setTimeout(()=>{if(c){c.classList.remove('scale-95','opacity-0');c.classList.add('scale-100','opacity-100')}},10); }
-        window.closeAllModals = () => { document.getElementById('modal-overlay').classList.add('opacity-0'); document.getElementById('cart-modal').classList.add('translate-x-full'); document.querySelectorAll('[id$="-content"]').forEach(c=>{c.classList.remove('scale-100','opacity-100');c.classList.add('scale-95','opacity-0')}); setTimeout(()=>{document.getElementById('modal-overlay').classList.add('hidden');document.querySelectorAll('.modal, #product-modal').forEach(m=>m.classList.add('hidden'))},300); }
-        function showToast(m,t) { const b=document.getElementById('status-bar'); b.innerText=m; b.className=`fixed top-0 w-full text-center py-2 text-white text-xs font-bold z-[100] transition-transform duration-500 ${t==='success'?'bg-green-600':'bg-red-600'}`; b.style.transform='translateY(0)'; setTimeout(()=>b.style.transform='translateY(-100%)',3000); }
-        function getCategoryLabel(id) { return CATEGORIES.find(c=>c.id===id)?.label||id; }
-        function compressImage(f) { return new Promise(r=>{const rd=new FileReader();rd.readAsDataURL(f);rd.onload=e=>{const i=new Image();i.src=e.target.result;i.onload=()=>{const c=document.createElement('canvas');const ctx=c.getContext('2d');const s=800/i.width;c.width=s<1?800:i.width;c.height=s<1?i.height*s:i.height;ctx.drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',0.8));}}});}
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            t.classList.remove('translate-y-[-10px]', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-[-10px]', 'opacity-0'), 3000);
+        }
+
+        function getCategoryLabel(id) { return CATEGORIES.find(c => c.id === id)?.label || id; }
         
+        function compressImage(file) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = e => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const scale = 800 / img.width;
+                        canvas.width = scale < 1 ? 800 : img.width;
+                        canvas.height = scale < 1 ? img.height * scale : img.height;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.8));
+                    }
+                }
+            });
+        }
+
         init();
     </script>
 </body>
 </html>
-
-
-
