@@ -2,166 +2,296 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo ELECPRO | En Línea</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ELECPRO | Catálogo 2026</title>
+    <!-- Fuentes Modernas -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&family=Teko:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Iconos -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#0044cc', // Azul Marca
+                            darkblue: '#002a80',
+                            red: '#e62222',  // Rojo Marca
+                            yellow: '#ffcc00', // Amarillo Marca
+                            dark: '#0f172a',
+                            light: '#f8fafc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'], 
+                        display: ['Teko', 'sans-serif'], 
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* --- ESTILOS VISUALES --- */
-        :root { 
-            --primary: #1e40af; 
-            --accent: #dc2626; 
-            --highlight: #facc15; 
-            --dark: #1f2937; 
-            --light: #f3f4f6; 
-            --white: #ffffff; 
-            --success: #10b981;
+        body { -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,68,204,0.1);
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Roboto', sans-serif; background: var(--light); color: var(--dark); margin: 0; padding-bottom: 80px; }
-        
-        header { background: var(--white); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; padding: 10px 0; }
-        .header-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .logo-text { font-family: 'Oswald', sans-serif; color: var(--primary); margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
-        .contact-btn { background: #25D366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s; }
-        .contact-btn:hover { transform: scale(1.05); }
 
-        .categories-wrapper { background: var(--primary); padding: 10px 0; overflow-x: auto; position: sticky; top: 60px; z-index: 90; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .categories-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; gap: 10px; }
-        .cat-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; font-size: 0.9rem; }
-        .cat-btn:hover, .cat-btn.active { background: var(--highlight); color: var(--dark); border-color: var(--highlight); font-weight: bold; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        @media (min-width: 600px) { .grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; } }
-
-        .card { background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); display: flex; flex-direction: column; transition: transform 0.2s; position: relative; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        .card-img-container { width: 100%; aspect-ratio: 1/1; background: #fff; display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid #eee; }
-        .card-img-container img { width: 90%; height: 90%; object-fit: contain; }
-        
-        .card-badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; z-index: 2; }
-        
-        /* BOTÓN DE DESCARGA NUEVO */
-        .btn-download { 
-            position: absolute; 
-            top: 10px; 
-            left: 10px; 
-            background: rgba(255,255,255,0.9); 
-            color: #333; 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            text-decoration: none; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
-            z-index: 5; 
-            font-size: 1.1rem;
-            transition: 0.2s;
-            cursor: pointer;
+        #loader {
+            position: fixed; inset: 0; background: #fff; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
         }
-        .btn-download:hover { transform: scale(1.1); background: white; color: var(--primary); }
 
-        .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
-        .product-brand { font-size: 0.8rem; color: #6b7280; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
-        .product-title { font-family: 'Oswald', sans-serif; font-size: 1.1rem; margin: 0 0 5px 0; color: var(--dark); line-height: 1.2; }
-        .product-desc { font-size: 0.85rem; color: #666; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1; }
-        .card-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f3f3; padding-top: 10px; }
-        .price { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
-        .buy-btn { background: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
-        .buy-btn:hover { background: #128C7E; }
+        /* Tarjeta con efecto */
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 68, 204, 0.15);
+            border-color: #3b82f6;
+        }
 
-        #admin-fab { position: fixed; bottom: 80px; right: 20px; width: 50px; height: 50px; background: var(--primary); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 1000; transition: transform 0.2s; }
-        #admin-fab:hover { transform: scale(1.1); }
-        
-        .admin-controls { display: none; position: absolute; top: 5px; left: 5px; gap: 5px; z-index: 10; }
-        .btn-icon { width: 32px; height: 32px; border-radius: 50%; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .btn-edit { background: #f59e0b; }
-        .btn-del { background: #ef4444; }
+        .btn-gradient {
+            background: linear-gradient(135deg, #0044cc 0%, #002a80 100%);
+            color: white;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #0055ff 0%, #003399 100%);
+            box-shadow: 0 10px 20px -5px rgba(0, 68, 204, 0.4);
+        }
 
-        body.is-admin #admin-fab { display: flex; }
-        body.is-admin .admin-controls { display: flex; }
-        body.is-admin .card { border: 2px dashed var(--highlight); }
+        .coming-soon-bg {
+            background-image: radial-gradient(#0044cc 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.05;
+        }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .form-row { display: flex; gap: 15px; }
-        .form-group { margin-bottom: 15px; flex: 1; }
-        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 0.9rem; color: #555; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; transition: 0.3s; }
-        .form-group input:focus { border-color: var(--primary); outline: none; }
-
-        #admin-panel { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; padding: 12px; z-index: 2000; display: flex; justify-content: space-around; gap: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); }
-        .btn-panel { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; font-size: 0.85rem; flex: 1; max-width: 200px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-login-main { background: #444; width: 100%; }
-        
-        .admin-only-btn { display: none; }
-        body.is-admin .admin-only-btn { display: flex; }
-        body.is-admin .btn-login-main { display: none; }
-        .btn-add { background: var(--primary); }
-
-        #status-bar { background: #333; color: white; text-align: center; font-size: 0.8rem; padding: 5px; position: relative; z-index: 101; font-weight: bold; }
+        .btn-press:active { transform: scale(0.95); }
     </style>
 </head>
-<body>
+<body class="text-gray-800 antialiased pb-10">
 
-    <div id="status-bar">
-        <span id="status-text">Conectando...</span>
+    <!-- PANTALLA DE CARGA -->
+    <div id="loader">
+        <div class="text-center relative">
+            <div class="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50 animate-pulse"></div>
+            <h1 class="relative font-display text-8xl font-bold text-brand-blue tracking-tighter select-none" style="line-height: 0.8;">ELEC<br><span class="text-brand-red">PRO</span></h1>
+            <div class="mt-4 text-sm font-bold tracking-[0.5em] text-gray-400">2026</div>
+        </div>
     </div>
 
-    <header>
-        <div class="header-container">
-            <div>
-                <h2 class="logo-text">FERRETERÍA ELECPRO</h2>
-                <p style="margin:0; color: #666; font-size: 0.8rem;">Especialistas en Materiales Eléctricos</p>
+    <!-- HEADER -->
+    <header class="fixed top-0 w-full z-40 glass-nav shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center cursor-pointer group" onclick="window.scrollTo(0,0)">
+                <div class="w-10 h-10 bg-gradient-to-br from-brand-blue to-brand-darkblue rounded-lg flex items-center justify-center text-white shadow-lg group-hover:rotate-3 transition-transform">
+                    <span class="font-display font-bold text-2xl mt-1">E</span>
+                </div>
+                <div class="ml-2 leading-none">
+                    <span class="block font-display font-bold text-2xl text-brand-blue tracking-tight">ELECPRO</span>
+                    <span class="block text-[10px] font-bold text-gray-400 tracking-widest uppercase">Catálogo 2026</span>
+                </div>
             </div>
-            <a href="https://wa.me/50587600225" target="_blank" class="contact-btn">
-                <span>✆ Pedir por WhatsApp</span>
-            </a>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl hover:bg-blue-50 transition btn-press group">
+                    <i data-lucide="shopping-cart" class="w-6 h-6 text-brand-dark group-hover:text-brand-blue"></i>
+                    <span id="header-cart-count" class="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-md scale-0 transition-transform duration-300">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="pb-3 pt-1">
+            <nav class="max-w-7xl mx-auto px-4 overflow-x-auto hide-scroll flex gap-2" id="cat-nav">
+                <!-- JS llena esto -->
+            </nav>
         </div>
     </header>
 
-    <nav class="categories-wrapper">
-        <div class="categories-container" id="cat-nav"></div>
-    </nav>
+    <!-- BARRA DE ESTADO (TOAST) -->
+    <div id="status-bar" class="hidden fixed top-0 w-full z-[100] text-center py-2 text-white text-xs font-bold shadow-lg transform -translate-y-full transition-transform duration-500"></div>
 
-    <main class="grid" id="catalog-grid">
-        <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
-            <p>Cargando productos...</p>
+    <!-- MAIN -->
+    <main class="max-w-7xl mx-auto px-4 pt-36 md:pt-40 min-h-screen">
+        
+        <!-- Hero Banner -->
+        <div class="relative bg-brand-darkblue rounded-3xl p-8 md:p-12 mb-10 text-white shadow-2xl overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-brand-blue rounded-full blur-[100px] opacity-50 transform translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-brand-red rounded-full blur-[80px] opacity-20 transform -translate-x-1/3 translate-y-1/3"></div>
+            
+            <div class="relative z-10 max-w-2xl">
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 mb-4 animate-float">
+                    <span class="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></span>
+                    <span class="text-xs font-bold tracking-wide uppercase text-brand-yellow">Nuevo Stock</span>
+                </div>
+                <h2 class="font-display text-5xl md:text-7xl font-bold mb-4 leading-none tracking-tight">
+                    EQUIPA TU <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">PROYECTO</span>
+                </h2>
+                <p class="text-blue-100 text-lg mb-8 max-w-lg leading-relaxed">Las mejores marcas en herramientas y material eléctrico.</p>
+                <button onclick="window.scrollTo({top: 500, behavior: 'smooth'})" class="bg-brand-red hover:bg-red-600 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-lg shadow-red-600/30 flex items-center gap-2 btn-press">
+                    Ver Catálogo <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
         </div>
+
+        <!-- Encabezado Grid -->
+        <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-4">
+            <h3 class="font-display text-3xl font-bold text-brand-dark">Productos</h3>
+            <span class="text-xs font-bold text-brand-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100" id="product-count">...</span>
+        </div>
+
+        <!-- Grid -->
+        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+            <!-- Items JS -->
+        </div>
+
+        <!-- SECCIÓN PRÓXIMAMENTE (LIMPIA) -->
+        <div class="mt-24 mb-12 relative overflow-hidden rounded-3xl bg-white border border-gray-100 p-12 text-center shadow-lg">
+            <div class="absolute inset-0 coming-soon-bg"></div>
+            <div class="relative z-10">
+                <div class="inline-block p-4 rounded-full bg-brand-dark text-brand-yellow mb-4 shadow-lg shadow-gray-500/20">
+                    <i data-lucide="sparkles" class="w-8 h-8 animate-pulse"></i>
+                </div>
+                <h3 class="font-display text-5xl font-bold text-brand-dark mb-3">PRÓXIMAMENTE</h3>
+                <p class="text-gray-500 max-w-md mx-auto text-lg">Estamos preparando nuevas líneas de materiales eléctricos y herramientas para el 2026.</p>
+            </div>
+        </div>
+
     </main>
 
-    <div id="admin-fab" onclick="openNewProduct()">+</div>
+    <!-- FOOTER CON ACCESO ADMIN DISCRETO Y RECUPERACIÓN -->
+    <footer class="mt-20 border-t border-gray-200 bg-white py-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <h4 class="font-display text-2xl font-bold text-brand-blue">ELECPRO</h4>
+                <p class="text-xs text-gray-400">© 2026 Ferretería Elecpro.</p>
+            </div>
+            
+            <div class="flex flex-col items-center md:items-end gap-2">
+                <!-- Botón de emergencia para conectar nube si se pierden los datos -->
+                <div id="reconnect-btn" class="hidden text-center mb-2">
+                    <button onclick="openConfigModal()" class="text-xs font-bold text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full shadow-lg animate-bounce">
+                        ⚠️ Recuperar mis Productos
+                    </button>
+                </div>
 
-    <!-- Panel Inferior -->
-    <div id="admin-panel">
-        <button class="btn-panel btn-login-main" onclick="login()">🔒 Iniciar Sesión (Admin)</button>
-        <button class="btn-panel admin-only-btn btn-add" onclick="openNewProduct()">➕ Nuevo Producto</button>
+                <!-- Botón Admin Oculto (Candado) -->
+                <button onclick="login()" class="text-gray-300 hover:text-brand-blue transition p-2" title="Acceso Administrativo">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTONES FLOTANTES -->
+    
+    <!-- Carrito -->
+    <button id="cart-fab" onclick="toggleCart()" class="fixed bottom-6 right-5 w-16 h-16 bg-brand-red text-white rounded-2xl shadow-2xl shadow-red-500/40 flex items-center justify-center hover:scale-105 transition-all z-50 btn-press group hidden">
+        <i data-lucide="shopping-bag" class="w-7 h-7 group-hover:rotate-12 transition-transform"></i>
+        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-brand-dark text-white text-xs font-bold w-7 h-7 flex items-center justify-center rounded-full border-2 border-white">0</span>
+    </button>
+
+    <!-- Admin Tools (Aparecen al loguearse) -->
+    <div id="admin-fab-group" class="hidden fixed bottom-6 left-6 z-40 flex flex-col gap-3">
+        <button onclick="openNewProduct()" class="w-14 h-14 bg-brand-blue text-white rounded-full shadow-xl flex items-center justify-center hover:bg-blue-600 transition tooltip-btn" title="Nuevo Producto">
+            <i data-lucide="plus" class="w-7 h-7"></i>
+        </button>
+        <button onclick="openConfigModal()" class="w-10 h-10 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-900 transition tooltip-btn" title="Configuración">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
     </div>
 
-    <!-- Modal Formulario Producto -->
-    <div id="product-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top:0; color:var(--primary)" id="modal-title">📦 Gestión de Producto</h3>
-            <input type="hidden" id="edit-id">
-            <div class="form-row">
-                <div class="form-group"><label>Categoría</label><select id="edit-category"></select></div>
-                <div class="form-group"><label>Marca</label><input id="edit-brand" placeholder="Ej: DONG CHENG"></div>
+    <!-- MODALES -->
+    <div id="modal-overlay" class="fixed inset-0 bg-brand-dark/60 z-[60] hidden backdrop-blur-sm transition-opacity opacity-0" onclick="closeAllModals()"></div>
+
+    <!-- Carrito -->
+    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
+        <div class="p-5 border-b flex justify-between items-center bg-gray-50/50 backdrop-blur">
+            <h2 class="font-display text-2xl font-bold text-brand-dark">Tu Pedido</h2>
+            <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#f8fafc]"></div>
+        <div class="p-6 border-t bg-white shadow-up">
+            <div class="flex justify-between items-end mb-4">
+                <span class="text-gray-500 font-medium">Total</span>
+                <span id="cart-total" class="font-display text-3xl font-bold text-brand-blue">C$ 0</span>
             </div>
-            <div class="form-group"><label>Nombre</label><input id="edit-title" placeholder="Ej: Taladro Percutor"></div>
-            <div class="form-group"><label>Precio (C$)</label><input id="edit-price" type="number" placeholder="0.00"></div>
-            <div class="form-group"><label>Descripción</label><textarea id="edit-desc" rows="3"></textarea></div>
-            <div class="form-group"><label>Foto</label><input type="file" id="edit-image" accept="image/*"></div>
-            <div style="display:flex; gap:10px; margin-top:20px">
-                <button onclick="closeModal('product-modal')" style="background:#f3f4f6; color:#333; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Cancelar</button>
-                <button onclick="saveProduct()" id="btn-save" style="background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; flex:1; cursor:pointer; font-weight:bold;">Guardar</button>
+            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-xl shadow-lg shadow-green-500/30 hover:brightness-105 transition flex justify-center items-center gap-2 btn-press">
+                <span>Enviar Pedido</span> <i data-lucide="send" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Producto Form -->
+    <div id="product-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 pointer-events-none">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl pointer-events-auto transform scale-95 opacity-0 transition-all duration-300 overflow-hidden" id="product-modal-content">
+            <div class="p-6 bg-gradient-to-r from-brand-blue to-brand-darkblue text-white flex justify-between items-center">
+                <h3 class="font-display text-2xl font-bold" id="modal-title">Producto</h3>
+                <button onclick="closeAllModals()" class="text-white/70 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                <input type="hidden" id="edit-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1"><label class="text-xs font-bold text-gray-400">CATEGORÍA</label><select id="edit-category" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border"></select></div>
+                    <div class="space-y-1"><label class="text-xs font-bold text-gray-400">MARCA</label><input id="edit-brand" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border" placeholder="Marca"></div>
+                </div>
+                <div class="space-y-1"><label class="text-xs font-bold text-gray-400">NOMBRE</label><input id="edit-title" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border font-bold"></div>
+                <div class="space-y-1"><label class="text-xs font-bold text-gray-400">PRECIO (C$)</label><input id="edit-price" type="number" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border font-bold text-brand-blue text-lg"></div>
+                <div class="space-y-1"><label class="text-xs font-bold text-gray-400">DESCRIPCIÓN</label><textarea id="edit-desc" rows="3" class="w-full bg-gray-50 border-gray-200 rounded-xl p-3 outline-none focus:border-brand-blue border"></textarea></div>
+                <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 border-dashed"><input type="file" id="edit-image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-blue file:text-white hover:file:bg-blue-700"></div>
+            </div>
+            <div class="p-5 border-t bg-gray-50 flex gap-3">
+                <button onclick="closeAllModals()" class="flex-1 py-3.5 font-bold text-gray-500 hover:bg-gray-200 rounded-xl">Cancelar</button>
+                <button onclick="saveProduct()" id="btn-save" class="flex-1 py-3.5 font-bold btn-gradient text-white rounded-xl shadow-lg">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Config Form -->
+    <div id="config-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 pointer-events-none">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl pointer-events-auto p-8 transform scale-95 opacity-0 transition-all duration-300 text-center" id="config-modal-content">
+            <h3 class="font-display text-2xl font-bold text-brand-dark mb-2">Conectar Nube</h3>
+            <p class="text-sm text-gray-500 mb-4">Pega tu llave de Firebase para recuperar tus productos.</p>
+            <textarea id="firebase-config-input" rows="5" class="w-full bg-gray-900 text-green-400 font-mono text-[10px] p-4 rounded-xl mb-4 focus:outline-none" placeholder='{ "apiKey": "..." }'></textarea>
+            <button onclick="saveCloudConfig()" class="w-full btn-gradient text-white font-bold py-4 rounded-xl">Conectar y Recuperar</button>
         </div>
     </div>
 
     <script type="module">
+        lucide.createIcons();
+
         const CATEGORIES = [
             { id: 'all', label: 'Todo' }, { id: 'herramientas', label: 'Herramientas' }, { id: 'iluminacion', label: 'Iluminación' },
             { id: 'hogar', label: 'Hogar' }, { id: 'ferreteria', label: 'Ferretería' }, { id: 'electronica', label: 'Electrónica' },
@@ -169,258 +299,189 @@
             { id: 'fontaneria', label: 'Fontanería' }, { id: 'electricidad', label: 'Electricidad' }
         ];
 
-        // --- TUS LLAVES CONFIGURADAS ---
-        const MY_FIREBASE_CONFIG = {
-            apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4",
-            authDomain: "catalogoelecpro.firebaseapp.com",
-            projectId: "catalogoelecpro",
-            storageBucket: "catalogoelecpro.firebasestorage.app",
-            messagingSenderId: "847606996266",
-            appId: "1:847606996266:web:7e46736011c7b77afb9253"
-        };
-
+        let MY_FIREBASE_CONFIG = { apiKey: "" };
         let products = [];
+        let cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [];
         let currentFilter = 'all';
-        let db = null;
-        let productsCollection = null;
-        let useCloud = false;
-        let fbFirestore = null;
+        let db, productsCollection, fbFirestore, useCloud = false;
 
         async function init() {
             renderNav();
-            populateCategorySelect();
+            updateCartUI();
             
-            try {
-                // Importación dinámica de módulos
-                const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-                fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                // NOTA: Eliminamos la dependencia de AUTH para evitar errores si no se activó.
-                // En modo prueba de Firestore, no es estrictamente necesaria.
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').remove(), 500);
+            }, 1000);
 
-                // Inicializar con TU configuración
-                const app = fbApp.initializeApp(MY_FIREBASE_CONFIG);
-                db = fbFirestore.getFirestore(app);
-                
-                productsCollection = fbFirestore.collection(db, 'products');
-                useCloud = true;
-                updateStatus("🟢 Catálogo En Línea");
+            const saved = localStorage.getItem('elecpro_firebase_config');
+            if (saved) MY_FIREBASE_CONFIG = JSON.parse(saved);
+            else if (typeof __firebase_config !== 'undefined') MY_FIREBASE_CONFIG = JSON.parse(__firebase_config);
 
-                // Escuchar cambios
-                fbFirestore.onSnapshot(productsCollection, (snapshot) => {
-                    products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                    renderGrid();
-                    if(products.length === 0) updateStatus("⚪ Base de datos vacía (Agrega productos)");
-                }, (error) => {
-                    console.error(error);
-                    // Si falla, mostramos el error real para depurar
-                    alert("Error de Permisos en la Nube: " + error.message + "\n\nAsegúrate de haber creado la base de datos en 'Modo Prueba'.");
-                    useLocalMode();
-                });
-
-            } catch (e) {
-                console.error("Error cargando Firebase", e);
-                alert("Error de Conexión: " + e.message);
-                useLocalMode();
-            }
+            if (MY_FIREBASE_CONFIG.apiKey) {
+                try {
+                    const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                    fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    const app = fbApp.initializeApp(MY_FIREBASE_CONFIG);
+                    db = fbFirestore.getFirestore(app);
+                    productsCollection = fbFirestore.collection(db, 'products');
+                    useCloud = true;
+                    showToast("Nube Conectada", "success");
+                    document.getElementById('reconnect-btn').classList.add('hidden'); // Ocultar botón recuperar
+                    fbFirestore.onSnapshot(productsCollection, (snapshot) => {
+                        products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                        renderGrid();
+                    });
+                } catch (e) { useLocalMode(); }
+            } else { useLocalMode(); }
         }
 
-        function updateStatus(msg) {
-            document.getElementById('status-text').innerText = msg;
-            document.getElementById('status-bar').style.backgroundColor = msg.includes("Error") ? '#b91c1c' : '#064e3b';
+        function useLocalMode() {
+            useCloud = false;
+            // Mostrar botón de recuperación para que el usuario sepa que puede volver a conectar
+            document.getElementById('reconnect-btn').classList.remove('hidden');
+            
+            const stored = localStorage.getItem('elecpro_db');
+            if (stored) products = JSON.parse(stored);
+            if (products.length === 0) products = [{ id: '1', category: 'herramientas', brand: 'DEMO', title: 'Ejemplo (Conecta la nube)', price: '0', desc: 'Usa el botón rojo abajo para recuperar tus datos.' }];
+            renderGrid();
         }
 
+        // --- RENDER ---
         function renderNav() {
-            const nav = document.getElementById('cat-nav');
-            nav.innerHTML = '';
-            CATEGORIES.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = `cat-btn ${cat.id === 'all' ? 'active' : ''}`;
-                btn.textContent = cat.label;
-                btn.onclick = () => {
-                    currentFilter = cat.id;
-                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderGrid();
-                };
-                nav.appendChild(btn);
-            });
+            document.getElementById('cat-nav').innerHTML = CATEGORIES.map(cat => `
+                <button onclick="window.setFilter('${cat.id}')" id="btn-cat-${cat.id}" class="px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${cat.id === 'all' ? 'bg-brand-blue text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-100'}">${cat.label}</button>
+            `).join('');
+            document.getElementById('edit-category').innerHTML = CATEGORIES.filter(c => c.id !== 'all').map(c => `<option value="${c.id}">${c.label}</option>`).join('');
         }
 
-        function populateCategorySelect() {
-            const select = document.getElementById('edit-category');
-            select.innerHTML = '';
-            CATEGORIES.filter(c => c.id !== 'all').forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.id;
-                opt.textContent = c.label;
-                select.appendChild(opt);
-            });
+        window.setFilter = function(id) {
+            currentFilter = id;
+            document.querySelectorAll('#cat-nav button').forEach(b => b.className = "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 bg-white text-gray-500 border border-gray-100");
+            document.getElementById(`btn-cat-${id}`).className = "px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 bg-brand-blue text-white shadow-lg transform scale-105";
+            renderGrid();
         }
 
         function renderGrid() {
             const grid = document.getElementById('catalog-grid');
-            grid.innerHTML = '';
             const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
-            
+            document.getElementById('product-count').innerText = `${filtered.length}`;
+
             if(filtered.length === 0) {
-                grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:#999">No hay productos en esta categoría.</div>';
-                return;
+                grid.innerHTML = `<div class="col-span-full text-center py-24 opacity-40"><i data-lucide="box" class="w-12 h-12 mx-auto mb-2"></i><p>Sin productos</p></div>`;
+                lucide.createIcons(); return;
             }
 
-            // Ordenar por nombre (o fecha si existiera)
             filtered.sort((a,b) => (b.updated || "").localeCompare(a.updated || ""));
 
-            filtered.forEach(p => {
-                const card = document.createElement('article');
-                card.className = 'card';
-                const msg = `Hola, me interesa el ${p.title} (C$ ${p.price})`;
-                const waLink = `https://wa.me/50587600225?text=${encodeURIComponent(msg)}`;
-                
-                // Botón de descarga: solo si hay imagen real
-                const downloadBtn = p.image ? 
-                    `<a href="${p.image}" download="${p.title}.jpg" class="btn-download" title="Descargar Foto" onclick="event.stopPropagation()">⬇</a>` 
-                    : '';
-
-                card.innerHTML = `
-                    <div class="admin-controls">
-                        <button class="btn-icon btn-edit" onclick="window.editItem('${p.id}')">✏️</button>
-                        <button class="btn-icon btn-del" onclick="window.deleteItem('${p.id}')">🗑️</button>
+            grid.innerHTML = filtered.map((p, i) => {
+                const inCart = cart.find(x => x.id === p.id);
+                return `
+                <article class="product-card animate-fade-up" style="animation-delay: ${i * 50}ms">
+                    ${p.image ? `<a href="${p.image}" download class="absolute top-3 left-3 z-10 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-600 hover:text-brand-blue shadow-sm transition btn-press" onclick="event.stopPropagation()"><i data-lucide="download" class="w-4 h-4"></i></a>` : ''}
+                    <div class="w-full aspect-[4/3] bg-white flex items-center justify-center relative p-6 border-b border-gray-50 group">
+                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-lg" loading="lazy">` : `<i data-lucide="image" class="w-12 h-12 text-gray-200"></i>`}
+                        <div class="absolute top-3 right-3 bg-white/90 border border-gray-100 text-brand-dark text-[10px] font-extrabold px-2 py-1 rounded-lg uppercase shadow-sm">${getCategoryLabel(p.category)}</div>
                     </div>
-                    <div class="card-img-container">
-                        ${downloadBtn}
-                        ${p.image ? `<img src="${p.image}" alt="${p.title}">` : '<span style="font-size:3rem; color:#eee">📷</span>'}
-                        <div class="card-badge">${getCategoryLabel(p.category)}</div>
-                    </div>
-                    <div class="card-body">
-                        <div class="product-brand">${p.brand || ''}</div>
-                        <h3 class="product-title">${p.title}</h3>
-                        <div class="product-desc">${p.desc || ''}</div>
-                        <div class="card-footer">
-                            <div class="price">C$ ${p.price}</div>
-                            <a href="${waLink}" target="_blank" class="buy-btn"><span>Pedir</span></a>
+                    <div class="p-5 flex flex-col h-[180px]">
+                        <div class="text-[10px] font-bold text-brand-red uppercase tracking-widest mb-1">${p.brand || 'GENERICO'}</div>
+                        <h3 class="font-display text-xl font-bold text-gray-800 leading-none mb-2 line-clamp-2">${p.title}</h3>
+                        <p class="text-xs text-gray-400 font-medium line-clamp-2 mb-auto">${p.desc || ''}</p>
+                        <div class="pt-4 mt-2 flex items-center justify-between">
+                            <div><span class="text-[10px] text-gray-400 block font-bold uppercase">Precio</span><span class="font-display text-2xl font-bold text-brand-blue">C$ ${p.price}</span></div>
+                            <button onclick="addToCart('${p.id}')" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg ${inCart ? 'bg-green-500 text-white' : 'bg-brand-dark text-white hover:bg-brand-blue'} btn-press"><i data-lucide="${inCart ? 'check' : 'shopping-cart'}" class="w-5 h-5"></i></button>
                         </div>
                     </div>
-                `;
-                grid.appendChild(card);
-            });
+                    <div class="admin-controls hidden absolute top-3 right-3 flex-col gap-2 z-20">
+                         <button onclick="window.editItem('${p.id}')" class="w-9 h-9 bg-brand-yellow text-brand-dark rounded-full flex items-center justify-center shadow-lg hover:scale-110"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                         <button onclick="window.deleteItem('${p.id}')" class="w-9 h-9 bg-brand-red text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </article>
+            `}).join('');
+            lucide.createIcons();
+            if(document.body.classList.contains('is-admin')) document.querySelectorAll('.admin-controls').forEach(el => { el.classList.remove('hidden'); el.style.display = 'flex'; });
         }
 
-        function getCategoryLabel(id) {
-            const c = CATEGORIES.find(cat => cat.id === id);
-            return c ? c.label : id;
+        // --- CART ---
+        window.addToCart = function(id) {
+            const p = products.find(x => x.id === id); if(!p) return;
+            if(!cart.find(x => x.id === id)) { cart.push({...p, qty: 1}); saveCart(); renderGrid(); } else toggleCart();
+        }
+        window.updateQty = function(id, chg) {
+            const idx = cart.findIndex(x => x.id === id); if(idx === -1) return;
+            cart[idx].qty += chg; if(cart[idx].qty <= 0) cart.splice(idx, 1);
+            saveCart(); renderCartItems(); renderGrid();
+        }
+        function saveCart() { localStorage.setItem('elecpro_cart', JSON.stringify(cart)); updateCartUI(); }
+        function updateCartUI() {
+            const cnt = cart.reduce((a,b) => a + b.qty, 0);
+            document.getElementById('header-cart-count').innerText = cnt;
+            document.getElementById('fab-cart-count').innerText = cnt;
+            [document.getElementById('header-cart-count'), document.getElementById('fab-cart-count')].forEach(el => cnt > 0 ? el.classList.remove('scale-0') : el.classList.add('scale-0'));
+            const fab = document.getElementById('cart-fab'); cnt > 0 ? fab.classList.remove('hidden') : fab.classList.add('hidden');
+        }
+        window.toggleCart = function() {
+            const m = document.getElementById('cart-modal');
+            const o = document.getElementById('modal-overlay');
+            if(m.classList.contains('translate-x-full')) { o.classList.remove('hidden'); setTimeout(()=>o.classList.remove('opacity-0'),10); m.classList.remove('translate-x-full'); renderCartItems(); }
+            else closeAllModals();
+        }
+        function renderCartItems() {
+            const c = document.getElementById('cart-items-container');
+            let t = 0;
+            if(cart.length === 0) { c.innerHTML = `<div class="text-center py-20 text-gray-400"><i data-lucide="shopping-bag" class="w-10 h-10 mx-auto mb-2 opacity-50"></i><p>Vacío</p></div>`; document.getElementById('cart-total').innerText = '0'; lucide.createIcons(); return; }
+            c.innerHTML = cart.map(i => {
+                t += (parseFloat(i.price.replace(/,/g,''))||0) * i.qty;
+                return `<div class="flex gap-4 bg-white p-3 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center p-1"><img src="${i.image||''}" class="w-full h-full object-contain"></div><div class="flex-grow"><h4 class="font-bold text-sm line-clamp-1">${i.title}</h4><div class="text-brand-blue font-bold text-sm">C$ ${i.price}</div></div><div class="flex flex-col items-center gap-1"><button onclick="updateQty('${i.id}',1)" class="w-6 h-6 bg-gray-100 rounded text-xs">+</button><span class="font-bold text-xs">${i.qty}</span><button onclick="updateQty('${i.id}',-1)" class="w-6 h-6 bg-gray-100 rounded text-xs">-</button></div></div>`
+            }).join('');
+            document.getElementById('cart-total').innerText = 'C$ ' + t.toLocaleString(); lucide.createIcons();
+        }
+        window.checkoutWhatsApp = function() {
+            if(cart.length===0)return;
+            let m = "*PEDIDO ELECPRO 2026:*\n\n", t=0;
+            cart.forEach(i=>{ const s=(parseFloat(i.price)||0)*i.qty; t+=s; m+=`📦 ${i.qty}x ${i.title}\n   (C$ ${i.price}) = C$ ${s.toLocaleString()}\n`; });
+            m+=`\n*TOTAL: C$ ${t.toLocaleString()}*`;
+            window.open(`https://wa.me/50587600225?text=${encodeURIComponent(m)}`, '_blank');
         }
 
-        window.saveProduct = async function() {
-            const btn = document.getElementById('btn-save');
-            btn.textContent = "Guardando...";
-            btn.disabled = true;
-
-            const id = document.getElementById('edit-id').value;
-            const fileInput = document.getElementById('edit-image');
-            
-            let imageBase64 = null;
-            if (fileInput.files[0]) {
-                imageBase64 = await compressImage(fileInput.files[0]);
-            }
-
-            const newItem = {
-                brand: document.getElementById('edit-brand').value,
-                title: document.getElementById('edit-title').value,
-                price: document.getElementById('edit-price').value,
-                category: document.getElementById('edit-category').value,
-                desc: document.getElementById('edit-desc').value,
-                updated: new Date().toISOString()
-            };
-
-            try {
-                if (id) {
-                    if (imageBase64) newItem.image = imageBase64;
-                    await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), newItem);
-                } else {
-                    if (imageBase64) newItem.image = imageBase64;
-                    await fbFirestore.addDoc(productsCollection, newItem);
-                }
-            } catch (e) { alert("Error: " + e.message); }
-
-            btn.textContent = "Guardar";
-            btn.disabled = false;
-            closeModal('product-modal');
-        }
-
-        window.deleteItem = async function(id) {
-            if(!confirm("¿Borrar producto?")) return;
-            try {
-                await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id));
-            } catch(e) { alert("Error: " + e.message); }
-        }
-
-        // MODO LOCAL (Solo si falla la nube)
-        function useLocalMode() {
-            useCloud = false;
-            updateStatus("🟠 MODO LOCAL (Error de Conexión)");
-            const stored = localStorage.getItem('elecpro_db');
-            if (stored) {
-                products = JSON.parse(stored);
-                renderGrid();
-            }
-        }
-
-        window.openNewProduct = function() {
-            document.getElementById('edit-id').value = '';
-            document.getElementById('edit-brand').value = '';
-            document.getElementById('edit-title').value = '';
-            document.getElementById('edit-price').value = '';
-            document.getElementById('edit-desc').value = '';
-            document.getElementById('edit-image').value = ''; 
-            document.getElementById('modal-title').innerText = "📦 Nuevo Producto";
-            document.getElementById('product-modal').style.display = 'flex';
-        }
-
-        window.editItem = function(id) {
-            const p = products.find(p => p.id === id);
-            if (!p) return;
-            document.getElementById('edit-id').value = id;
-            document.getElementById('edit-brand').value = p.brand;
-            document.getElementById('edit-title').value = p.title;
-            document.getElementById('edit-price').value = p.price;
-            document.getElementById('edit-category').value = p.category;
-            document.getElementById('edit-desc').value = p.desc;
-            document.getElementById('edit-image').value = '';
-            document.getElementById('modal-title').innerText = "✏️ Editar Producto";
-            document.getElementById('product-modal').style.display = 'flex';
-        }
-
-        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
-        
+        // --- ADMIN ---
         window.login = function() {
-            if (prompt("Contraseña:") === "elecpro50") {
+            if(prompt("Clave Admin:") === "elecpro50") {
                 document.body.classList.add('is-admin');
-                alert("Modo Admin Activado");
-            } else alert("Incorrecto");
+                document.getElementById('admin-fab-group').classList.remove('hidden'); document.getElementById('admin-fab-group').classList.add('flex');
+                document.getElementById('reconnect-btn').classList.remove('hidden'); 
+                renderGrid(); showToast("Admin Activado", "success");
+            }
         }
-
-        function compressImage(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const scale = 600 / img.width;
-                        const w = scale < 1 ? 600 : img.width;
-                        const h = scale < 1 ? img.height * scale : img.height;
-                        canvas.width = w; canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        resolve(canvas.toDataURL('image/jpeg', 0.7)); 
-                    };
-                };
-            });
+        window.openNewProduct = () => { openModal('product-modal'); document.getElementById('modal-title').innerText="Nuevo"; ['edit-id','edit-brand','edit-title','edit-price','edit-desc','edit-image'].forEach(i=>document.getElementById(i).value=''); }
+        window.editItem = (id) => { const p=products.find(x=>x.id===id); if(!p)return; openModal('product-modal'); document.getElementById('modal-title').innerText="Editar"; document.getElementById('edit-id').value=id; document.getElementById('edit-brand').value=p.brand; document.getElementById('edit-title').value=p.title; document.getElementById('edit-price').value=p.price; document.getElementById('edit-category').value=p.category; document.getElementById('edit-desc').value=p.desc; }
+        window.saveProduct = async () => {
+            const btn = document.getElementById('btn-save'); btn.innerText="..."; btn.disabled=true;
+            const id = document.getElementById('edit-id').value, file = document.getElementById('edit-image').files[0];
+            let img = null; if(file) img = await compressImage(file);
+            const item = { brand: document.getElementById('edit-brand').value, title: document.getElementById('edit-title').value, price: document.getElementById('edit-price').value, category: document.getElementById('edit-category').value, desc: document.getElementById('edit-desc').value, updated: new Date().toISOString() };
+            try {
+                if(useCloud) {
+                    if(id) { if(img) item.image=img; await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), item); }
+                    else { if(img) item.image=img; await fbFirestore.addDoc(productsCollection, item); }
+                } else { /* Local Fallback */ }
+                closeAllModals(); showToast("Guardado", "success");
+            } catch(e) { alert(e.message); }
+            btn.innerText="Guardar"; btn.disabled=false;
         }
-
+        window.deleteItem = async (id) => { if(confirm("¿Eliminar?")) { if(useCloud) await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id)); } }
+        
+        // --- UTILS ---
+        window.openModal = (id) => { const o=document.getElementById('modal-overlay'), m=document.getElementById(id), c=document.getElementById(id+'-content'); o.classList.remove('hidden'); setTimeout(()=>o.classList.remove('opacity-0'),10); m.classList.remove('hidden'); setTimeout(()=>{if(c){c.classList.remove('scale-95','opacity-0');c.classList.add('scale-100','opacity-100')}},10); }
+        window.closeAllModals = () => { document.getElementById('modal-overlay').classList.add('opacity-0'); document.getElementById('cart-modal').classList.add('translate-x-full'); document.querySelectorAll('[id$="-content"]').forEach(c=>{c.classList.remove('scale-100','opacity-100');c.classList.add('scale-95','opacity-0')}); setTimeout(()=>{document.getElementById('modal-overlay').classList.add('hidden');document.querySelectorAll('.modal, #product-modal, #config-modal').forEach(m=>m.classList.add('hidden'))},300); }
+        window.openConfigModal = () => openModal('config-modal');
+        window.saveCloudConfig = () => { try { JSON.parse(document.getElementById('firebase-config-input').value); localStorage.setItem('elecpro_firebase_config', document.getElementById('firebase-config-input').value); location.reload(); } catch(e){alert("Error JSON");} }
+        function showToast(m,t) { const b=document.getElementById('status-bar'); b.innerText=m; b.className=`fixed top-0 w-full text-center py-2 text-white text-xs font-bold z-[100] transition-transform duration-500 ${t==='success'?'bg-green-600':'bg-red-600'}`; b.style.transform='translateY(0)'; setTimeout(()=>b.style.transform='translateY(-100%)',3000); }
+        function getCategoryLabel(id) { return CATEGORIES.find(c=>c.id===id)?.label||id; }
+        function compressImage(f) { return new Promise(r=>{const rd=new FileReader();rd.readAsDataURL(f);rd.onload=e=>{const i=new Image();i.src=e.target.result;i.onload=()=>{const c=document.createElement('canvas');const ctx=c.getContext('2d');const s=800/i.width;c.width=s<1?800:i.width;c.height=s<1?i.height*s:i.height;ctx.drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',0.8));}}});}
+        
         init();
     </script>
 </body>
 </html>
+
