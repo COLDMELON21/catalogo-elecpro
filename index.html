@@ -17,10 +17,10 @@
                 extend: {
                     colors: {
                         brand: {
-                            blue: '#0044cc', // Azul Marca
+                            blue: '#0044cc', 
                             darkblue: '#002a80',
-                            red: '#e62222',  // Rojo Marca
-                            yellow: '#ffcc00', // Amarillo Marca
+                            red: '#e62222',  
+                            yellow: '#ffcc00', 
                             dark: '#0f172a',
                             light: '#f8fafc'
                         }
@@ -49,52 +49,14 @@
     </script>
     <style>
         body { -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
-        
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,68,204,0.1);
-        }
-
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-
-        #loader {
-            position: fixed; inset: 0; background: #fff; z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.5s ease;
-        }
-
-        /* Tarjeta con efecto */
-        .product-card {
-            background: white;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px -5px rgba(0, 68, 204, 0.15);
-            border-color: #3b82f6;
-        }
-
-        .btn-gradient {
-            background: linear-gradient(135deg, #0044cc 0%, #002a80 100%);
-            color: white;
-        }
-        .btn-gradient:hover {
-            background: linear-gradient(135deg, #0055ff 0%, #003399 100%);
-            box-shadow: 0 10px 20px -5px rgba(0, 68, 204, 0.4);
-        }
-
-        .coming-soon-bg {
-            background-image: radial-gradient(#0044cc 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.05;
-        }
-
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,68,204,0.1); }
+        .hide-scroll::-webkit-scrollbar { display: none; } .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        #loader { position: fixed; inset: 0; background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+        .product-card { background: white; border-radius: 16px; transition: all 0.3s ease; position: relative; overflow: hidden; border: 1px solid #e2e8f0; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px -5px rgba(0, 68, 204, 0.15); border-color: #3b82f6; }
+        .btn-gradient { background: linear-gradient(135deg, #0044cc 0%, #002a80 100%); color: white; }
+        .btn-gradient:hover { background: linear-gradient(135deg, #0055ff 0%, #003399 100%); box-shadow: 0 10px 20px -5px rgba(0, 68, 204, 0.4); }
+        .coming-soon-bg { background-image: radial-gradient(#0044cc 1px, transparent 1px); background-size: 20px 20px; opacity: 0.05; }
         .btn-press:active { transform: scale(0.95); }
     </style>
 </head>
@@ -112,7 +74,6 @@
     <!-- HEADER -->
     <header class="fixed top-0 w-full z-40 glass-nav shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <!-- Logo -->
             <div class="flex items-center cursor-pointer group" onclick="window.scrollTo(0,0)">
                 <div class="w-10 h-10 bg-gradient-to-br from-brand-blue to-brand-darkblue rounded-lg flex items-center justify-center text-white shadow-lg group-hover:rotate-3 transition-transform">
                     <span class="font-display font-bold text-2xl mt-1">E</span>
@@ -122,7 +83,6 @@
                     <span class="block text-[10px] font-bold text-gray-400 tracking-widest uppercase">Catálogo 2026</span>
                 </div>
             </div>
-
             <div class="flex items-center gap-3">
                 <button onclick="toggleCart()" class="relative p-2.5 rounded-xl hover:bg-blue-50 transition btn-press group">
                     <i data-lucide="shopping-cart" class="w-6 h-6 text-brand-dark group-hover:text-brand-blue"></i>
@@ -130,16 +90,12 @@
                 </button>
             </div>
         </div>
-
-        <!-- NAVEGACIÓN -->
         <div class="pb-3 pt-1">
-            <nav class="max-w-7xl mx-auto px-4 overflow-x-auto hide-scroll flex gap-2" id="cat-nav">
-                <!-- JS llena esto -->
-            </nav>
+            <nav class="max-w-7xl mx-auto px-4 overflow-x-auto hide-scroll flex gap-2" id="cat-nav"></nav>
         </div>
     </header>
 
-    <!-- BARRA DE ESTADO (TOAST) -->
+    <!-- TOAST -->
     <div id="status-bar" class="hidden fixed top-0 w-full z-[100] text-center py-2 text-white text-xs font-bold shadow-lg transform -translate-y-full transition-transform duration-500"></div>
 
     <!-- MAIN -->
@@ -149,15 +105,13 @@
         <div class="relative bg-brand-darkblue rounded-3xl p-8 md:p-12 mb-10 text-white shadow-2xl overflow-hidden">
             <div class="absolute top-0 right-0 w-96 h-96 bg-brand-blue rounded-full blur-[100px] opacity-50 transform translate-x-1/2 -translate-y-1/2"></div>
             <div class="absolute bottom-0 left-0 w-64 h-64 bg-brand-red rounded-full blur-[80px] opacity-20 transform -translate-x-1/3 translate-y-1/3"></div>
-            
             <div class="relative z-10 max-w-2xl">
                 <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 mb-4 animate-float">
                     <span class="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></span>
                     <span class="text-xs font-bold tracking-wide uppercase text-brand-yellow">Nuevo Stock</span>
                 </div>
                 <h2 class="font-display text-5xl md:text-7xl font-bold mb-4 leading-none tracking-tight">
-                    EQUIPA TU <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">PROYECTO</span>
+                    EQUIPA TU <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">PROYECTO</span>
                 </h2>
                 <p class="text-blue-100 text-lg mb-8 max-w-lg leading-relaxed">Las mejores marcas en herramientas y material eléctrico.</p>
                 <button onclick="window.scrollTo({top: 500, behavior: 'smooth'})" class="bg-brand-red hover:bg-red-600 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-lg shadow-red-600/30 flex items-center gap-2 btn-press">
@@ -166,18 +120,13 @@
             </div>
         </div>
 
-        <!-- Encabezado Grid -->
         <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-4">
             <h3 class="font-display text-3xl font-bold text-brand-dark">Productos</h3>
             <span class="text-xs font-bold text-brand-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100" id="product-count">...</span>
         </div>
 
-        <!-- Grid -->
-        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-            <!-- Items JS -->
-        </div>
+        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"></div>
 
-        <!-- SECCIÓN PRÓXIMAMENTE (LIMPIA) -->
         <div class="mt-24 mb-12 relative overflow-hidden rounded-3xl bg-white border border-gray-100 p-12 text-center shadow-lg">
             <div class="absolute inset-0 coming-soon-bg"></div>
             <div class="relative z-10">
@@ -188,26 +137,15 @@
                 <p class="text-gray-500 max-w-md mx-auto text-lg">Estamos preparando nuevas líneas de materiales eléctricos y herramientas para el 2026.</p>
             </div>
         </div>
-
     </main>
 
-    <!-- FOOTER CON ACCESO ADMIN DISCRETO Y RECUPERACIÓN -->
     <footer class="mt-20 border-t border-gray-200 bg-white py-10">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="text-center md:text-left">
                 <h4 class="font-display text-2xl font-bold text-brand-blue">ELECPRO</h4>
                 <p class="text-xs text-gray-400">© 2026 Ferretería Elecpro.</p>
             </div>
-            
             <div class="flex flex-col items-center md:items-end gap-2">
-                <!-- Botón de emergencia para conectar nube si se pierden los datos -->
-                <div id="reconnect-btn" class="hidden text-center mb-2">
-                    <button onclick="openConfigModal()" class="text-xs font-bold text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full shadow-lg animate-bounce">
-                        ⚠️ Recuperar mis Productos
-                    </button>
-                </div>
-
-                <!-- Botón Admin Oculto (Candado) -->
                 <button onclick="login()" class="text-gray-300 hover:text-brand-blue transition p-2" title="Acceso Administrativo">
                     <i data-lucide="lock" class="w-4 h-4"></i>
                 </button>
@@ -215,28 +153,21 @@
         </div>
     </footer>
 
-    <!-- BOTONES FLOTANTES -->
-    
-    <!-- Carrito -->
+    <!-- BOTONES -->
     <button id="cart-fab" onclick="toggleCart()" class="fixed bottom-6 right-5 w-16 h-16 bg-brand-red text-white rounded-2xl shadow-2xl shadow-red-500/40 flex items-center justify-center hover:scale-105 transition-all z-50 btn-press group hidden">
         <i data-lucide="shopping-bag" class="w-7 h-7 group-hover:rotate-12 transition-transform"></i>
         <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-brand-dark text-white text-xs font-bold w-7 h-7 flex items-center justify-center rounded-full border-2 border-white">0</span>
     </button>
 
-    <!-- Admin Tools (Aparecen al loguearse) -->
     <div id="admin-fab-group" class="hidden fixed bottom-6 left-6 z-40 flex flex-col gap-3">
         <button onclick="openNewProduct()" class="w-14 h-14 bg-brand-blue text-white rounded-full shadow-xl flex items-center justify-center hover:bg-blue-600 transition tooltip-btn" title="Nuevo Producto">
             <i data-lucide="plus" class="w-7 h-7"></i>
-        </button>
-        <button onclick="openConfigModal()" class="w-10 h-10 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-900 transition tooltip-btn" title="Configuración">
-            <i data-lucide="settings" class="w-5 h-5"></i>
         </button>
     </div>
 
     <!-- MODALES -->
     <div id="modal-overlay" class="fixed inset-0 bg-brand-dark/60 z-[60] hidden backdrop-blur-sm transition-opacity opacity-0" onclick="closeAllModals()"></div>
 
-    <!-- Carrito -->
     <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
         <div class="p-5 border-b flex justify-between items-center bg-gray-50/50 backdrop-blur">
             <h2 class="font-display text-2xl font-bold text-brand-dark">Tu Pedido</h2>
@@ -254,7 +185,6 @@
         </div>
     </div>
 
-    <!-- Producto Form -->
     <div id="product-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 pointer-events-none">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl pointer-events-auto transform scale-95 opacity-0 transition-all duration-300 overflow-hidden" id="product-modal-content">
             <div class="p-6 bg-gradient-to-r from-brand-blue to-brand-darkblue text-white flex justify-between items-center">
@@ -279,16 +209,6 @@
         </div>
     </div>
 
-    <!-- Config Form -->
-    <div id="config-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 pointer-events-none">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl pointer-events-auto p-8 transform scale-95 opacity-0 transition-all duration-300 text-center" id="config-modal-content">
-            <h3 class="font-display text-2xl font-bold text-brand-dark mb-2">Conectar Nube</h3>
-            <p class="text-sm text-gray-500 mb-4">Pega tu llave de Firebase para recuperar tus productos.</p>
-            <textarea id="firebase-config-input" rows="5" class="w-full bg-gray-900 text-green-400 font-mono text-[10px] p-4 rounded-xl mb-4 focus:outline-none" placeholder='{ "apiKey": "..." }'></textarea>
-            <button onclick="saveCloudConfig()" class="w-full btn-gradient text-white font-bold py-4 rounded-xl">Conectar y Recuperar</button>
-        </div>
-    </div>
-
     <script type="module">
         lucide.createIcons();
 
@@ -299,52 +219,42 @@
             { id: 'fontaneria', label: 'Fontanería' }, { id: 'electricidad', label: 'Electricidad' }
         ];
 
-        let MY_FIREBASE_CONFIG = { apiKey: "" };
-        let products = [];
-        let cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [];
-        let currentFilter = 'all';
-        let db, productsCollection, fbFirestore, useCloud = false;
+        // --- LLAVE INCRUSTADA (GLOBAL) ---
+        const GLOBAL_CONFIG = {
+            apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4",
+            authDomain: "catalogoelecpro.firebaseapp.com",
+            projectId: "catalogoelecpro",
+            storageBucket: "catalogoelecpro.firebasestorage.app",
+            messagingSenderId: "847606996266",
+            appId: "1:847606996266:web:7e46736011c7b77afb9253"
+        };
+
+        let products = [], cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [], currentFilter = 'all';
+        let db, productsCollection, fbFirestore;
 
         async function init() {
             renderNav();
             updateCartUI();
             
-            setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader').remove(), 500);
-            }, 1000);
+            // Animacion carga
+            setTimeout(() => { document.getElementById('loader').style.opacity = '0'; setTimeout(() => document.getElementById('loader').remove(), 500); }, 1000);
 
-            const saved = localStorage.getItem('elecpro_firebase_config');
-            if (saved) MY_FIREBASE_CONFIG = JSON.parse(saved);
-            else if (typeof __firebase_config !== 'undefined') MY_FIREBASE_CONFIG = JSON.parse(__firebase_config);
-
-            if (MY_FIREBASE_CONFIG.apiKey) {
-                try {
-                    const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-                    fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    const app = fbApp.initializeApp(MY_FIREBASE_CONFIG);
-                    db = fbFirestore.getFirestore(app);
-                    productsCollection = fbFirestore.collection(db, 'products');
-                    useCloud = true;
-                    showToast("Nube Conectada", "success");
-                    document.getElementById('reconnect-btn').classList.add('hidden'); // Ocultar botón recuperar
-                    fbFirestore.onSnapshot(productsCollection, (snapshot) => {
-                        products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                        renderGrid();
-                    });
-                } catch (e) { useLocalMode(); }
-            } else { useLocalMode(); }
-        }
-
-        function useLocalMode() {
-            useCloud = false;
-            // Mostrar botón de recuperación para que el usuario sepa que puede volver a conectar
-            document.getElementById('reconnect-btn').classList.remove('hidden');
-            
-            const stored = localStorage.getItem('elecpro_db');
-            if (stored) products = JSON.parse(stored);
-            if (products.length === 0) products = [{ id: '1', category: 'herramientas', brand: 'DEMO', title: 'Ejemplo (Conecta la nube)', price: '0', desc: 'Usa el botón rojo abajo para recuperar tus datos.' }];
-            renderGrid();
+            try {
+                const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                const app = fbApp.initializeApp(GLOBAL_CONFIG);
+                db = fbFirestore.getFirestore(app);
+                productsCollection = fbFirestore.collection(db, 'products');
+                
+                showToast("Conectado (Global)", "success");
+                fbFirestore.onSnapshot(productsCollection, (snapshot) => {
+                    products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                    renderGrid();
+                });
+            } catch (e) {
+                console.error(e);
+                alert("Error crítico: No se pudo conectar a la base de datos.");
+            }
         }
 
         // --- RENDER ---
@@ -368,7 +278,7 @@
             document.getElementById('product-count').innerText = `${filtered.length}`;
 
             if(filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-24 opacity-40"><i data-lucide="box" class="w-12 h-12 mx-auto mb-2"></i><p>Sin productos</p></div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-24 opacity-40"><i data-lucide="box" class="w-12 h-12 mx-auto mb-2"></i><p>Cargando productos...</p></div>`;
                 lucide.createIcons(); return;
             }
 
@@ -449,7 +359,6 @@
             if(prompt("Clave Admin:") === "elecpro50") {
                 document.body.classList.add('is-admin');
                 document.getElementById('admin-fab-group').classList.remove('hidden'); document.getElementById('admin-fab-group').classList.add('flex');
-                document.getElementById('reconnect-btn').classList.remove('hidden'); 
                 renderGrid(); showToast("Admin Activado", "success");
             }
         }
@@ -461,21 +370,17 @@
             let img = null; if(file) img = await compressImage(file);
             const item = { brand: document.getElementById('edit-brand').value, title: document.getElementById('edit-title').value, price: document.getElementById('edit-price').value, category: document.getElementById('edit-category').value, desc: document.getElementById('edit-desc').value, updated: new Date().toISOString() };
             try {
-                if(useCloud) {
-                    if(id) { if(img) item.image=img; await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), item); }
-                    else { if(img) item.image=img; await fbFirestore.addDoc(productsCollection, item); }
-                } else { /* Local Fallback */ }
+                if(id) { if(img) item.image=img; await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), item); }
+                else { if(img) item.image=img; await fbFirestore.addDoc(productsCollection, item); }
                 closeAllModals(); showToast("Guardado", "success");
             } catch(e) { alert(e.message); }
             btn.innerText="Guardar"; btn.disabled=false;
         }
-        window.deleteItem = async (id) => { if(confirm("¿Eliminar?")) { if(useCloud) await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id)); } }
+        window.deleteItem = async (id) => { if(confirm("¿Eliminar?")) { await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection, id)); } }
         
         // --- UTILS ---
         window.openModal = (id) => { const o=document.getElementById('modal-overlay'), m=document.getElementById(id), c=document.getElementById(id+'-content'); o.classList.remove('hidden'); setTimeout(()=>o.classList.remove('opacity-0'),10); m.classList.remove('hidden'); setTimeout(()=>{if(c){c.classList.remove('scale-95','opacity-0');c.classList.add('scale-100','opacity-100')}},10); }
-        window.closeAllModals = () => { document.getElementById('modal-overlay').classList.add('opacity-0'); document.getElementById('cart-modal').classList.add('translate-x-full'); document.querySelectorAll('[id$="-content"]').forEach(c=>{c.classList.remove('scale-100','opacity-100');c.classList.add('scale-95','opacity-0')}); setTimeout(()=>{document.getElementById('modal-overlay').classList.add('hidden');document.querySelectorAll('.modal, #product-modal, #config-modal').forEach(m=>m.classList.add('hidden'))},300); }
-        window.openConfigModal = () => openModal('config-modal');
-        window.saveCloudConfig = () => { try { JSON.parse(document.getElementById('firebase-config-input').value); localStorage.setItem('elecpro_firebase_config', document.getElementById('firebase-config-input').value); location.reload(); } catch(e){alert("Error JSON");} }
+        window.closeAllModals = () => { document.getElementById('modal-overlay').classList.add('opacity-0'); document.getElementById('cart-modal').classList.add('translate-x-full'); document.querySelectorAll('[id$="-content"]').forEach(c=>{c.classList.remove('scale-100','opacity-100');c.classList.add('scale-95','opacity-0')}); setTimeout(()=>{document.getElementById('modal-overlay').classList.add('hidden');document.querySelectorAll('.modal, #product-modal').forEach(m=>m.classList.add('hidden'))},300); }
         function showToast(m,t) { const b=document.getElementById('status-bar'); b.innerText=m; b.className=`fixed top-0 w-full text-center py-2 text-white text-xs font-bold z-[100] transition-transform duration-500 ${t==='success'?'bg-green-600':'bg-red-600'}`; b.style.transform='translateY(0)'; setTimeout(()=>b.style.transform='translateY(-100%)',3000); }
         function getCategoryLabel(id) { return CATEGORIES.find(c=>c.id===id)?.label||id; }
         function compressImage(f) { return new Promise(r=>{const rd=new FileReader();rd.readAsDataURL(f);rd.onload=e=>{const i=new Image();i.src=e.target.result;i.onload=()=>{const c=document.createElement('canvas');const ctx=c.getContext('2d');const s=800/i.width;c.width=s<1?800:i.width;c.height=s<1?i.height*s:i.height;ctx.drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',0.8));}}});}
