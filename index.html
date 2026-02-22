@@ -1,25 +1,35 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELECPRO | Materiales y Herramientas</title>
+    <title>ELECPRO | Catálogo de Materiales Eléctricos</title>
     
+    <!-- Script para Modo Oscuro (Evita el parpadeo blanco al cargar) -->
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     <!-- Fuentes Premium -->
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=Teko:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Iconos y Estilos -->
+    <!-- Iconos y Tailwind CSS -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         brand: {
                             blue: '#0044cc', 
-                            darkblue: '#002a80',
+                            darkblue: '#002277',
                             red: '#e62222',  
                             yellow: '#ffcc00', 
                             dark: '#0f172a',
@@ -32,14 +42,14 @@
                         display: ['Teko', 'sans-serif'], 
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.4s ease-out',
-                        'slide-up': 'slideUp 0.3s ease-out',
-                        'float': 'float 4s ease-in-out infinite'
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'float': 'float 5s ease-in-out infinite'
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } }
+                        slideUp: { '0%': { transform: 'translateY(30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } }
                     }
                 }
             }
@@ -47,199 +57,579 @@
     </script>
 
     <style>
-        body { background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
-        .glass-header { background: rgba(255, 255, 255, 0.98); border-bottom: 1px solid rgba(0,0,0,0.06); }
-        .hide-scroll::-webkit-scrollbar { display: none; }
+        body { 
+            background-color: #f8fafc; 
+            -webkit-tap-highlight-color: transparent; 
+            overflow-x: hidden; 
+            transition: background-color 0.3s ease;
+        }
+        .dark body { background-color: #0b1120; }
         
-        /* Efectos Profesionales Tarjetas */
+        /* Efecto Vidrio Premium (Glassmorphism) */
+        .glass-header { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.04); 
+        }
+        .dark .glass-header {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Tarjetas Estilo E-commerce Moderno */
         .product-card {
             background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            border: 1px solid #f1f5f9;
             overflow: hidden;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: flex;
             flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+        .dark .product-card {
+            background: #1e293b;
+            border-color: #334155;
         }
         .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px -8px rgba(0, 68, 204, 0.15);
-            border-color: #93c5fd;
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -10px rgba(0, 68, 204, 0.12);
+            border-color: rgba(0, 68, 204, 0.2);
         }
+        .dark .product-card:hover { box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5); border-color: #3b82f6; }
 
-        /* Botones Corporativos */
+        /* Botones Corporativos Mejorados */
         .btn-primary {
-            background: linear-gradient(135deg, #0044cc 0%, #002a80 100%);
+            background: linear-gradient(135deg, #0044cc 0%, #002277 100%);
             color: white;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
-        .btn-primary:active { transform: scale(0.96); opacity: 0.9; }
+        .btn-primary:hover {
+            box-shadow: 0 8px 20px -6px rgba(0, 68, 204, 0.5);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active { transform: scale(0.97); }
 
-        .search-bar:focus-within { border-color: #0044cc; box-shadow: 0 0 0 3px rgba(0,68,204,0.1); }
-        
+        /* Buscador Moderno */
+        .search-container { transition: all 0.3s ease; }
+        .search-container:focus-within {
+            box-shadow: 0 0 0 4px rgba(0,68,204,0.1);
+            border-color: #0044cc;
+            background-color: #ffffff;
+        }
+        .dark .search-container:focus-within { background-color: #0f172a; }
+
         #loader { z-index: 999999; }
-        #modal-overlay { backdrop-filter: blur(4px); }
+        #modal-overlay { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+        /* Banner Principal Premium */
+        .hero-banner-bg {
+            background-image: linear-gradient(135deg, rgba(0, 34, 119, 0.92) 0%, rgba(0, 68, 204, 0.8) 100%), 
+                              url('https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+        }
+        .dark .hero-banner-bg {
+            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(0, 34, 119, 0.9) 100%), 
+                              url('https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&q=80&w=1600');
+        }
+
+        /* Imágenes Decorativas Laterales (Difuminadas Elegantes) */
+        .side-decoration {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 25vw;
+            max-width: 450px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(30%) contrast(110%);
+        }
+        .dark .side-decoration { opacity: 0.05; }
+        .side-left { 
+            left: 0; 
+            background-image: url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=800'); 
+            -webkit-mask-image: linear-gradient(to right, black, transparent);
+            mask-image: linear-gradient(to right, black, transparent);
+        }
+        .side-right { 
+            right: 0; 
+            background-image: url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800'); 
+            -webkit-mask-image: linear-gradient(to left, black, transparent);
+            mask-image: linear-gradient(to left, black, transparent);
+        }
+
+        /* Whatsapp Dual Float */
+        .wa-menu {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(20px);
+        }
+        .wa-container:hover .wa-menu {
+            max-height: 200px;
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
-<body class="text-brand-dark antialiased pb-24">
+<body class="text-brand-dark dark:text-gray-200 antialiased pb-24">
 
-    <!-- 1. PANTALLA DE CARGA -->
-    <div id="loader" class="fixed inset-0 bg-white flex flex-col justify-center items-center transition-opacity duration-500">
-        <div class="relative">
-            <h1 class="font-display text-7xl md:text-8xl font-bold text-brand-blue leading-none tracking-tighter">ELEC<span class="text-brand-red">PRO</span></h1>
-            <i data-lucide="zap" class="absolute -right-6 -top-2 w-10 h-10 text-brand-yellow animate-bounce"></i>
+    <!-- DECORACIONES LATERALES (Solo en pantallas grandes) -->
+    <div class="side-decoration side-left hidden 2xl:block"></div>
+    <div class="side-decoration side-right hidden 2xl:block"></div>
+
+    <!-- 1. PANTALLA DE CARGA (Minimalista) -->
+    <div id="loader" class="fixed inset-0 bg-brand-light dark:bg-gray-900 flex flex-col justify-center items-center transition-opacity duration-700">
+        <div class="relative flex items-center justify-center w-24 h-24 bg-white dark:bg-gray-800 rounded-3xl shadow-xl mb-6">
+            <span class="font-display font-bold text-6xl text-brand-blue dark:text-blue-400 mt-2">E</span>
+            <div class="absolute inset-0 border-4 border-brand-blue/20 rounded-3xl animate-ping opacity-20"></div>
         </div>
-        <div class="mt-4 text-xs md:text-sm font-bold tracking-[0.3em] text-gray-400">INICIANDO CATÁLOGO</div>
+        <h1 class="font-display text-4xl font-bold text-brand-dark dark:text-white tracking-wide">ELEC<span class="text-brand-red">PRO</span></h1>
+        <div class="mt-2 w-32 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div class="w-full h-full bg-brand-blue origin-left animate-[scaleX_1s_ease-in-out_infinite] scale-x-0"></div>
+        </div>
     </div>
 
-    <!-- 2. HEADER CORPORATIVO CON BUSCADOR -->
+    <!-- 2. HEADER MODERNO -->
     <header class="fixed top-0 w-full z-40 glass-header shadow-sm transition-all">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap lg:flex-nowrap items-center justify-between gap-4">
             
             <!-- Logo -->
-            <div class="flex items-center cursor-pointer flex-shrink-0" onclick="window.scrollTo(0,0)">
-                <div class="w-10 h-10 bg-brand-blue rounded-xl flex items-center justify-center text-white shadow-md">
+            <div class="flex items-center cursor-pointer flex-shrink-0 group" onclick="window.scrollTo(0,0)">
+                <div class="w-11 h-11 bg-brand-blue rounded-xl flex items-center justify-center text-white shadow-lg group-hover:bg-brand-darkblue transition-colors">
                     <span class="font-display font-bold text-2xl mt-1">E</span>
                 </div>
                 <div class="ml-3 leading-none hidden sm:block">
-                    <span class="block font-display font-bold text-2xl text-brand-blue tracking-tight">ELECPRO</span>
-                    <span class="block text-[10px] font-bold text-gray-500 tracking-widest uppercase">Distribuidor Autorizado</span>
+                    <span class="block font-display font-bold text-2xl text-gray-900 dark:text-white tracking-tight">ELECPRO</span>
+                    <span class="block text-[10px] font-bold text-gray-400 dark:text-gray-400 tracking-widest uppercase mt-0.5">Distribuidor Oficial</span>
                 </div>
             </div>
 
             <!-- Buscador Central -->
             <div class="flex-grow order-3 lg:order-none w-full lg:w-auto max-w-2xl">
-                <div class="relative search-bar bg-gray-100 border border-transparent rounded-full flex items-center px-4 py-2 transition-all">
+                <div class="search-container relative bg-gray-100/80 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl flex items-center px-4 py-2.5">
                     <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
-                    <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Buscar herramientas, cables, marcas..." class="w-full bg-transparent border-none outline-none px-3 text-sm text-gray-700 placeholder-gray-400">
-                    <button id="clear-search" onclick="clearSearch()" class="hidden text-gray-400 hover:text-brand-red"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
+                    <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Buscar productos, herramientas, marcas..." class="w-full bg-transparent border-none outline-none px-3 text-sm font-medium text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500">
+                    <button id="clear-search" onclick="clearSearch()" class="hidden text-gray-400 hover:text-brand-red transition-colors"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
                 </div>
             </div>
 
-            <!-- Carrito -->
-            <button onclick="toggleCart()" class="relative p-2.5 rounded-xl bg-gray-50 border border-gray-100 hover:bg-gray-100 transition flex-shrink-0">
-                <i data-lucide="shopping-cart" class="w-6 h-6 text-brand-dark"></i>
-                <span id="header-cart-count" class="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm scale-0 transition-transform">0</span>
-            </button>
+            <!-- Botones Header (Dark Mode, Nosotros y Carrito) -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <!-- Toggle Dark Mode -->
+                <button id="theme-toggle" class="p-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all text-gray-600 dark:text-gray-300">
+                    <i id="theme-toggle-dark-icon" data-lucide="moon" class="hidden w-5 h-5"></i>
+                    <i id="theme-toggle-light-icon" data-lucide="sun" class="hidden w-5 h-5"></i>
+                </button>
+
+                <button onclick="document.getElementById('about-us').scrollIntoView({behavior: 'smooth'})" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-blue dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors">
+                    <i data-lucide="users" class="w-4 h-4"></i> Nosotros
+                </button>
+
+                <button onclick="toggleCart()" class="relative p-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-brand-blue/30 dark:hover:border-blue-500/50 transition-all group">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-brand-blue dark:group-hover:text-blue-400 transition-colors"></i>
+                    <span id="header-cart-count" class="absolute -top-2 -right-2 bg-brand-red text-white text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full shadow-md scale-0 transition-transform">0</span>
+                </button>
+            </div>
         </div>
 
         <!-- Categorías -->
-        <div class="border-t border-gray-100/50 bg-white/50">
-            <nav class="max-w-7xl mx-auto px-4 py-2 overflow-x-auto hide-scroll flex gap-2" id="cat-nav"></nav>
+        <div class="border-t border-gray-100/50 dark:border-gray-800/50 bg-white/40 dark:bg-gray-900/40">
+            <nav class="max-w-7xl mx-auto px-4 py-3 overflow-x-auto hide-scroll flex gap-2 items-center" id="cat-nav"></nav>
         </div>
     </header>
 
     <!-- NOTIFICACIONES TOAST -->
-    <div id="toast" class="fixed top-32 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-full shadow-2xl z-[100] text-sm font-bold transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px] flex items-center gap-2">
-        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i> <span id="toast-msg">Hecho</span>
+    <div id="toast" class="fixed top-36 left-1/2 transform -translate-x-1/2 bg-gray-900/95 dark:bg-white/95 backdrop-blur text-white dark:text-gray-900 px-6 py-3.5 rounded-2xl shadow-2xl z-[100] text-sm font-semibold transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px] flex items-center gap-3 border border-gray-700 dark:border-gray-200">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 dark:text-green-600"></i> <span id="toast-msg">Completado</span>
     </div>
 
-    <!-- 3. MAIN (CATÁLOGO) -->
-    <main class="max-w-7xl mx-auto px-4 pt-44 md:pt-36 min-h-screen">
+    <!-- 3. MAIN -->
+    <main class="max-w-7xl mx-auto px-4 pt-48 md:pt-40 min-h-screen relative z-10">
         
-        <!-- Banner Corporativo -->
-        <div id="hero-banner" class="relative bg-brand-darkblue rounded-3xl p-8 md:p-12 mb-8 text-white shadow-xl overflow-hidden animate-fade-in flex items-center justify-between">
-            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
-            <div class="absolute top-0 right-0 w-64 h-64 bg-brand-blue rounded-full blur-[80px] opacity-60"></div>
+        <!-- Banner Corporativo Premium -->
+        <div id="hero-banner" class="relative hero-banner-bg rounded-[2rem] p-8 md:p-14 mb-12 text-white shadow-2xl overflow-hidden animate-fade-in flex items-center justify-between">
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-darkblue/80 dark:from-slate-900/90 to-transparent"></div>
             
-            <div class="relative z-10 max-w-xl">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 mb-4 animate-float">
-                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    <span class="text-[10px] font-bold tracking-widest uppercase text-white">Catálogo 2026 Actualizado</span>
+            <div class="relative z-10 max-w-2xl">
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 mb-6 animate-float shadow-lg">
+                    <span class="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></span>
+                    <span class="text-xs font-bold tracking-widest uppercase text-white">Equipamiento 2026</span>
                 </div>
-                <h2 class="font-display text-4xl md:text-6xl font-bold mb-3 leading-none tracking-tight">
-                    CALIDAD <span class="text-brand-yellow">INDUSTRIAL</span> A TU ALCANCE
+                <h2 class="font-display text-5xl md:text-7xl font-bold mb-4 leading-none tracking-tight text-white drop-shadow-md">
+                    SOLUCIONES <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">INDUSTRIALES</span>
                 </h2>
-                <p class="text-blue-100 text-sm md:text-base leading-relaxed mb-6 opacity-90">Somos distribuidores de las mejores marcas de ferretería y electricidad para proyectos residenciales e industriales.</p>
+                <p class="text-blue-50/90 text-sm md:text-lg leading-relaxed mb-8 max-w-lg font-medium drop-shadow-sm">Proveedor autorizado de herramientas y material eléctrico de alto rendimiento para profesionales y proyectos exigentes.</p>
+                
+                <button onclick="document.getElementById('catalog-grid').scrollIntoView({behavior: 'smooth', block: 'start'})" class="bg-white text-brand-blue font-bold px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-colors shadow-lg flex items-center gap-2">
+                    Ver Catálogo <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                </button>
             </div>
             
-            <i data-lucide="hard-hat" class="hidden md:block w-40 h-40 text-white/10 relative z-10 mr-10 transform rotate-12"></i>
+            <div class="hidden lg:block relative z-10 mr-8">
+                <div class="w-48 h-48 border-4 border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <i data-lucide="zap" class="w-20 h-20 text-brand-yellow drop-shadow-lg"></i>
+                </div>
+            </div>
         </div>
 
-        <!-- Encabezado de Sección -->
-        <div class="flex justify-between items-end mb-5 border-b border-gray-200 pb-2 mt-4">
-            <h3 class="font-display text-2xl md:text-3xl font-bold text-brand-dark" id="section-title">Todos los Productos</h3>
-            <span class="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full" id="product-count">0</span>
+        <!-- Encabezado Catálogo -->
+        <div class="flex justify-between items-end mb-6 border-b border-gray-200 dark:border-gray-800 pb-3 mt-4 relative z-10">
+            <div>
+                <h3 class="font-display text-3xl md:text-4xl font-bold text-gray-900 dark:text-white" id="section-title">Inventario Disponible</h3>
+                <p class="text-sm font-medium text-gray-400 mt-1">Precios exclusivos web</p>
+            </div>
+            <span class="text-xs font-bold text-brand-blue dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 px-3 py-1.5 rounded-full shadow-sm" id="product-count">0 Items</span>
         </div>
 
         <!-- GRID DE PRODUCTOS -->
-        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-5 pb-10">
-            <!-- Los productos se inyectan aquí -->
+        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 pb-16 relative z-10">
+            <!-- Inyección de JavaScript -->
         </div>
 
+        <!-- ================= PLANES DE MANTENIMIENTO ================= -->
+        <section id="planes" class="mt-8 mb-16 relative z-10">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full text-brand-blue dark:text-blue-400 font-bold text-xs uppercase tracking-widest mb-4">
+                    <i data-lucide="settings" class="w-4 h-4"></i> Servicios Corporativos
+                </div>
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">Planes de Mantenimiento</h2>
+                <p class="text-gray-500 dark:text-gray-400 mt-2 max-w-xl mx-auto">Asegura la continuidad de tus operaciones con nuestros contratos de mantenimiento especializado.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <!-- Plan 1 -->
+                <div class="bg-white dark:bg-slate-800 rounded-[2rem] p-8 border border-gray-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden group">
+                    <div class="w-14 h-14 bg-blue-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 rounded-2xl flex items-center justify-center mb-6"><i data-lucide="wind" class="w-7 h-7"></i></div>
+                    <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-2">Climatización Básico</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Ideal para residencias y oficinas pequeñas. Mantenimiento preventivo.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-600 dark:text-gray-300">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Limpieza de filtros y serpentines</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Medición de gas refrigerante</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Revisión eléctrica del equipo</li>
+                    </ul>
+                    <button onclick="window.open('https://wa.me/50587600225?text=Hola,%20deseo%20cotizar%20el%20Plan%20de%20Climatización%20Básico', '_blank')" class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Cotizar Plan</button>
+                </div>
+
+                <!-- Plan 2 (Destacado) -->
+                <div class="bg-brand-darkblue dark:bg-brand-dark rounded-[2rem] p-8 border border-blue-800 dark:border-blue-900 shadow-2xl relative overflow-hidden transform md:-translate-y-4">
+                    <div class="absolute top-0 right-0 bg-brand-yellow text-brand-dark text-[10px] font-bold px-4 py-1 rounded-bl-xl uppercase tracking-widest">Recomendado</div>
+                    <div class="w-14 h-14 bg-white/10 text-brand-yellow rounded-2xl flex items-center justify-center mb-6"><i data-lucide="power" class="w-7 h-7"></i></div>
+                    <h3 class="font-bold text-xl text-white mb-2">Industrial Preventivo</h3>
+                    <p class="text-sm text-blue-100 mb-6">Cobertura total para generadores, tableros y sistemas críticos.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-white/90">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-yellow"></i> Mantenimiento de Generadores</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-yellow"></i> Revisión de Tableros Eléctricos</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-yellow"></i> Inspección de Redes de Tierra</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-yellow"></i> Visitas programadas mensuales</li>
+                    </ul>
+                    <button onclick="window.open('https://wa.me/50587600225?text=Hola,%20deseo%20cotizar%20el%20Plan%20Industrial%20Preventivo%20para%20mi%20empresa', '_blank')" class="w-full py-3 rounded-xl bg-brand-yellow text-brand-dark font-bold hover:bg-white transition-colors">Solicitar Evaluación</button>
+                </div>
+
+                <!-- Plan 3 -->
+                <div class="bg-white dark:bg-slate-800 rounded-[2rem] p-8 border border-gray-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
+                    <div class="w-14 h-14 bg-red-50 dark:bg-red-900/30 text-brand-red rounded-2xl flex items-center justify-center mb-6"><i data-lucide="zap" class="w-7 h-7"></i></div>
+                    <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-2">Emergencia 24/7</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Soporte técnico inmediato para fallas y apagones inesperados.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-600 dark:text-gray-300">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Atención técnica prioritaria</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Diagnóstico electromecánico</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500"></i> Reparaciones correctivas en el lugar</li>
+                    </ul>
+                    <button onclick="window.open('https://wa.me/17472703016?text=Hola,%20necesito%20Soporte%20Técnico%20de%20Emergencia', '_blank')" class="w-full py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex justify-center items-center gap-2">Contactar Soporte <span class="text-[11px] font-extrabold bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 px-2 py-0.5 rounded-md text-brand-dark dark:text-white">+1 (747) 270-3016</span></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= GALERÍA DE PROYECTOS ================= -->
+        <section id="galeria" class="mt-16 mb-16 relative z-10">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="font-display text-4xl font-bold text-gray-900 dark:text-white">Proyectos Realizados</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Nuestra calidad en acción</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Imagen 1 -->
+                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md">
+                    <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Proyecto Industrial">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-5">
+                        <p class="text-brand-yellow text-[10px] font-bold uppercase tracking-widest mb-1">Industrial</p>
+                        <h4 class="text-white font-bold text-lg leading-tight">Montaje de Paneles y Líneas de Fuerza</h4>
+                    </div>
+                </div>
+                <!-- Imagen 2 -->
+                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md">
+                    <img src="https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Proyecto Comercial">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-5">
+                        <p class="text-brand-yellow text-[10px] font-bold uppercase tracking-widest mb-1">Comercial</p>
+                        <h4 class="text-white font-bold text-lg leading-tight">Instalaciones de Tuberías Eléctricas</h4>
+                    </div>
+                </div>
+                <!-- Imagen 3 -->
+                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md">
+                    <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Mantenimiento">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-5">
+                        <p class="text-brand-yellow text-[10px] font-bold uppercase tracking-widest mb-1">Mantenimiento</p>
+                        <h4 class="text-white font-bold text-lg leading-tight">Gabinetes y Transferencias Automáticas</h4>
+                    </div>
+                </div>
+                <!-- Imagen 4 -->
+                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Proyectos Especializados">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity"></div>
+                    <div class="absolute bottom-0 left-0 p-5">
+                        <p class="text-brand-yellow text-[10px] font-bold uppercase tracking-widest mb-1">Especializado</p>
+                        <h4 class="text-white font-bold text-lg leading-tight">Redes de Tierra y Pararrayos</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECCIÓN QUIÉNES SOMOS ================= -->
+        <section id="about-us" class="mt-8 mb-16 relative z-10 bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl border border-gray-100 dark:border-slate-700 p-8 md:p-14 overflow-hidden animate-fade-in">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-brand-blue/5 dark:bg-brand-blue/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full text-brand-blue dark:text-blue-400 font-bold text-xs uppercase tracking-widest mb-4">
+                        <i data-lucide="info" class="w-4 h-4"></i> Sobre Nosotros
+                    </div>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                        Expertos en <span class="text-brand-blue dark:text-blue-400">Electricidad y Electromecánica</span>
+                    </h2>
+                    
+                    <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-base md:text-lg">
+                        Fundada el <strong>25 de febrero de 2012</strong>, <span class="text-brand-dark dark:text-white font-bold">ELECPRO</span> se ha consolidado como una empresa líder especializada en servicios eléctricos de baja tensión, tanto en entornos industriales como residenciales.
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-base md:text-lg">
+                        Nos destacamos por nuestro compromiso inquebrantable con la <strong>puntualidad, la calidad y la eficiencia</strong>. Nuestro enfoque se centra en ofrecer soluciones efectivas y personalizadas a las empresas que confían en nosotros.
+                    </p>
+
+                    <!-- Clientes -->
+                    <div class="bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-slate-700 rounded-2xl p-6 mb-6">
+                        <h3 class="font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
+                            <i data-lucide="briefcase" class="w-5 h-5 text-brand-red"></i> Empresas que confían en nosotros
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm">PUMA</span>
+                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm">Claro</span>
+                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm">Banco LaFise</span>
+                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm">Alfa Servicio</span>
+                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm">Construcciones Gaitán</span>
+                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm">Reingesa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Servicios -->
+                <div>
+                    <h3 class="font-display text-3xl font-bold text-gray-900 dark:text-white mb-6">Nuestros Servicios</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg"><i data-lucide="server" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Tableros y Controles</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Montaje de tableros eléctricos y electromecánicos.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg"><i data-lucide="power" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Generadores</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Instalación y transferencias automáticas.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg"><i data-lucide="fuel" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Gasolineras</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Sistemas eléctricos para combustibles.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Redes de Tierra</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Instalación de tierras y pararrayos.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg"><i data-lucide="wind" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Aires Acondicionados</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Mantenimiento preventivo y correctivo.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg"><i data-lucide="sun" class="w-5 h-5"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Sistemas Solares</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Instalación de paneles fotovoltaicos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila de Contacto (Directorio) -->
+            <div class="mt-10 border-t border-gray-100 dark:border-slate-700 pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-brand-blue dark:bg-blue-600 text-white flex items-center justify-center"><i data-lucide="user" class="w-5 h-5"></i></div>
+                    <div>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase">Gerente Propietario</p>
+                        <p class="text-gray-900 dark:text-white font-bold">David Otero Solís</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center"><i data-lucide="phone" class="w-5 h-5"></i></div>
+                    <div>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase">Soporte Técnico</p>
+                        <p class="text-gray-900 dark:text-white font-bold">+1 (747) 270-3016</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-brand-blue dark:bg-blue-600 text-white flex items-center justify-center"><i data-lucide="mail" class="w-5 h-5"></i></div>
+                    <div>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase">Correo Electrónico</p>
+                        <p class="text-gray-900 dark:text-white font-bold">elecpro505@gmail.com</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-brand-blue dark:bg-blue-600 text-white flex items-center justify-center"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+                    <div>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase">Dirección Principal</p>
+                        <p class="text-gray-900 dark:text-white font-bold text-sm">Parqueo de las Ferreterías, Costado Sur, Mercado Roberto Huembes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- 4. FOOTER -->
-    <footer class="mt-10 border-t border-gray-200 bg-white py-12">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-2">
-            <div class="flex items-center gap-2 opacity-50 mb-2">
-                <div class="w-8 h-8 bg-gray-300 rounded flex items-center justify-center text-white font-display text-xl">E</div>
-                <span class="font-display font-bold text-xl tracking-wide">ELECPRO</span>
+    <!-- 4. FOOTER PROFESIONAL -->
+    <footer class="mt-12 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-4 text-center">
+            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-brand-blue dark:text-blue-400 font-display text-2xl mb-2">E</div>
+            <div>
+                <h4 class="font-display text-2xl font-bold text-gray-800 dark:text-white">ELECPRO</h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Suministros Eléctricos, Ferretería y Mano de Obra</p>
             </div>
-            <p class="text-xs text-gray-400">© 2026. Distribución de Materiales Eléctricos.</p>
-            <button onclick="login()" class="text-gray-300 hover:text-brand-blue transition p-2 mt-4"><i data-lucide="lock" class="w-4 h-4"></i></button>
+            <p class="text-xs text-gray-400 dark:text-gray-600 mt-4">© 2026 Elecpro Nicaragua. Todos los derechos reservados.</p>
+            
+            <button onclick="login()" class="text-gray-300 dark:text-gray-700 hover:text-brand-blue dark:hover:text-blue-500 transition-colors p-3 mt-4 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800" title="Acceso Panel Administrativo"><i data-lucide="lock" class="w-4 h-4"></i></button>
         </div>
     </footer>
 
-    <!-- 5. BOTONES FLOTANTES -->
-    <button id="cart-fab" onclick="toggleCart()" class="fixed bottom-6 right-5 w-14 h-14 md:w-16 md:h-16 bg-brand-red text-white rounded-2xl shadow-2xl flex items-center justify-center z-30 hidden transition-transform active:scale-90">
-        <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-        <span id="fab-cart-count" class="absolute -top-1 -right-1 bg-brand-dark text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white">0</span>
+    <!-- ================= BOTONES FLOTANTES DE ACCIÓN ================= -->
+    
+    <!-- Botón de Carrito (Productos) -->
+    <button id="cart-fab" onclick="toggleCart()" class="fixed bottom-8 right-6 w-16 h-16 bg-brand-red text-white rounded-2xl shadow-[0_10px_25px_rgba(230,34,34,0.4)] flex items-center justify-center z-30 hidden transition-transform hover:scale-105 active:scale-95 group">
+        <i data-lucide="shopping-bag" class="w-7 h-7 group-hover:-rotate-12 transition-transform"></i>
+        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-brand-dark text-white text-xs font-bold w-7 h-7 flex items-center justify-center rounded-full border-[3px] border-white shadow-sm">0</span>
     </button>
 
-    <button id="admin-add-btn" onclick="openNewProduct()" class="hidden fixed bottom-6 left-6 w-14 h-14 bg-brand-blue text-white rounded-full shadow-xl items-center justify-center z-30 active:scale-90">
+    <!-- Botón Dual WhatsApp (Servicios / Soporte) -->
+    <div class="fixed bottom-8 left-6 z-30 flex flex-col items-start wa-container">
+        <!-- Menú Expandible -->
+        <div class="wa-menu flex flex-col gap-2 mb-3 ml-2">
+            <button onclick="window.open('https://wa.me/50587600225?text=Hola,%20deseo%20cotizar%20un%20proyecto%20o%20servicio%20eléctrico', '_blank')" class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-xl px-4 py-3 rounded-2xl text-sm font-bold text-gray-800 dark:text-white flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
+                <i data-lucide="hard-hat" class="w-5 h-5 text-brand-blue dark:text-blue-400"></i> Cotizar Proyecto
+            </button>
+            <button onclick="window.open('https://wa.me/17472703016?text=Hola,%20necesito%20soporte%20técnico', '_blank')" class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-xl px-4 py-3 rounded-2xl text-sm font-bold text-gray-800 dark:text-white flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
+                <i data-lucide="tool" class="w-5 h-5 text-brand-red"></i> 
+                <div class="flex flex-col items-start leading-none text-left">
+                    <span>Soporte Técnico</span>
+                    <span class="text-[11px] text-gray-500 dark:text-gray-400 mt-1 font-extrabold">+1 (747) 270-3016</span>
+                </div>
+            </button>
+        </div>
+        <!-- Botón Principal Flotante (Icono de Chat) -->
+        <button class="w-16 h-16 bg-[#25D366] text-white rounded-full shadow-[0_10px_25px_rgba(37,211,102,0.4)] flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+            <i data-lucide="message-circle" class="w-8 h-8"></i>
+        </button>
+    </div>
+
+    <!-- Botón Añadir Admin -->
+    <button id="admin-add-btn" onclick="openNewProduct()" class="hidden fixed bottom-28 left-6 w-14 h-14 bg-brand-dark dark:bg-white dark:text-brand-dark text-white rounded-full shadow-xl items-center justify-center z-30 active:scale-95 hover:bg-brand-blue transition-colors">
         <i data-lucide="plus" class="w-6 h-6"></i>
     </button>
 
-    <!-- ================= SISTEMA DE MODALES SIMPLIFICADO ================= -->
+    <!-- ================= SISTEMA DE MODALES ================= -->
 
-    <!-- Fondo Oscuro -->
-    <div id="modal-overlay" onclick="closeAllModals()" class="fixed inset-0 bg-gray-900/60 z-[50] hidden transition-opacity duration-300 opacity-0"></div>
+    <div id="modal-overlay" onclick="closeAllModals()" class="fixed inset-0 bg-brand-dark/40 dark:bg-black/60 z-[50] hidden transition-opacity duration-300 opacity-0"></div>
 
     <!-- MODAL CARRITO -->
-    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
-        <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-white">
+    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-slate-900 z-[70] transform translate-x-full transition-transform duration-300 shadow-[0_0_40px_rgba(0,0,0,0.1)] flex flex-col">
+        <div class="p-6 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
             <div>
-                <h2 class="font-display text-2xl font-bold text-brand-dark leading-none">Tu Presupuesto</h2>
-                <p class="text-xs text-gray-500 font-medium mt-1">Cotización sin compromiso</p>
+                <h2 class="font-display text-3xl font-bold text-gray-900 dark:text-white leading-none">Tu Cotización</h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1.5 flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3 text-green-500"></i> Solicitud rápida y segura</p>
             </div>
-            <button onclick="toggleCart()" class="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-500 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <button onclick="toggleCart()" class="p-2.5 bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full text-gray-500 dark:text-gray-300 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         
-        <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/50"></div>
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50/50 dark:bg-slate-900/50"></div>
         
-        <div class="p-6 border-t border-gray-100 bg-white z-10">
-            <div class="flex justify-between items-end mb-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                <span class="text-gray-600 font-bold text-sm">TOTAL ESTIMADO</span>
-                <span id="cart-total" class="font-display text-3xl font-bold text-brand-blue leading-none">C$ 0</span>
+        <div class="p-6 border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] z-10">
+            <div class="flex justify-between items-end mb-5 bg-gray-50 dark:bg-slate-800 p-5 rounded-2xl border border-gray-100 dark:border-slate-700">
+                <span class="text-gray-500 dark:text-gray-400 font-bold text-xs tracking-wider uppercase">Total Estimado</span>
+                <span id="cart-total" class="font-display text-4xl font-bold text-brand-blue dark:text-blue-400 leading-none">C$ 0</span>
             </div>
-            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-600 transition flex justify-center items-center gap-2 btn-primary">
-                <i data-lucide="message-circle" class="w-5 h-5"></i>
-                <span>Enviar pedido por WhatsApp</span>
+            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white font-bold py-4 rounded-xl shadow-[0_8px_20px_rgba(37,211,102,0.3)] hover:bg-[#1ebd57] transition-all hover:-translate-y-1 flex justify-center items-center gap-2.5 text-lg">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+                <span>Enviar cotización</span>
             </button>
         </div>
     </div>
 
     <!-- MODAL EDITOR (Admin) -->
     <div id="product-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300 scale-95 opacity-0">
-            <div class="p-4 bg-brand-dark text-white flex justify-between items-center rounded-t-2xl">
-                <h3 class="font-bold flex items-center gap-2 text-sm"><i data-lucide="database" class="w-4 h-4"></i> Gestor de Inventario</h3>
-                <button onclick="closeAllModals()" class="hover:text-red-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300 scale-95 opacity-0">
+            <div class="p-5 md:p-6 bg-brand-dark dark:bg-slate-900 text-white flex justify-between items-center rounded-t-[2rem]">
+                <h3 class="font-bold flex items-center gap-2 text-sm"><i data-lucide="box" class="w-4 h-4"></i> Gestor de Producto</h3>
+                <button onclick="closeAllModals()" class="hover:text-red-400 bg-white/10 p-2 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
-            <div class="p-5 space-y-4 overflow-y-auto bg-gray-50">
+            <div class="p-6 space-y-4 overflow-y-auto bg-gray-50 dark:bg-slate-800 hide-scroll">
                 <input type="hidden" id="edit-id">
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-[10px] font-bold text-gray-500 mb-1 block">CATEGORÍA</label><select id="edit-category" class="w-full p-2.5 border rounded-lg text-sm outline-none focus:border-brand-blue bg-white"></select></div>
-                    <div><label class="text-[10px] font-bold text-gray-500 mb-1 block">MARCA</label><input id="edit-brand" class="w-full p-2.5 border rounded-lg text-sm outline-none focus:border-brand-blue bg-white"></div>
+                
+                <div class="flex items-center gap-2 bg-blue-50 dark:bg-slate-700 p-3 rounded-xl border border-blue-100 dark:border-slate-600 mb-2">
+                    <input type="checkbox" id="edit-bestseller" class="w-5 h-5 rounded border-gray-300 text-brand-blue focus:ring-brand-blue cursor-pointer">
+                    <label for="edit-bestseller" class="text-sm font-bold text-gray-800 dark:text-white cursor-pointer flex items-center gap-2">
+                        <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Marcar como "Más Vendido"
+                    </label>
                 </div>
-                <div><label class="text-[10px] font-bold text-gray-500 mb-1 block">NOMBRE</label><input id="edit-title" class="w-full p-2.5 border rounded-lg font-bold text-gray-800 outline-none focus:border-brand-blue bg-white"></div>
-                <div><label class="text-[10px] font-bold text-gray-500 mb-1 block">PRECIO (C$)</label><input id="edit-price" type="number" class="w-full p-2.5 border rounded-lg font-bold text-brand-blue outline-none focus:border-brand-blue bg-white"></div>
-                <div><label class="text-[10px] font-bold text-gray-500 mb-1 block">DESCRIPCIÓN</label><textarea id="edit-desc" rows="3" class="w-full p-2.5 border rounded-lg text-sm outline-none focus:border-brand-blue bg-white"></textarea></div>
-                <div class="border border-dashed border-gray-300 rounded-lg p-3 bg-white"><input type="file" id="edit-image" accept="image/*" class="w-full text-xs text-gray-500"></div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Categoría</label><select id="edit-category" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all"></select></div>
+                    <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Marca</label><input id="edit-brand" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all" placeholder="Ej: Dong Cheng"></div>
+                </div>
+                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Nombre</label><input id="edit-title" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl font-bold text-gray-800 dark:text-white outline-none focus:border-brand-blue bg-white dark:bg-slate-700 transition-all" placeholder="Ej: Taladro Percutor"></div>
+                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Precio (C$)</label><input id="edit-price" type="number" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl font-bold text-brand-blue dark:text-blue-400 text-lg outline-none focus:border-brand-blue bg-white dark:bg-slate-700 transition-all" placeholder="0.00"></div>
+                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Descripción</label><textarea id="edit-desc" rows="3" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all" placeholder="Especificaciones técnicas..."></textarea></div>
+                <div class="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 bg-white dark:bg-slate-700 hover:border-brand-blue transition-colors group cursor-pointer relative">
+                    <input type="file" id="edit-image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <div class="flex flex-col items-center justify-center text-gray-400 group-hover:text-brand-blue">
+                        <i data-lucide="upload-cloud" class="w-6 h-6 mb-2"></i>
+                        <span class="text-xs font-semibold">Subir Fotografía</span>
+                    </div>
+                </div>
             </div>
-            <div class="p-4 border-t bg-white flex gap-2">
-                <button onclick="saveProduct()" id="btn-save" class="w-full btn-primary py-3 rounded-xl font-bold text-white text-sm">Guardar Producto</button>
+            <div class="p-5 border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-900 flex gap-3 rounded-b-[2rem]">
+                <button onclick="closeAllModals()" class="w-1/3 py-3 rounded-xl font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-sm transition-colors">Cancelar</button>
+                <button onclick="saveProduct()" id="btn-save" class="w-2/3 btn-primary py-3 rounded-xl font-bold text-white shadow-lg text-sm">Guardar Cambios</button>
             </div>
         </div>
     </div>
@@ -248,20 +638,38 @@
     <script type="module">
         lucide.createIcons();
 
+        // Lógica Modo Oscuro
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (document.documentElement.classList.contains('dark')) { lightIcon.classList.remove('hidden'); } 
+        else { darkIcon.classList.remove('hidden'); }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden'); lightIcon.classList.toggle('hidden');
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark'); localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark'); localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        // Configuración Base de Datos
         const GLOBAL_CONFIG = { apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4", authDomain: "catalogoelecpro.firebaseapp.com", projectId: "catalogoelecpro", storageBucket: "catalogoelecpro.firebasestorage.app", messagingSenderId: "847606996266", appId: "1:847606996266:web:7e46736011c7b77afb9253" };
         const CATEGORIES = [
-            {id:'all',label:'Todos'},{id:'herramientas',label:'Herramientas'},{id:'iluminacion',label:'Iluminación'},
+            {id:'all',label:'Mostrar Todo'},{id:'herramientas',label:'Herramientas'},{id:'iluminacion',label:'Iluminación'},
             {id:'hogar',label:'Hogar'},{id:'ferreteria',label:'Ferretería'},{id:'electronica',label:'Electrónica'},
             {id:'industrial',label:'Industrial'},{id:'construccion',label:'Construcción'},{id:'pinturas',label:'Pinturas'},
             {id:'fontaneria',label:'Fontanería'},{id:'electricidad',label:'Electricidad'}
         ];
 
         const PDF_PRODUCTS = [
-            { id: 'p1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro Impacto DZJ16', price: '2450', desc: '16mm (5/8"). Potencia 600W. Uso Industrial. Excelente durabilidad.', image: '' },
-            { id: 'p2', category: 'hogar', brand: 'ORIX', title: 'Extractor Aire 10"', price: '850', desc: 'Alta eficiencia y bajo ruido. Ideal para mantener ventilados baños y cocinas.', image: '' },
-            { id: 'p3', category: 'electricidad', brand: 'ELECPRO', title: 'Protector Voltaje V199', price: '450', desc: '1000W. Protege tus equipos contra variaciones de voltaje.', image: '' },
-            { id: 'p4', category: 'fontaneria', brand: 'ZLHF', title: 'Válvula Lujo 104', price: '320', desc: 'Acabado cromado anticorrosión. Calidad Premium garantizada.', image: '' },
-            { id: 'p5', category: 'ferreteria', brand: 'LOCK', title: 'Cerradura Max 398', price: '580', desc: 'Cerradura de sobreponer. Doble pestillo de seguridad para máxima protección.', image: '' }
+            { id: 'p1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro Impacto Industrial DZJ16', price: '2450', desc: '16mm (5/8"). Potencia 600W. Diseño ergonómico para uso rudo y continuo en construcción.', image: '', bestseller: true },
+            { id: 'p2', category: 'hogar', brand: 'ORIX', title: 'Extractor de Aire Premium 10"', price: '850', desc: 'Alta eficiencia y motor silencioso. Ideal para mantener ventilados baños, cocinas y espacios cerrados.', image: '', bestseller: false },
+            { id: 'p3', category: 'electricidad', brand: 'ELECPRO', title: 'Protector de Voltaje V199', price: '450', desc: '1000W. Protege tus equipos contra variaciones y picos de voltaje. Indispensable para electrodomésticos.', image: '', bestseller: true },
+            { id: 'p4', category: 'fontaneria', brand: 'ZLHF', title: 'Válvula de Lujo Metálica 104', price: '320', desc: 'Acabado cromado anticorrosión. Materiales de primera calidad para una larga vida útil sin fugas.', image: '', bestseller: false },
+            { id: 'p5', category: 'ferreteria', brand: 'LOCK', title: 'Cerradura de Sobreponer Max 398', price: '580', desc: 'Sistema de doble pestillo. Máxima seguridad para puertas principales de residencias y comercios.', image: '', bestseller: false }
         ];
 
         let products = [], cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [];
@@ -271,17 +679,14 @@
         async function init() {
             renderNav(); updateCartUI();
             
-            // Carga instantánea
             products = PDF_PRODUCTS;
             renderGrid();
 
-            // Desaparecer loader
             setTimeout(() => {
                 const l = document.getElementById('loader');
-                if(l) { l.style.opacity = '0'; setTimeout(() => l.remove(), 500); }
-            }, 800);
+                if(l) { l.style.opacity = '0'; setTimeout(() => l.remove(), 700); }
+            }, 600);
 
-            // Conexión Firebase
             try {
                 const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
                 fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
@@ -297,7 +702,7 @@
                     }
                 });
             } catch (e) {
-                console.log("Offline mode.");
+                console.log("Modo local activo.");
             }
         }
 
@@ -312,7 +717,7 @@
             } else {
                 clearBtn.classList.add('hidden');
                 document.getElementById('hero-banner').style.display = 'flex';
-                document.getElementById('section-title').innerText = currentFilter === 'all' ? 'Todos los Productos' : getCategoryLabel(currentFilter);
+                document.getElementById('section-title').innerText = currentFilter === 'all' ? 'Inventario Disponible' : getCategoryLabel(currentFilter);
             }
             renderGrid();
         }
@@ -322,13 +727,13 @@
             searchTerm = '';
             document.getElementById('clear-search').classList.add('hidden');
             document.getElementById('hero-banner').style.display = 'flex';
-            document.getElementById('section-title').innerText = currentFilter === 'all' ? 'Todos los Productos' : getCategoryLabel(currentFilter);
+            document.getElementById('section-title').innerText = currentFilter === 'all' ? 'Inventario Disponible' : getCategoryLabel(currentFilter);
             renderGrid();
         }
 
         function renderNav() {
             document.getElementById('cat-nav').innerHTML = CATEGORIES.map(c => `
-                <button onclick="setFilter('${c.id}')" id="btn-cat-${c.id}" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 ${c.id==='all'?'bg-brand-dark text-white shadow-md':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
+                <button onclick="setFilter('${c.id}')" id="btn-cat-${c.id}" class="px-5 py-2 rounded-full text-[13px] font-bold whitespace-nowrap transition-all duration-300 ${c.id==='all'?'bg-brand-dark dark:bg-blue-600 text-white shadow-md':'bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700'}">
                     ${c.label}
                 </button>`).join('');
             document.getElementById('edit-category').innerHTML = CATEGORIES.filter(c=>c.id!=='all').map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
@@ -336,16 +741,16 @@
 
         window.setFilter = (id) => {
             currentFilter = id;
-            document.querySelectorAll('#cat-nav button').forEach(b => b.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200");
-            document.getElementById(`btn-cat-${id}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-brand-dark text-white shadow-md";
+            document.querySelectorAll('#cat-nav button').forEach(b => b.className = "px-5 py-2 rounded-full text-[13px] font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-300");
+            document.getElementById(`btn-cat-${id}`).className = "px-5 py-2 rounded-full text-[13px] font-bold whitespace-nowrap bg-brand-dark dark:bg-blue-600 text-white shadow-md transition-all duration-300";
             
             if(searchTerm === '') {
-                document.getElementById('section-title').innerText = id === 'all' ? 'Todos los Productos' : getCategoryLabel(id);
+                document.getElementById('section-title').innerText = id === 'all' ? 'Inventario Disponible' : getCategoryLabel(id);
             }
             renderGrid();
         }
 
-        // --- RENDER DE TARJETAS ---
+        // --- RENDER DE TARJETAS MODERNO ---
         function renderGrid() {
             const grid = document.getElementById('catalog-grid');
             
@@ -358,10 +763,10 @@
                 );
             }
 
-            document.getElementById('product-count').innerText = `${filtered.length} items`;
+            document.getElementById('product-count').innerText = `${filtered.length} Items`;
             
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-16 text-center text-gray-400"><i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i><p class="font-medium text-sm">No encontramos productos con esa búsqueda.</p><button onclick="clearSearch()" class="mt-4 text-brand-blue font-bold text-xs underline">Ver todo el catálogo</button></div>`;
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-gray-400 dark:text-gray-500 flex flex-col items-center"><div class="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4"><i data-lucide="search-x" class="w-8 h-8 opacity-60"></i></div><h4 class="font-bold text-gray-800 dark:text-gray-200 text-lg mb-1">Sin resultados</h4><p class="font-medium text-sm">No encontramos productos con esa búsqueda.</p><button onclick="clearSearch()" class="mt-4 text-brand-blue font-bold text-sm bg-blue-50 dark:bg-blue-900/30 px-5 py-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">Ver todo el catálogo</button></div>`;
                 lucide.createIcons(); return;
             }
             
@@ -370,35 +775,40 @@
             grid.innerHTML = filtered.map((p,i) => {
                 const inCart = cart.find(x => String(x.id) === String(p.id));
                 return `
-                <article class="product-card animate-slide-up group" style="animation-delay: ${Math.min(i*30, 300)}ms">
-                    <div class="w-full aspect-[4/3] bg-white relative border-b border-gray-100 flex items-center justify-center p-3">
-                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" loading="lazy">` : `<i data-lucide="image" class="w-10 h-10 text-gray-200"></i>`}
-                        <div class="absolute top-2 left-2 bg-gray-900/80 backdrop-blur text-white text-[8px] font-bold px-2 py-0.5 rounded shadow-sm z-10">${getCategoryLabel(p.category)}</div>
+                <article class="product-card animate-slide-up group relative" style="animation-delay: ${Math.min(i*25, 300)}ms">
+                    <!-- Etiqueta Más Vendido -->
+                    ${p.bestseller ? `<div class="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[9px] font-bold px-2 py-1 rounded-md shadow-md flex items-center gap-1 z-20"><i data-lucide="flame" class="w-3 h-3"></i> MÁS VENDIDO</div>` : ''}
+                    
+                    <!-- Área de Imagen Cuadrada -->
+                    <div class="w-full aspect-square bg-gray-50/50 dark:bg-slate-800/50 relative border-b border-gray-100 dark:border-slate-700 flex items-center justify-center p-5 overflow-hidden">
+                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" loading="lazy">` : `<div class="w-16 h-16 rounded-full bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-gray-300 dark:text-gray-500"><i data-lucide="image" class="w-8 h-8"></i></div>`}
+                        <div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm z-10">${getCategoryLabel(p.category)}</div>
                     </div>
                     
-                    <div class="p-3 md:p-4 flex flex-col flex-grow bg-white">
-                        <div class="text-[9px] font-bold text-brand-red uppercase tracking-widest mb-1 truncate">${p.brand || 'GENERICO'}</div>
-                        <h3 class="font-display text-lg md:text-xl font-bold text-gray-800 leading-tight mb-2 line-clamp-2 min-h-[2.4em]">${p.title}</h3>
+                    <!-- Información y Contenido -->
+                    <div class="p-4 md:p-5 flex flex-col flex-grow relative bg-white dark:bg-slate-800">
+                        <div class="text-[9px] font-extrabold text-brand-red uppercase tracking-widest mb-1.5 truncate bg-red-50 dark:bg-red-900/20 inline-block px-1.5 py-0.5 rounded self-start">${p.brand || 'GENERICO'}</div>
+                        <h3 class="font-display text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-2 line-clamp-2 min-h-[2.4em]">${p.title}</h3>
                         
-                        <!-- Descripción Integrada en la tarjeta -->
-                        <p class="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed flex-grow">${p.desc || ''}</p>
+                        <p class="text-[13px] text-gray-500 dark:text-gray-400 font-medium line-clamp-2 mb-4 leading-relaxed flex-grow">${p.desc || ''}</p>
 
-                        <div class="mt-auto flex items-center justify-between pt-3 border-t border-gray-50">
-                            <div class="font-display text-xl md:text-2xl font-bold text-brand-blue">C$ ${p.price}</div>
+                        <div class="mt-auto flex items-center justify-between pt-4 border-t border-gray-100/80 dark:border-slate-700">
+                            <div class="font-display text-2xl md:text-3xl font-bold text-brand-blue dark:text-blue-400 leading-none">C$ ${p.price}</div>
                             
-                            <!-- Botón de compra Directo -->
-                            <button onclick="addToCart('${p.id}')" class="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-colors active:scale-90 shadow-md ${inCart ? 'bg-green-500 text-white shadow-green-200' : 'bg-brand-blue text-white hover:bg-brand-dark'}">
+                            <button onclick="addToCart('${p.id}')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center transition-all shadow-sm active:scale-90 ${inCart ? 'bg-green-500 text-white shadow-green-200 dark:shadow-green-900/50' : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-brand-blue hover:text-white'}">
                                 <i data-lucide="${inCart ? 'check' : 'shopping-cart'}" class="w-4 h-4 md:w-5 md:h-5"></i>
                             </button>
                         </div>
                     </div>
-                    ${document.body.classList.contains('is-admin') ? `<div class="absolute top-2 right-2 flex flex-col gap-1 z-20"><button onclick="editItem('${p.id}')" class="w-7 h-7 bg-brand-yellow rounded-full flex items-center justify-center shadow"><i data-lucide="pencil" class="w-3 h-3 text-brand-dark"></i></button><button onclick="deleteItem('${p.id}')" class="w-7 h-7 bg-brand-red text-white rounded-full flex items-center justify-center shadow"><i data-lucide="trash" class="w-3 h-3"></i></button></div>` : ''}
+
+                    <!-- Controles Admin -->
+                    ${document.body.classList.contains('is-admin') ? `<div class="absolute top-[50%] right-3 -translate-y-1/2 flex flex-col gap-1.5 z-20"><button onclick="editItem('${p.id}')" class="w-8 h-8 bg-brand-yellow rounded-full flex items-center justify-center shadow-md hover:scale-110 transition"><i data-lucide="pencil" class="w-3.5 h-3.5 text-brand-dark"></i></button><button onclick="deleteItem('${p.id}')" class="w-8 h-8 bg-brand-red text-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button></div>` : ''}
                 </article>`;
             }).join('');
             lucide.createIcons();
         }
 
-        // --- SISTEMA DE MODALES SIMPLIFICADO ---
+        // --- SISTEMA DE MODALES ---
         window.closeAllModals = function() {
             const overlay = document.getElementById('modal-overlay');
             const cartM = document.getElementById('cart-modal');
@@ -407,7 +817,6 @@
             overlay.classList.add('opacity-0');
             cartM.classList.add('translate-x-full');
             
-            // Ocultar Admin Modal si está abierto
             if(prodM) prodM.querySelector('div').classList.add('opacity-0', 'scale-95');
 
             if(timeoutID) clearTimeout(timeoutID);
@@ -445,7 +854,7 @@
             if(!p) return; 
             if (!cart.find(x => String(x.id) === String(id))) {
                 cart.push({...p, qty: 1}); 
-                saveCart(); renderGrid(); showToast("Agregado al Carrito");
+                saveCart(); renderGrid(); showToast("Agregado a la cotización");
             } else { toggleCart(); }
         }
         
@@ -474,26 +883,26 @@
         function renderCartItems() {
             const container = document.getElementById('cart-items-container');
             if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 opacity-40"><i data-lucide="shopping-bag" class="w-16 h-16 mx-auto mb-4 text-gray-400"></i><p class="font-medium">Tu presupuesto está vacío</p></div>`;
+                container.innerHTML = `<div class="text-center py-20 opacity-50"><div class="w-16 h-16 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="shopping-bag" class="w-8 h-8 text-gray-500 dark:text-gray-400"></i></div><h4 class="font-bold text-gray-800 dark:text-white text-lg mb-1">Cotización Vacía</h4><p class="font-medium text-sm text-gray-500 dark:text-gray-400">Añade productos para cotizar.</p></div>`;
                 document.getElementById('cart-total').innerText = 'C$ 0'; lucide.createIcons(); return;
             }
             
             let total = 0;
-            container.innerHTML = cart.map(item => {
+            container.innerHTML = cart.map((item, i) => {
                 total += (parseFloat(item.price) || 0) * item.qty;
                 return `
-                <div class="flex gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm animate-slide-up">
-                    <div class="w-16 h-16 bg-gray-50 rounded-lg p-1.5 flex-shrink-0 flex items-center justify-center">
-                        ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-8 h-8 text-gray-300"></i>`}
+                <div class="flex gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm animate-slide-up" style="animation-delay: ${i*30}ms">
+                    <div class="w-16 h-16 bg-gray-50 dark:bg-slate-900 rounded-xl p-1.5 flex-shrink-0 flex items-center justify-center border border-gray-100 dark:border-slate-800">
+                        ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-6 h-6 text-gray-300 dark:text-gray-600"></i>`}
                     </div>
-                    <div class="flex-grow">
-                        <h4 class="font-bold text-sm text-gray-800 leading-tight line-clamp-2">${item.title}</h4>
-                        <div class="text-brand-blue font-bold text-sm mt-1">C$ ${item.price}</div>
+                    <div class="flex-grow flex flex-col justify-center">
+                        <h4 class="font-bold text-sm text-gray-900 dark:text-white leading-tight line-clamp-2">${item.title}</h4>
+                        <div class="text-brand-blue dark:text-blue-400 font-bold text-[15px] mt-1">C$ ${item.price}</div>
                     </div>
-                    <div class="flex flex-col items-center justify-between bg-gray-50 rounded-lg w-8 py-1">
-                        <button onclick="updateQty('${item.id}', 1)" class="w-full text-center hover:text-brand-blue font-bold">+</button>
-                        <span class="font-bold text-xs">${item.qty}</span>
-                        <button onclick="updateQty('${item.id}', -1)" class="w-full text-center hover:text-brand-red font-bold">-</button>
+                    <div class="flex flex-col items-center justify-between bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl w-9 py-1 shadow-inner">
+                        <button onclick="updateQty('${item.id}', 1)" class="w-full text-center text-gray-500 hover:text-brand-blue font-bold transition-colors">+</button>
+                        <span class="font-bold text-xs text-brand-dark dark:text-white">${item.qty}</span>
+                        <button onclick="updateQty('${item.id}', -1)" class="w-full text-center text-gray-500 hover:text-brand-red font-bold transition-colors">-</button>
                     </div>
                 </div>`;
             }).join('');
@@ -503,22 +912,22 @@
 
         window.checkoutWhatsApp = () => {
             if (cart.length === 0) return;
-            let msg = "*NUEVA COTIZACIÓN ELECPRO:*\n\n";
+            let msg = "*SOLICITUD DE COTIZACIÓN - ELECPRO:*\n\n";
             let total = 0;
             cart.forEach(i => {
                 const sub = (parseFloat(i.price) || 0) * i.qty; total += sub;
-                msg += `🔸 *${i.qty}x* ${i.title}\n`;
+                msg += `🔸 *${i.qty} und* | ${i.title}\n`;
             });
-            msg += `\n*TOTAL APROX: C$ ${total.toLocaleString()}*`;
+            msg += `\n*TOTAL APROXIMADO: C$ ${total.toLocaleString()}*\n\n_Deseo confirmar stock y envío._`;
             window.open(`https://wa.me/50587600225?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         // --- GESTIÓN ADMIN ---
         window.login = () => {
-            if (prompt("Clave de Acceso:") === "elecpro50") {
+            if (prompt("Credenciales de Acceso:") === "elecpro50") {
                 document.getElementById('admin-add-btn').classList.remove('hidden');
                 document.body.classList.add('is-admin'); 
-                renderGrid(); showToast("Modo Admin Activado");
+                renderGrid(); showToast("Modo Gestor Activado");
             }
         }
         
@@ -527,6 +936,7 @@
             m.classList.remove('hidden');
             setTimeout(() => { m.querySelector('div').classList.remove('scale-95', 'opacity-0'); }, 10);
             ['edit-id', 'edit-brand', 'edit-title', 'edit-price', 'edit-desc', 'edit-image'].forEach(i => document.getElementById(i).value = '');
+            document.getElementById('edit-bestseller').checked = false;
         }
 
         window.editItem=(id)=>{
@@ -542,13 +952,14 @@
             document.getElementById('edit-price').value = p.price;
             document.getElementById('edit-category').value = p.category;
             document.getElementById('edit-desc').value = p.desc;
+            document.getElementById('edit-bestseller').checked = p.bestseller || false;
         }
 
-        window.deleteItem=async(id)=>{if(confirm("¿Eliminar este producto permanentemente?")) await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection,id))}
+        window.deleteItem=async(id)=>{if(confirm("¿Confirmas eliminar este producto permanentemente?")) await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection,id))}
 
         window.saveProduct = async () => {
             const btn = document.getElementById('btn-save');
-            btn.innerText = "Guardando..."; btn.disabled = true;
+            btn.innerText = "Sincronizando..."; btn.disabled = true;
             
             const id = document.getElementById('edit-id').value;
             const file = document.getElementById('edit-image').files[0];
@@ -560,6 +971,7 @@
                 price: document.getElementById('edit-price').value,
                 category: document.getElementById('edit-category').value,
                 desc: document.getElementById('edit-desc').value,
+                bestseller: document.getElementById('edit-bestseller').checked,
                 updated: new Date().toISOString()
             };
 
@@ -567,7 +979,7 @@
             else { if (img) item.image = img; await fbFirestore.addDoc(productsCollection, item); }
             
             closeAllModals();
-            btn.innerText = "Guardar Producto"; btn.disabled = false; showToast("Catálogo Actualizado");
+            btn.innerText = "Guardar Cambios"; btn.disabled = false; showToast("Base de datos actualizada");
         }
 
         function showToast(msg) {
