@@ -900,6 +900,30 @@
                 
                 let formattedText = m.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 
+                if (m.products && m.products.length > 0) {
+                    let productsHtml = '<div class="mt-3 flex flex-col gap-2">';
+                    m.products.forEach(p => {
+                        productsHtml += `
+                        <div class="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg p-2.5 flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white dark:bg-slate-700 rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-slate-600">
+                                ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-5 h-5 text-gray-400"></i>`}
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-[11px] font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight">${p.title}</p>
+                                <p class="text-[11px] text-brand-blue dark:text-blue-400 font-black mt-0.5">C$ ${p.price}</p>
+                            </div>
+                            <button onclick="addToCart('${p.id}')" class="w-8 h-8 bg-[#25D366] text-white rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform flex-shrink-0 shadow-sm" title="Añadir al Carrito">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>`;
+                    });
+                    productsHtml += '</div>';
+                    if(m.products.length >= 3) {
+                        productsHtml += `<p class="text-[9px] text-gray-500 mt-2 italic text-center">*Top 3 resultados. Usa el buscador para más.</p>`;
+                    }
+                    formattedText += productsHtml;
+                }
+
                 return `
                 <div class="flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in">
                     <div class="max-w-[85%] rounded-2xl px-4 py-2.5 ${
@@ -912,6 +936,7 @@
                 </div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
+            lucide.createIcons();
         }
 
         window.sendPredefinedMsg = (text) => { handleUserMessage(text); }
@@ -950,22 +975,45 @@
 
         function generateBotResponse(text) {
             let response = '';
+            let isProductSearch = false;
+            let foundProducts = [];
+            const lowerText = text.toLowerCase();
             
-            if (text.includes('ubicacion') || text.includes('dónde') || text.includes('direccion') || text.includes('ubicación')) {
+            const searchTerms = lowerText.replace(/(necesito|busco|quiero|tienes|precio de|un|una|el|la|los|las|para|comprar)/g, '').trim();
+
+            if (lowerText.includes('ubicacion') || lowerText.includes('dónde') || lowerText.includes('direccion') || lowerText.includes('ubicación')) {
                 response = '📍 Estamos ubicados en el **Parqueo de las Ferreterías, Costado Sur, Mercado Roberto Huembes**, en Managua. ¡Te esperamos de lunes a sábado!';
-            } else if (text.includes('soporte') || text.includes('tecnico') || text.includes('técnico') || text.includes('falla') || text.includes('ayuda')) {
+            } else if (lowerText.includes('soporte') || lowerText.includes('tecnico') || lowerText.includes('técnico') || lowerText.includes('falla') || lowerText.includes('ayuda')) {
                 response = '🔧 Para soporte técnico o emergencias, comunícate directamente con nuestros ingenieros vía WhatsApp al <a href="https://wa.me/50587600225" target="_blank" class="text-brand-blue dark:text-blue-400 font-bold underline">+505 8760-0225</a>.\n\n*(Nota: Si el problema es con esta página web, escribe al +1 747-270-3016).*';
-            } else if (text.includes('mantenimiento') || text.includes('plan') || text.includes('servicio')) {
+            } else if (lowerText.includes('mantenimiento') || lowerText.includes('plan') || lowerText.includes('servicio')) {
                 response = '⚙️ Ofrecemos planes de **Climatización Básico**, **Industrial Preventivo** y atención de **Emergencias 24/7**. Puedes ver los detalles en la sección de "Planes de Mantenimiento" bajando un poco en la página.';
-            } else if (text.includes('producto') || text.includes('comprar') || text.includes('precio') || text.includes('cotizar') || text.includes('catalogo')) {
-                response = '📦 Puedes agregar productos a tu carrito (esquina inferior derecha) y luego enviarnos la cotización automática por WhatsApp. También puedes usar la **barra de búsqueda** arriba para buscar herramientas específicas.';
-            } else if (text.includes('hola') || text.includes('buenos') || text.includes('buenas') || text.includes('saludos')) {
-                response = '¡Hola nuevamente! 👋 ¿En qué más te puedo asesorar?';
+            } else if (lowerText.includes('hola') || lowerText.includes('buenos') || lowerText.includes('buenas') || lowerText.includes('saludos')) {
+                response = '¡Hola nuevamente! 👋 ¿En qué te puedo asesorar? Puedes preguntarme por herramientas específicas o nuestros servicios.';
             } else {
-                response = 'Aún estoy en fase Beta 🤖 y mi conocimiento es algo limitado.\n\nPara consultas detalladas, cotizaciones complejas o hablar con un humano, por favor contáctanos en nuestro WhatsApp corporativo: <a href="https://wa.me/50587600225" target="_blank" class="text-brand-blue dark:text-blue-400 font-bold underline">+505 8760-0225</a>.';
+                if (searchTerms.length > 2) {
+                    foundProducts = products.filter(p => 
+                        p.title.toLowerCase().includes(searchTerms) || 
+                        (p.brand && p.brand.toLowerCase().includes(searchTerms)) ||
+                        (p.category && p.category.toLowerCase().includes(searchTerms)) ||
+                        (p.desc && p.desc.toLowerCase().includes(searchTerms))
+                    );
+                }
+
+                if (foundProducts.length > 0) {
+                    isProductSearch = true;
+                    response = `¡Claro! Encontré ${foundProducts.length === 1 ? 'este producto' : 'estos productos'} en nuestro inventario que te ${foundProducts.length === 1 ? 'puede' : 'pueden'} interesar:`;
+                } else if (lowerText.includes('producto') || lowerText.includes('cotizar') || lowerText.includes('catalogo')) {
+                    response = '📦 Puedes agregar productos a tu carrito (esquina inferior derecha) y enviarnos la cotización por WhatsApp. También puedes usar la **barra de búsqueda** arriba.';
+                } else {
+                    response = 'No encontré un producto exacto con ese nombre o mi conocimiento es limitado sobre ese tema 🤖.\n\nPara consultas detalladas o hablar con un humano, contáctanos en WhatsApp: <a href="https://wa.me/50587600225" target="_blank" class="text-brand-blue dark:text-blue-400 font-bold underline">+505 8760-0225</a>.';
+                }
             }
             
-            chatMessages.push({ sender: 'bot', text: response });
+            chatMessages.push({ 
+                sender: 'bot', 
+                text: response, 
+                products: isProductSearch ? foundProducts.slice(0, 3) : null 
+            });
             renderChat();
         }
 
