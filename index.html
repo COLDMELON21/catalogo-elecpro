@@ -657,6 +657,10 @@
                 </div>
                 <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Nombre</label><input id="edit-title" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl font-bold text-gray-800 dark:text-white outline-none focus:border-brand-blue bg-white dark:bg-slate-700 transition-all" placeholder="Ej: Taladro Percutor"></div>
                 <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Precio (C$)</label><input id="edit-price" type="number" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl font-bold text-brand-blue dark:text-blue-400 text-lg outline-none focus:border-brand-blue bg-white dark:bg-slate-700 transition-all" placeholder="0.00"></div>
+                
+                <!-- NUEVO CAMPO: OPCIONES / COLORES -->
+                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Opciones / Colores (Separados por coma)</label><input id="edit-variants" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all" placeholder="Ej: Rojo, Azul, Verde"></div>
+
                 <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1 block">Descripción</label><textarea id="edit-desc" rows="3" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm outline-none focus:border-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all" placeholder="Especificaciones técnicas..."></textarea></div>
                 <div class="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 bg-white dark:bg-slate-700 hover:border-brand-blue transition-colors group cursor-pointer relative">
                     <input type="file" id="edit-image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
@@ -828,7 +832,9 @@
             filtered.sort((a,b)=>(b.updated||"").localeCompare(a.updated||""));
 
             grid.innerHTML = filtered.map((p,i) => {
-                const inCart = cart.find(x => String(x.id) === String(p.id));
+                // Comprobamos si alguna variante de este producto ya está en el carrito
+                const inCart = cart.some(x => String(x.id) === String(p.id));
+                
                 return `
                 <article class="product-card animate-slide-up group relative" style="animation-delay: ${Math.min(i*25, 300)}ms">
                     <!-- Etiqueta Más Vendido -->
@@ -846,6 +852,15 @@
                         <h3 class="font-display text-xl md:text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-2 line-clamp-2 min-h-[2.4em]">${p.title}</h3>
                         
                         <p class="text-[13px] text-gray-500 dark:text-gray-400 font-medium line-clamp-2 mb-4 leading-relaxed flex-grow">${p.desc || ''}</p>
+
+                        <!-- Desplegable de Variantes (Colores/Opciones) -->
+                        ${p.variants ? `
+                        <div class="mb-3">
+                            <select id="variant-${p.id}" class="w-full p-2 text-[11px] font-bold border border-gray-200 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-800 dark:text-white outline-none focus:border-brand-blue transition-colors cursor-pointer">
+                                ${p.variants.split(',').map(v => `<option value="${v.trim()}">${v.trim()}</option>`).join('')}
+                            </select>
+                        </div>
+                        ` : ''}
 
                         <div class="mt-auto flex items-center justify-between pt-4 border-t border-gray-100/80 dark:border-slate-700">
                             <div class="font-display text-2xl md:text-3xl font-bold text-brand-blue dark:text-blue-400 leading-none">C$ ${p.price}</div>
@@ -1062,14 +1077,32 @@
         window.addToCart = (id) => { 
             const p = products.find(x => String(x.id) === String(id)); 
             if(!p) return; 
-            if (!cart.find(x => String(x.id) === String(id))) {
-                cart.push({...p, qty: 1}); 
+            
+            let selectedVariant = '';
+            const variantEl = document.getElementById(`variant-${id}`);
+            
+            if (variantEl) {
+                // Lo agregó desde el catálogo (leyendo el desplegable)
+                selectedVariant = variantEl.value;
+            } else if (p.variants) {
+                // Lo agregó desde el ChatBot (selecciona la primera variante por defecto)
+                selectedVariant = p.variants.split(',')[0].trim();
+            }
+
+            // Crear un ID único para el carrito si el producto tiene variantes
+            const cartId = selectedVariant ? `${id}_${selectedVariant}` : id;
+
+            const existing = cart.find(x => String(x.cartId) === String(cartId));
+            if (!existing) {
+                cart.push({...p, cartId: cartId, selectedVariant: selectedVariant, qty: 1}); 
                 saveCart(); renderGrid(); showToast("Agregado a la cotización");
-            } else { toggleCart(); }
+            } else { 
+                toggleCart(); // Ya lo agregó, mostramos el carrito
+            }
         }
         
-        window.updateQty = (id, change) => {
-            const idx = cart.findIndex(x => String(x.id) === String(id));
+        window.updateQty = (cartId, change) => {
+            const idx = cart.findIndex(x => String(x.cartId) === String(cartId));
             if (idx === -1) return;
             cart[idx].qty += change;
             if (cart[idx].qty <= 0) cart.splice(idx, 1);
@@ -1106,13 +1139,16 @@
                         ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-6 h-6 text-gray-300 dark:text-gray-600"></i>`}
                     </div>
                     <div class="flex-grow flex flex-col justify-center">
-                        <h4 class="font-bold text-sm text-gray-900 dark:text-white leading-tight line-clamp-2">${item.title}</h4>
+                        <h4 class="font-bold text-sm text-gray-900 dark:text-white leading-tight line-clamp-2">
+                            ${item.title} 
+                            ${item.selectedVariant ? `<span class="text-brand-blue dark:text-blue-400 block text-xs mt-0.5 font-extrabold uppercase tracking-wider">Opción: ${item.selectedVariant}</span>` : ''}
+                        </h4>
                         <div class="text-brand-blue dark:text-blue-400 font-bold text-[15px] mt-1">C$ ${item.price}</div>
                     </div>
                     <div class="flex flex-col items-center justify-between bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl w-9 py-1 shadow-inner">
-                        <button onclick="updateQty('${item.id}', 1)" class="w-full text-center text-gray-500 hover:text-brand-blue font-bold transition-colors">+</button>
+                        <button onclick="updateQty('${item.cartId}', 1)" class="w-full text-center text-gray-500 hover:text-brand-blue font-bold transition-colors">+</button>
                         <span class="font-bold text-xs text-brand-dark dark:text-white">${item.qty}</span>
-                        <button onclick="updateQty('${item.id}', -1)" class="w-full text-center text-gray-500 hover:text-brand-red font-bold transition-colors">-</button>
+                        <button onclick="updateQty('${item.cartId}', -1)" class="w-full text-center text-gray-500 hover:text-brand-red font-bold transition-colors">-</button>
                     </div>
                 </div>`;
             }).join('');
@@ -1126,7 +1162,7 @@
             let total = 0;
             cart.forEach(i => {
                 const sub = (parseFloat(i.price) || 0) * i.qty; total += sub;
-                msg += `🔸 *${i.qty} und* | ${i.title}\n`;
+                msg += `🔸 *${i.qty} und* | ${i.title} ${i.selectedVariant ? `(Color/Opción: ${i.selectedVariant})` : ''}\n`;
             });
             msg += `\n*TOTAL APROXIMADO: C$ ${total.toLocaleString()}*\n\n_Deseo confirmar stock y envío._`;
             window.open(`https://wa.me/50587600225?text=${encodeURIComponent(msg)}`, '_blank');
@@ -1145,7 +1181,7 @@
             const m = document.getElementById('product-modal'); 
             m.classList.remove('hidden');
             setTimeout(() => { m.querySelector('div').classList.remove('scale-95', 'opacity-0'); }, 10);
-            ['edit-id', 'edit-brand', 'edit-title', 'edit-price', 'edit-desc', 'edit-image'].forEach(i => document.getElementById(i).value = '');
+            ['edit-id', 'edit-brand', 'edit-title', 'edit-price', 'edit-desc', 'edit-image', 'edit-variants'].forEach(i => document.getElementById(i).value = '');
             document.getElementById('edit-bestseller').checked = false;
         }
 
@@ -1162,6 +1198,7 @@
             document.getElementById('edit-price').value = p.price || '';
             document.getElementById('edit-category').value = p.category || '';
             document.getElementById('edit-desc').value = p.desc || '';
+            document.getElementById('edit-variants').value = p.variants || '';
             document.getElementById('edit-bestseller').checked = p.bestseller || false;
         }
 
@@ -1193,6 +1230,7 @@
                     price: document.getElementById('edit-price').value,
                     category: document.getElementById('edit-category').value,
                     desc: document.getElementById('edit-desc').value,
+                    variants: document.getElementById('edit-variants').value,
                     bestseller: document.getElementById('edit-bestseller').checked,
                     updated: new Date().toISOString()
                 };
@@ -1243,4 +1281,3 @@
     </script>
 </body>
 </html>
-
