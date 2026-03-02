@@ -673,8 +673,11 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
+    <!-- JAVASCRIPT: NUEVO MOTOR DE BASE DE DATOS OPTIMIZADO -->
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         lucide.createIcons();
 
         // Lógica Modo Oscuro
@@ -713,36 +716,49 @@
 
         let products = [], cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [];
         let currentFilter = 'all', searchTerm = '';
-        let db, productsCollection, fbFirestore, timeoutID;
+        let db, timeoutID;
 
         async function init() {
             renderNav(); updateCartUI();
             
+            // 1. CARGA SEGURA: Siempre muestra los productos base para que nunca quede en blanco.
             products = PDF_PRODUCTS;
             renderGrid();
 
-            setTimeout(() => {
-                const l = document.getElementById('loader');
-                if(l) { l.style.opacity = '0'; setTimeout(() => l.remove(), 700); }
-            }, 600);
-
+            // 2. CONEXIÓN INTELIGENTE A LA BASE DE DATOS
             try {
-                const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-                fbFirestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                const app = fbApp.initializeApp(GLOBAL_CONFIG);
-                db = fbFirestore.getFirestore(app);
-                productsCollection = fbFirestore.collection(db, 'products');
+                const app = initializeApp(GLOBAL_CONFIG);
+                db = getFirestore(app);
+
+                // Activar Memoria Caché (Offline Persistence) para conexiones lentas
+                try {
+                    await enableIndexedDbPersistence(db);
+                } catch (err) {
+                    console.warn("Memoria caché no disponible en este navegador.");
+                }
+
+                const productsCollection = collection(db, 'products');
                 
-                fbFirestore.onSnapshot(productsCollection, (s) => {
+                // Escucha cambios en tiempo real desde Firebase o la caché
+                onSnapshot(productsCollection, (s) => {
                     const fetched = s.docs.map(d => ({id: d.id, ...d.data()}));
                     if(fetched.length > 0) {
                         products = fetched;
                         renderGrid(); 
                     }
+                }, (error) => {
+                    console.error("Error al conectar con la base de datos:", error);
+                    // Si falla, el usuario ni lo nota porque la pantalla ya tiene los PDF_PRODUCTS cargados
                 });
             } catch (e) {
-                console.log("Modo local activo.");
+                console.error("Modo sin conexión forzado:", e);
             }
+
+            // Quitar pantalla de carga después de un tiempo prudencial
+            setTimeout(() => {
+                const l = document.getElementById('loader');
+                if(l) { l.style.opacity = '0'; setTimeout(() => l.remove(), 700); }
+            }, 800);
         }
 
         // --- BÚSQUEDA Y FILTROS ---
@@ -1068,7 +1084,7 @@
             window.open(`https://wa.me/50587600225?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // --- GESTIÓN ADMIN ---
+        // --- GESTIÓN ADMIN ROBUSTA ---
         window.login = () => {
             if (prompt("Credenciales de Acceso:") === "elecpro50") {
                 document.getElementById('admin-add-btn').classList.remove('hidden');
@@ -1085,7 +1101,7 @@
             document.getElementById('edit-bestseller').checked = false;
         }
 
-        window.editItem=(id)=>{
+        window.editItem = (id) => {
             const p = products.find(x => String(x.id) === String(id)); 
             if(!p) return;
             const m = document.getElementById('product-modal');
@@ -1093,39 +1109,62 @@
             setTimeout(() => { m.querySelector('div').classList.remove('scale-95', 'opacity-0'); }, 10);
             
             document.getElementById('edit-id').value = id;
-            document.getElementById('edit-brand').value = p.brand;
-            document.getElementById('edit-title').value = p.title;
-            document.getElementById('edit-price').value = p.price;
-            document.getElementById('edit-category').value = p.category;
-            document.getElementById('edit-desc').value = p.desc;
+            document.getElementById('edit-brand').value = p.brand || '';
+            document.getElementById('edit-title').value = p.title || '';
+            document.getElementById('edit-price').value = p.price || '';
+            document.getElementById('edit-category').value = p.category || '';
+            document.getElementById('edit-desc').value = p.desc || '';
             document.getElementById('edit-bestseller').checked = p.bestseller || false;
         }
 
-        window.deleteItem=async(id)=>{if(confirm("¿Confirmas eliminar este producto permanentemente?")) await fbFirestore.deleteDoc(fbFirestore.doc(productsCollection,id))}
+        window.deleteItem = async (id) => {
+            if(confirm("¿Confirmas eliminar este producto permanentemente?")) {
+                try {
+                    await deleteDoc(doc(db, 'products', id));
+                    showToast("Producto eliminado");
+                } catch(e) {
+                    console.error("Error al eliminar:", e);
+                    showToast("No se pudo eliminar el producto.");
+                }
+            }
+        }
 
         window.saveProduct = async () => {
             const btn = document.getElementById('btn-save');
-            btn.innerText = "Sincronizando..."; btn.disabled = true;
+            btn.innerText = "Guardando..."; btn.disabled = true;
             
-            const id = document.getElementById('edit-id').value;
-            const file = document.getElementById('edit-image').files[0];
-            let img = null; if (file) img = await compressImage(file);
+            try {
+                const id = document.getElementById('edit-id').value;
+                const file = document.getElementById('edit-image').files[0];
+                let img = null; 
+                if (file) img = await compressImage(file);
 
-            const item = {
-                brand: document.getElementById('edit-brand').value,
-                title: document.getElementById('edit-title').value,
-                price: document.getElementById('edit-price').value,
-                category: document.getElementById('edit-category').value,
-                desc: document.getElementById('edit-desc').value,
-                bestseller: document.getElementById('edit-bestseller').checked,
-                updated: new Date().toISOString()
-            };
+                const item = {
+                    brand: document.getElementById('edit-brand').value,
+                    title: document.getElementById('edit-title').value,
+                    price: document.getElementById('edit-price').value,
+                    category: document.getElementById('edit-category').value,
+                    desc: document.getElementById('edit-desc').value,
+                    bestseller: document.getElementById('edit-bestseller').checked,
+                    updated: new Date().toISOString()
+                };
 
-            if (id) { if (img) item.image = img; await fbFirestore.updateDoc(fbFirestore.doc(productsCollection, id), item); } 
-            else { if (img) item.image = img; await fbFirestore.addDoc(productsCollection, item); }
-            
-            closeAllModals();
-            btn.innerText = "Guardar Cambios"; btn.disabled = false; showToast("Base de datos actualizada");
+                if (id) { 
+                    if (img) item.image = img; 
+                    await updateDoc(doc(db, 'products', id), item); 
+                } else { 
+                    if (img) item.image = img; 
+                    await addDoc(collection(db, 'products'), item); 
+                }
+                
+                closeAllModals();
+                showToast("Base de datos actualizada");
+            } catch (error) {
+                console.error("Error al guardar:", error);
+                showToast("Revisa tu conexión a internet e intenta de nuevo.");
+            } finally {
+                btn.innerText = "Guardar Cambios"; btn.disabled = false;
+            }
         }
 
         function showToast(msg) {
@@ -1156,3 +1195,4 @@
     </script>
 </body>
 </html>
+
