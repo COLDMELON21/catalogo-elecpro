@@ -528,7 +528,7 @@
             setTimeout(() => {
                 const l = document.getElementById('loader');
                 if(l) { l.style.opacity = '0'; l.style.transform = 'scale(1.05)'; setTimeout(() => l.remove(), 700); }
-            }, 1200); // 1.2s para que se vea el spinner
+            }, 1200); 
         }
 
         // --- BÚSQUEDA ---
@@ -553,7 +553,7 @@
             renderGrid();
         }
 
-        // --- NAVEGACIÓN TABS (NUEVA UI PÍLDORAS) ---
+        // --- NAVEGACIÓN TABS ---
         function renderNav() {
             const tabsContainer = document.getElementById('category-tabs');
             tabsContainer.innerHTML = CATEGORIES.map(c => `
@@ -567,7 +567,6 @@
         }
 
         window.setFilter = (id) => {
-            // Actualizar UI de los tabs
             document.querySelectorAll('.cat-tab').forEach(el => {
                 el.classList.remove('active', 'bg-white', 'dark:bg-brand-surface');
                 if(el.id === `tab-${id}`) {
@@ -580,14 +579,13 @@
             currentFilter = id;
             if(searchTerm === '') renderGrid();
             
-            // Scroll hacia el tab para que se vea si está oculto
             const tab = document.getElementById(`tab-${id}`);
             if(tab) tab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
             
             renderGrid();
         }
 
-        // --- RENDER DE TARJETAS (Neo-minimalismo) ---
+        // --- RENDER DE TARJETAS ---
         function renderGrid() {
             const grid = document.getElementById('catalog-grid');
             let filtered = products;
@@ -640,7 +638,8 @@
                         </div>
                     </div>
 
-                    ${document.body.classList.contains('is-admin') ? `<div class="absolute top-[50%] right-5 -translate-y-1/2 flex flex-col gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="editItem('${p.id}')" class="w-8 h-8 bg-white text-zinc-900 rounded-full shadow-lg flex items-center justify-center hover:scale-110"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="deleteItem('${p.id}')" class="w-8 h-8 bg-red-500 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110"><i data-lucide="trash" class="w-4 h-4"></i></button></div>` : ''}
+                    <!-- Botones Admin Totalmente Separados (Esquina Superior Derecha) -->
+                    ${document.body.classList.contains('is-admin') ? `<div class="absolute top-3 right-3 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="editItem('${p.id}')" class="w-8 h-8 bg-white text-blue-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 border border-blue-100"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="deleteItem('${p.id}')" class="w-8 h-8 bg-red-500 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110"><i data-lucide="trash" class="w-4 h-4"></i></button></div>` : ''}
                 </div>`;
             }).join('');
             lucide.createIcons();
@@ -833,7 +832,11 @@
             overlay.classList.add('opacity-0');
             cartM.classList.add('translate-x-full');
             if(chatOpen) toggleChatbot();
-            if(prodM) prodM.classList.add('scale-95', 'opacity-0');
+            
+            // Corrige el cierre de la ventana modal aplicando las clases al contenedor interno
+            if(prodM && !prodM.classList.contains('hidden')) {
+                prodM.querySelector('div').classList.add('scale-95', 'opacity-0');
+            }
 
             if(timeoutID) clearTimeout(timeoutID);
             timeoutID = setTimeout(() => {
@@ -849,6 +852,10 @@
 
             if (cartM.classList.contains('hidden')) {
                 if(chatOpen) toggleChatbot();
+                
+                // Cierra los demas modales si están abiertos
+                document.getElementById('product-modal').classList.add('hidden');
+
                 overlay.classList.remove('hidden');
                 cartM.classList.remove('hidden');
                 setTimeout(() => { overlay.classList.remove('opacity-0'); cartM.classList.remove('translate-x-full'); }, 10);
@@ -969,17 +976,36 @@
             }
         }
         
+        // Corrige la apertura del modal Añadir asegurando que el overlay aparezca
         window.openNewProduct = () => {
-            const m = document.getElementById('product-modal'); m.classList.remove('hidden');
-            setTimeout(() => { m.classList.remove('scale-95', 'opacity-0'); }, 10);
+            const m = document.getElementById('product-modal'); 
+            const overlay = document.getElementById('modal-overlay');
+            
+            overlay.classList.remove('hidden');
+            m.classList.remove('hidden');
+            
+            setTimeout(() => { 
+                overlay.classList.remove('opacity-0');
+                m.querySelector('div').classList.remove('scale-95', 'opacity-0'); 
+            }, 10);
+            
             ['edit-id', 'edit-brand', 'edit-title', 'edit-price', 'edit-desc', 'edit-image', 'edit-variants'].forEach(i => document.getElementById(i).value = '');
             document.getElementById('edit-bestseller').checked = false;
         }
 
+        // Corrige la apertura del modal Editar asegurando que el overlay aparezca
         window.editItem = (id) => {
             const p = products.find(x => String(x.id) === String(id)); if(!p) return;
-            const m = document.getElementById('product-modal'); m.classList.remove('hidden');
-            setTimeout(() => { m.classList.remove('scale-95', 'opacity-0'); }, 10);
+            const m = document.getElementById('product-modal'); 
+            const overlay = document.getElementById('modal-overlay');
+            
+            overlay.classList.remove('hidden');
+            m.classList.remove('hidden');
+            
+            setTimeout(() => { 
+                overlay.classList.remove('opacity-0');
+                m.querySelector('div').classList.remove('scale-95', 'opacity-0'); 
+            }, 10);
             
             document.getElementById('edit-id').value = id; document.getElementById('edit-brand').value = p.brand || '';
             document.getElementById('edit-title').value = p.title || ''; document.getElementById('edit-price').value = p.price || '';
