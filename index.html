@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELECPRO | Catálogo de Materiales Eléctricos</title>
+    <title>ELECPRO | Next-Gen Industrial Suministros</title>
     
-    <!-- Script para Modo Oscuro (Evita el parpadeo blanco al cargar) -->
+    <!-- Script Modo Oscuro -->
     <script>
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -14,14 +14,16 @@
         }
     </script>
 
-    <!-- Librerías para PDF -->
+    <!-- Librerías PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
-    <!-- Fuentes Premium Tech (Inter + Teko) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Teko:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fuentes Ultra Modernas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Iconos y Tailwind CSS -->
+    <!-- Iconos y Tailwind -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -32,28 +34,33 @@
                 extend: {
                     colors: {
                         brand: {
-                            blue: '#0044cc', 
-                            darkblue: '#002277',
-                            red: '#e62222',  
-                            yellow: '#ffcc00', 
-                            dark: '#0f172a',
-                            light: '#f8fafc',
-                            gray: '#f1f5f9'
+                            blue: '#0055FF', /* Azul vibrante tech */
+                            darkblue: '#003399',
+                            yellow: '#F5E100', /* Amarillo neón sutil */
+                            dark: '#09090b', /* Zinc 950 profundo */
+                            surface: '#18181b' /* Zinc 900 para tarjetas oscuras */
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'], 
-                        display: ['Teko', 'sans-serif'], 
+                        sans: ['Plus Jakarta Sans', 'sans-serif'], 
+                        display: ['Outfit', 'sans-serif'], 
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                        'float': 'float 5s ease-in-out infinite'
+                        'spin-slow': 'spin 3s linear infinite',
+                        'reveal-up': 'revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'blob': 'blob 7s infinite',
                     },
                     keyframes: {
-                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { transform: 'translateY(30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } }
+                        revealUp: { 
+                            '0%': { opacity: '0', transform: 'translateY(40px)', filter: 'blur(10px)' }, 
+                            '100%': { opacity: '1', transform: 'translateY(0)', filter: 'blur(0)' } 
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
+                        }
                     }
                 }
             }
@@ -62,700 +69,404 @@
 
     <style>
         body { 
-            background-color: #f8fafc; 
+            background-color: #fafafa; 
             -webkit-tap-highlight-color: transparent; 
             overflow-x: hidden; 
-            transition: background-color 0.3s ease;
+            transition: background-color 0.4s ease;
         }
-        .dark body { background-color: #0b1120; }
+        .dark body { background-color: #09090b; }
         
-        /* Efecto Vidrio Premium (Glassmorphism) */
-        .glass-header { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(0,0,0,0.06); 
+        .lucide { stroke-width: 1.5px; } /* Iconos finos y elegantes */
+
+        /* Floating Island Header */
+        .island-header { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
-        .dark .glass-header {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+        .dark .island-header {
+            background: rgba(24, 24, 27, 0.7);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
         
+        /* Scrollbar oculta pero funcional */
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Tarjetas Estilo Industrial Moderno */
-        .product-card {
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+        /* Efecto Bento Box Hover */
+        .bento-card {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
         }
-        .dark .product-card {
-            background: #1e293b;
-            border-color: #334155;
-        }
-        .product-card:hover {
+        .bento-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(0, 68, 204, 0.15);
-            border-color: rgba(0, 68, 204, 0.3);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
         }
-        .dark .product-card:hover { box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6); border-color: #3b82f6; }
+        .dark .bento-card:hover { box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4); }
 
-        /* Botones Corporativos Mejorados */
-        .btn-primary {
-            background: linear-gradient(135deg, #0044cc 0%, #002277 100%);
+        /* Categorías Tabs (Píldoras) */
+        .cat-tab {
+            transition: all 0.3s ease;
+        }
+        .cat-tab.active {
+            background-color: #0055FF;
             color: white;
-            transition: all 0.2s ease;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 8px 20px -6px rgba(0, 68, 204, 0.5);
-            transform: translateY(-1px);
-        }
-        .btn-primary:active { transform: scale(0.97); }
-
-        /* Buscador Moderno */
-        .search-container { transition: all 0.3s ease; }
-        .search-container:focus-within {
-            box-shadow: 0 0 0 4px rgba(0,68,204,0.1);
-            border-color: #0044cc;
-            background-color: #ffffff;
-        }
-        .dark .search-container:focus-within { background-color: #0f172a; border-color: #3b82f6; }
-
-        #loader { z-index: 999999; }
-        #modal-overlay { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-
-        /* Banner Principal Premium */
-        .hero-banner-bg {
-            background-image: linear-gradient(135deg, rgba(0, 34, 119, 0.95) 0%, rgba(0, 68, 204, 0.85) 100%), 
-                              url('https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&q=80&w=1600');
-            background-size: cover;
-            background-position: center;
-        }
-        .dark .hero-banner-bg {
-            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(0, 34, 119, 0.9) 100%), 
-                              url('https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&q=80&w=1600');
+            box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);
+            border-color: #0055FF;
         }
 
-        /* Imágenes Decorativas Laterales */
-        .side-decoration {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            width: 25vw;
-            max-width: 450px;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.12;
-            background-size: cover;
-            background-position: center;
-            filter: grayscale(30%) contrast(110%);
+        /* Input Moderno */
+        .modern-input {
+            background: transparent;
+            transition: all 0.3s ease;
         }
-        .dark .side-decoration { opacity: 0.04; }
-        .side-left { 
-            left: 0; 
-            background-image: url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=800'); 
-            -webkit-mask-image: linear-gradient(to right, black, transparent);
-            mask-image: linear-gradient(to right, black, transparent);
+        .modern-input:focus-within {
+            background: white;
+            box-shadow: 0 0 0 2px rgba(0,85,255,0.2);
         }
-        .side-right { 
-            right: 0; 
-            background-image: url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800'); 
-            -webkit-mask-image: linear-gradient(to left, black, transparent);
-            mask-image: linear-gradient(to left, black, transparent);
+        .dark .modern-input:focus-within {
+            background: #18181b;
+            box-shadow: 0 0 0 2px rgba(0,85,255,0.4);
         }
 
-        /* Whatsapp Dual Float */
-        .wa-menu {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            transform: translateY(20px);
+        /* Animación de carga SVG */
+        .loader-ring {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: #0055FF;
+            border-right-color: #0055FF;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
         }
-        .wa-container:hover .wa-menu {
-            max-height: 200px;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Animaciones Chatbot */
-        .typing-dot { animation: typingBounce 1.4s infinite ease-in-out both; }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* Estilos Panel Admin */
-        #admin-dashboard { display: none; }
-        body.is-admin #admin-dashboard { display: grid; }
-        
-        /* Estilos Menú Desplegable Personalizado */
-        #cat-dropdown { transform-origin: top left; }
+        /* Gradientes Modernos text */
+        .text-gradient {
+            background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(135deg, #0055FF, #00C2FF);
+        }
+        .dark .text-gradient { background-image: linear-gradient(135deg, #4da6ff, #00ffff); }
     </style>
 </head>
-<body class="text-brand-dark dark:text-gray-200 antialiased pb-24">
+<body class="text-zinc-800 dark:text-zinc-200 antialiased pb-24 selection:bg-brand-blue selection:text-white">
 
-    <!-- DECORACIONES LATERALES -->
-    <div class="side-decoration side-left hidden 2xl:block"></div>
-    <div class="side-decoration side-right hidden 2xl:block"></div>
-
-    <!-- 1. PANTALLA DE CARGA -->
-    <div id="loader" class="fixed inset-0 bg-brand-light dark:bg-gray-900 flex flex-col justify-center items-center transition-opacity duration-700 z-[999999]">
-        <div class="relative flex items-center justify-center w-24 h-24 bg-white dark:bg-gray-800 rounded-2xl shadow-xl mb-6 border border-gray-100 dark:border-gray-700">
-            <span class="font-display font-bold text-6xl text-brand-blue dark:text-blue-400 mt-2">E</span>
-            <div class="absolute inset-0 border-4 border-brand-blue/20 rounded-2xl animate-ping opacity-20"></div>
-        </div>
-        <h1 class="font-display text-4xl font-bold text-brand-dark dark:text-white tracking-wide">ELEC<span class="text-brand-red">PRO</span></h1>
-        <div class="mt-2 w-32 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="w-full h-full bg-brand-blue origin-left animate-[scaleX_1s_ease-in-out_infinite] scale-x-0"></div>
-        </div>
+    <!-- FONDOS ABSTRACTOS (BLOBS) PARA ESTÉTICA MODERNA -->
+    <div class="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-0 opacity-40 dark:opacity-20">
+        <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-400/20 mix-blend-multiply filter blur-[80px] animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-cyan-400/20 mix-blend-multiply filter blur-[80px] animate-blob" style="animation-delay: 2s"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[45vw] h-[45vw] rounded-full bg-indigo-400/20 mix-blend-multiply filter blur-[80px] animate-blob" style="animation-delay: 4s"></div>
     </div>
 
-    <!-- 2. HEADER ESTRUCTURADO Y MODERNO -->
-    <header class="fixed top-0 w-full z-40 glass-header shadow-sm transition-all">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 md:gap-6">
+    <!-- 1. PANTALLA DE CARGA (Minimalista y Fluida) -->
+    <div id="loader" class="fixed inset-0 bg-[#fafafa] dark:bg-[#09090b] z-[999999] flex flex-col justify-center items-center transition-all duration-700 ease-in-out">
+        <div class="relative flex justify-center items-center w-32 h-32 mb-4">
+            <div class="absolute loader-ring"></div>
+            <i data-lucide="zap" class="w-8 h-8 text-brand-blue animate-pulse"></i>
+        </div>
+        <h1 class="font-display text-2xl font-bold tracking-widest text-zinc-900 dark:text-white uppercase">Elecpro</h1>
+    </div>
+
+    <!-- 2. HEADER DYNAMIC ISLAND -->
+    <header class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 island-header rounded-full px-2 py-2 transition-all">
+        <div class="flex items-center justify-between gap-4 w-full">
             
-            <!-- Logo -->
-            <div class="flex items-center cursor-pointer flex-shrink-0 group" onclick="window.scrollTo(0,0)">
-                <div class="w-11 h-11 bg-brand-blue rounded-xl flex items-center justify-center text-white shadow-lg group-hover:bg-brand-darkblue transition-colors">
-                    <span class="font-display font-bold text-2xl mt-1">E</span>
+            <!-- Logo Sutil -->
+            <div class="flex items-center cursor-pointer pl-2 group" onclick="window.scrollTo(0,0)">
+                <div class="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
+                    <i data-lucide="zap" class="w-5 h-5 fill-current"></i>
                 </div>
-                <div class="ml-3 leading-none hidden sm:block">
-                    <span class="block font-display font-bold text-2xl text-gray-900 dark:text-white tracking-tight">ELECPRO</span>
-                    <span class="block text-[10px] font-bold text-gray-400 tracking-widest uppercase mt-0.5">Distribuidor Oficial</span>
+                <span class="ml-3 font-display font-bold text-xl tracking-tight hidden md:block text-zinc-900 dark:text-white">ELECPRO</span>
+            </div>
+
+            <!-- Buscador Integrado -->
+            <div class="flex-grow max-w-xl">
+                <div class="modern-input relative flex items-center bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/80 rounded-full px-4 py-2.5 h-11">
+                    <i data-lucide="search" class="w-4 h-4 text-zinc-400"></i>
+                    <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Buscar productos..." class="w-full bg-transparent border-none outline-none text-sm font-medium px-3 text-zinc-800 dark:text-zinc-200 placeholder-zinc-400">
+                    <button id="clear-search" onclick="clearSearch()" class="hidden text-zinc-400 hover:text-red-500 transition-colors"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
-            <!-- Estructura de Búsqueda y Categorías (Menú Desplegable) -->
-            <div class="flex-grow order-3 md:order-none w-full md:w-auto max-w-3xl flex gap-2">
-                <!-- Dropdown de Categorías -->
-                <div class="relative z-50 flex-shrink-0">
-                    <button onclick="toggleDropdown(event)" id="dropdown-btn" class="h-full flex items-center justify-center gap-2 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-4 py-2.5 rounded-xl font-bold text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition shadow-sm whitespace-nowrap">
-                        <i data-lucide="layout-grid" class="w-4 h-4"></i> <span class="hidden lg:inline" id="current-cat-label">Categorías</span> <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </button>
-                    <!-- Menú oculto por defecto -->
-                    <div id="cat-dropdown" class="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl shadow-2xl py-2 hidden flex-col opacity-0 scale-95 transition-all origin-top-left z-50">
-                        <!-- Inyección JS -->
-                    </div>
-                </div>
-
-                <!-- Buscador Central -->
-                <div class="search-container relative bg-gray-100/80 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl flex-grow flex items-center px-4 py-2.5 shadow-sm">
-                    <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
-                    <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Buscar productos, herramientas..." class="w-full bg-transparent border-none outline-none px-3 text-sm font-semibold text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500">
-                    <button id="clear-search" onclick="clearSearch()" class="hidden text-gray-400 hover:text-brand-red transition-colors"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
-                </div>
-            </div>
-
-            <!-- Botones Header -->
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <!-- Toggle Dark Mode -->
-                <button id="theme-toggle" class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all text-gray-600 dark:text-gray-300">
-                    <i id="theme-toggle-dark-icon" data-lucide="moon" class="hidden w-5 h-5"></i>
-                    <i id="theme-toggle-light-icon" data-lucide="sun" class="hidden w-5 h-5"></i>
+            <!-- Controles (Dark Mode + Cart) -->
+            <div class="flex items-center pr-1 gap-1">
+                <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors">
+                    <i id="theme-toggle-dark-icon" data-lucide="moon" class="hidden w-4 h-4"></i>
+                    <i id="theme-toggle-light-icon" data-lucide="sun" class="hidden w-4 h-4"></i>
                 </button>
+                
+                <div class="w-[1px] h-5 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
 
-                <button onclick="document.getElementById('about-us').scrollIntoView({behavior: 'smooth'})" class="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-brand-blue dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">
-                    <i data-lucide="users" class="w-4 h-4"></i> Nosotros
-                </button>
-
-                <button onclick="toggleCart()" class="relative p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-brand-blue/30 dark:hover:border-blue-500/50 transition-all group">
-                    <i data-lucide="shopping-cart" class="w-5 h-5 text-gray-700 dark:text-gray-300 group-hover:text-brand-blue dark:group-hover:text-blue-400 transition-colors"></i>
-                    <span id="header-cart-count" class="absolute -top-2 -right-2 bg-brand-red text-white text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full shadow-md scale-0 transition-transform">0</span>
+                <button onclick="toggleCart()" class="relative flex items-center justify-center h-10 px-4 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:scale-105 active:scale-95 transition-all gap-2 group">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span id="header-cart-count" class="font-bold text-sm">0</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- NOTIFICACIONES TOAST -->
-    <div id="toast" class="fixed top-28 left-1/2 transform -translate-x-1/2 bg-gray-900/95 dark:bg-white/95 backdrop-blur text-white dark:text-gray-900 px-6 py-3.5 rounded-xl shadow-2xl z-[100] text-sm font-semibold transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px] flex items-center gap-3 border border-gray-700 dark:border-gray-200">
-        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 dark:text-green-600"></i> <span id="toast-msg">Completado</span>
+    <!-- TOAST NOTIFICACIONES -->
+    <div id="toast" class="fixed top-28 left-1/2 transform -translate-x-1/2 bg-zinc-900/95 dark:bg-white/95 backdrop-blur-md text-white dark:text-zinc-900 px-5 py-3 rounded-full shadow-2xl z-[100] text-sm font-medium transition-all duration-400 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2 border border-zinc-800 dark:border-zinc-200">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-green-400 dark:text-green-500"></i> <span id="toast-msg">Hecho</span>
     </div>
 
-    <!-- 3. MAIN -->
-    <main class="max-w-7xl mx-auto px-4 pt-40 md:pt-32 min-h-screen relative z-10">
+    <!-- 3. MAIN CONTENIDO -->
+    <main class="max-w-7xl mx-auto px-4 pt-40 md:pt-48 min-h-screen relative z-10">
         
-        <!-- Banner Corporativo Premium -->
-        <div id="hero-banner" class="relative hero-banner-bg rounded-[2rem] p-8 md:p-14 mb-12 text-white shadow-2xl overflow-hidden animate-fade-in flex items-center justify-between">
-            <div class="absolute inset-0 bg-gradient-to-r from-brand-darkblue/80 dark:from-slate-900/95 to-transparent"></div>
-            
-            <div class="relative z-10 max-w-2xl">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 mb-6 animate-float shadow-lg">
-                    <span class="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></span>
-                    <span class="text-xs font-bold tracking-widest uppercase text-white">Equipamiento 2026</span>
-                </div>
-                <h2 class="font-display text-6xl md:text-7xl font-bold mb-4 leading-none tracking-tight text-white drop-shadow-md">
-                    SOLUCIONES <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">INDUSTRIALES</span>
-                </h2>
-                <p class="text-blue-50/90 text-sm md:text-lg leading-relaxed mb-8 max-w-lg font-medium drop-shadow-sm">Proveedor autorizado de herramientas y material eléctrico de alto rendimiento para profesionales y proyectos exigentes.</p>
-                
-                <button onclick="document.getElementById('catalog-grid').scrollIntoView({behavior: 'smooth', block: 'start'})" class="bg-white text-brand-blue font-bold px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-colors shadow-lg flex items-center gap-2">
-                    Ver Catálogo <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                </button>
+        <!-- HERO SECTION (Ultra Minimalista) -->
+        <div class="text-center max-w-4xl mx-auto mb-20 animate-reveal">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-blue/10 text-brand-blue dark:bg-blue-500/10 dark:text-blue-400 text-xs font-bold uppercase tracking-widest mb-6 border border-brand-blue/20">
+                <span class="w-2 h-2 rounded-full bg-brand-blue animate-pulse"></span> Sistema B2B
             </div>
-            
-            <div class="hidden lg:block relative z-10 mr-8">
-                <div class="w-48 h-48 border-4 border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <i data-lucide="zap" class="w-20 h-20 text-brand-yellow drop-shadow-lg"></i>
-                </div>
+            <h1 class="font-display text-6xl md:text-8xl font-bold tracking-tight text-zinc-900 dark:text-white leading-[1.05] mb-6">
+                Energía que <br/>
+                <span class="text-gradient">Transforma.</span>
+            </h1>
+            <p class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg max-w-2xl mx-auto font-medium leading-relaxed mb-10">
+                Catálogo especializado de suministros eléctricos y soluciones electromecánicas para la industria, construcción y desarrollo corporativo.
+            </p>
+            <div class="flex justify-center gap-4">
+                <button onclick="document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'})" class="bg-brand-blue text-white px-8 py-4 rounded-full font-bold text-sm hover:bg-blue-600 transition-all hover:shadow-[0_0_30px_rgba(0,85,255,0.4)] hover:-translate-y-1">
+                    Ver Catálogo
+                </button>
+                <button onclick="window.open('https://wa.me/50587600225', '_blank')" class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-800 px-8 py-4 rounded-full font-bold text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all flex items-center gap-2">
+                    <i data-lucide="phone" class="w-4 h-4"></i> Asesoría
+                </button>
             </div>
         </div>
 
-        <!-- ================= SECCIÓN QUIÉNES SOMOS (REUBICADA ESTRATÉGICAMENTE) ================= -->
-        <section id="about-us" class="mb-16 relative z-10 bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-gray-200 dark:border-slate-700 p-8 md:p-14 overflow-hidden animate-slide-up">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-brand-blue/5 dark:bg-brand-blue/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
-                <div>
-                    <div class="inline-flex items-center gap-2 bg-blue-50 dark:bg-slate-700 px-3 py-1.5 rounded-lg text-brand-blue dark:text-blue-400 font-bold text-xs uppercase tracking-widest mb-4 border border-blue-100 dark:border-slate-600">
-                        <i data-lucide="shield-check" class="w-4 h-4"></i> Construyendo Confianza
+        <!-- ABOUT US (BENTO GRID MODERNO) -->
+        <section class="mb-24 animate-reveal" style="animation-delay: 0.2s">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 auto-rows-[200px]">
+                
+                <!-- Caja Principal Info -->
+                <div class="md:col-span-2 md:row-span-2 bg-white dark:bg-brand-surface rounded-[2rem] p-8 md:p-10 border border-zinc-100 dark:border-zinc-800/50 shadow-sm bento-card relative overflow-hidden flex flex-col justify-between group">
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-brand-blue/5 rounded-full blur-3xl group-hover:bg-brand-blue/10 transition-colors"></div>
+                    <div>
+                        <div class="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-brand-blue mb-6"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+                        <h2 class="font-display text-3xl font-bold text-zinc-900 dark:text-white mb-4">Ingeniería de Confianza</h2>
+                        <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">Desde 2012, ELECPRO es sinónimo de eficiencia técnica. No solo vendemos equipos, diseñamos soluciones integrales en baja tensión, tableros y climatización para proyectos de alta demanda.</p>
                     </div>
-                    <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-                        Expertos en <span class="text-brand-blue dark:text-blue-400">Electricidad y Electromecánica</span>
-                    </h2>
-                    
-                    <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-base">
-                        Fundada el <strong>25 de febrero de 2012</strong>, <span class="text-brand-dark dark:text-white font-black">ELECPRO</span> se ha consolidado como una empresa líder especializada en servicios eléctricos de baja tensión, tanto en entornos industriales como residenciales.
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-base">
-                        Nos destacamos por nuestro compromiso inquebrantable con la <strong>puntualidad, la calidad y la eficiencia</strong>. Nuestro enfoque se centra en ofrecer soluciones efectivas y personalizadas a las empresas que confían en nosotros.
-                    </p>
-
-                    <!-- Clientes -->
-                    <div class="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-2xl p-6 mb-6 shadow-inner">
-                        <h3 class="font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider">
-                            <i data-lucide="briefcase" class="w-5 h-5 text-brand-red"></i> Clientes Destacados
-                        </h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-md font-bold shadow-sm">PUMA</span>
-                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-md font-bold shadow-sm">Claro</span>
-                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-md font-bold shadow-sm">Banco LaFise</span>
-                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-md font-bold shadow-sm">Alfa Servicio</span>
-                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-md font-bold shadow-sm">Construcciones Gaitán</span>
-                            <span class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 text-xs px-3 py-1.5 rounded-md font-bold shadow-sm">Reingesa</span>
+                    <div class="mt-8 flex items-center gap-4">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold">P</div>
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold">C</div>
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold">L</div>
                         </div>
+                        <p class="text-xs font-semibold text-zinc-400">Puma, Claro, LaFise y más confían en nosotros.</p>
                     </div>
                 </div>
 
-                <!-- Servicios -->
-                <div>
-                    <h3 class="font-display text-3xl font-bold text-gray-900 dark:text-white mb-6">Nuestros Servicios</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start hover:border-brand-blue dark:hover:border-blue-500 transition-colors">
-                            <div class="bg-blue-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg border border-blue-100 dark:border-slate-600"><i data-lucide="server" class="w-5 h-5"></i></div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Tableros y Controles</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Montaje de tableros eléctricos y electromecánicos.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start hover:border-brand-blue dark:hover:border-blue-500 transition-colors">
-                            <div class="bg-blue-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg border border-blue-100 dark:border-slate-600"><i data-lucide="power" class="w-5 h-5"></i></div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Generadores</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Instalación y transferencias automáticas.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start hover:border-brand-blue dark:hover:border-blue-500 transition-colors">
-                            <div class="bg-blue-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg border border-blue-100 dark:border-slate-600"><i data-lucide="fuel" class="w-5 h-5"></i></div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Gasolineras</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Sistemas eléctricos para combustibles.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start hover:border-brand-blue dark:hover:border-blue-500 transition-colors">
-                            <div class="bg-blue-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg border border-blue-100 dark:border-slate-600"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Redes de Tierra</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Instalación de tierras y pararrayos.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start hover:border-brand-blue dark:hover:border-blue-500 transition-colors">
-                            <div class="bg-blue-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg border border-blue-100 dark:border-slate-600"><i data-lucide="wind" class="w-5 h-5"></i></div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Aires Acondicionados</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Mantenimiento preventivo y correctivo.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm p-4 rounded-xl flex gap-4 items-start hover:border-brand-blue dark:hover:border-blue-500 transition-colors">
-                            <div class="bg-blue-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 p-2.5 rounded-lg border border-blue-100 dark:border-slate-600"><i data-lucide="sun" class="w-5 h-5"></i></div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white text-sm mb-1">Sistemas Solares</h4>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Instalación de paneles fotovoltaicos.</p>
-                            </div>
-                        </div>
+                <!-- Caja Tableros -->
+                <div class="md:col-span-1 md:row-span-1 bg-gradient-to-br from-brand-blue to-blue-600 rounded-[2rem] p-6 text-white shadow-lg bento-card flex flex-col justify-between relative overflow-hidden">
+                    <i data-lucide="server" class="w-24 h-24 absolute -bottom-4 -right-4 opacity-10"></i>
+                    <i data-lucide="server" class="w-6 h-6 mb-4"></i>
+                    <div>
+                        <h3 class="font-bold text-lg font-display">Tableros</h3>
+                        <p class="text-blue-100 text-xs mt-1">Montaje electromecánico</p>
                     </div>
                 </div>
+
+                <!-- Caja Clima -->
+                <div class="md:col-span-1 md:row-span-1 bg-white dark:bg-brand-surface rounded-[2rem] p-6 border border-zinc-100 dark:border-zinc-800/50 shadow-sm bento-card flex flex-col justify-between group">
+                    <div class="w-10 h-10 bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="wind" class="w-5 h-5"></i></div>
+                    <div>
+                        <h3 class="font-bold text-zinc-900 dark:text-white text-lg font-display">Climatización</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400 text-xs mt-1">Mantenimiento preventivo</p>
+                    </div>
+                </div>
+
+                <!-- Caja Stats -->
+                <div class="md:col-span-2 md:row-span-1 bg-zinc-900 dark:bg-black rounded-[2rem] p-8 border border-zinc-800 shadow-xl bento-card flex items-center justify-around text-white">
+                    <div class="text-center">
+                        <p class="text-4xl font-display font-bold text-brand-yellow">12+</p>
+                        <p class="text-xs font-medium text-zinc-400 mt-1 uppercase tracking-wider">Años Experiencia</p>
+                    </div>
+                    <div class="w-px h-12 bg-zinc-800"></div>
+                    <div class="text-center">
+                        <p class="text-4xl font-display font-bold text-brand-blue">24/7</p>
+                        <p class="text-xs font-medium text-zinc-400 mt-1 uppercase tracking-wider">Soporte Técnico</p>
+                    </div>
+                </div>
+
             </div>
         </section>
 
-        <!-- SEPARADOR ESTRUCTURAL DEL CATÁLOGO -->
-        <div class="mt-20 mb-12 flex items-center justify-center gap-6 relative z-10">
-            <div class="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent flex-grow"></div>
-            <h3 class="font-display text-3xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-wider uppercase text-center flex items-center gap-3">
-                <i data-lucide="boxes" class="w-8 h-8 text-brand-blue dark:text-blue-400"></i> Todos los Productos
-            </h3>
-            <div class="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent flex-grow"></div>
+        <!-- DASHBOARD ADMIN (Oculto por defecto) -->
+        <div id="admin-dashboard" class="hidden grid-cols-1 md:grid-cols-3 gap-4 mb-10 animate-reveal">
+            <div class="bg-white dark:bg-brand-surface rounded-[2rem] p-6 border border-brand-blue/20 shadow-sm flex items-center gap-5">
+                <div class="w-12 h-12 bg-brand-blue/10 rounded-full flex items-center justify-center text-brand-blue"><i data-lucide="package" class="w-5 h-5"></i></div>
+                <div><p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Inventario</p><h4 class="text-2xl font-display font-bold text-zinc-900 dark:text-white" id="stat-total-items">0</h4></div>
+            </div>
+            <div class="bg-white dark:bg-brand-surface rounded-[2rem] p-6 border border-green-500/20 shadow-sm flex items-center gap-5">
+                <div class="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center text-green-500"><i data-lucide="dollar-sign" class="w-5 h-5"></i></div>
+                <div><p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Valor</p><h4 class="text-2xl font-display font-bold text-zinc-900 dark:text-white" id="stat-total-value">C$ 0</h4></div>
+            </div>
+            <button onclick="openNewProduct()" class="bg-brand-blue text-white rounded-[2rem] p-6 shadow-lg flex items-center justify-center gap-3 hover:bg-brand-darkblue transition-colors">
+                <i data-lucide="plus" class="w-5 h-5"></i> <span class="font-bold">Añadir Producto</span>
+            </button>
         </div>
 
-        <!-- Encabezado Catálogo y Dashboard Admin -->
-        <div class="flex justify-between items-end mb-6 relative z-10">
-            <div>
-                <p class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1" id="section-title">Inventario General</p>
-                <span class="text-xs font-bold text-brand-blue dark:text-blue-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 px-3 py-1.5 rounded-md shadow-sm" id="product-count">0 Items</span>
-            </div>
-        </div>
-
-        <!-- PANEL DASHBOARD ADMIN -->
-        <div id="admin-dashboard" class="grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-slide-up">
-            <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border-l-4 border-brand-blue shadow-sm flex items-center justify-between">
-                <div><p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Inventario</p><h4 class="text-3xl font-display font-bold text-gray-900 dark:text-white leading-none" id="stat-total-items">0</h4></div>
-                <div class="w-12 h-12 bg-blue-50 dark:bg-slate-700 rounded-lg flex items-center justify-center"><i data-lucide="box" class="w-6 h-6 text-brand-blue"></i></div>
-            </div>
-            <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border-l-4 border-brand-yellow shadow-sm flex items-center justify-between">
-                <div><p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Valor Catálogo</p><h4 class="text-3xl font-display font-bold text-gray-900 dark:text-white leading-none" id="stat-total-value">C$ 0</h4></div>
-                <div class="w-12 h-12 bg-orange-50 dark:bg-slate-700 rounded-lg flex items-center justify-center"><i data-lucide="circle-dollar-sign" class="w-6 h-6 text-brand-yellow"></i></div>
-            </div>
-            <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border-l-4 border-green-500 shadow-sm flex items-center justify-between">
-                <div><p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Categorías</p><h4 class="text-3xl font-display font-bold text-gray-900 dark:text-white leading-none" id="stat-categories">0</h4></div>
-                <div class="w-12 h-12 bg-green-50 dark:bg-slate-700 rounded-lg flex items-center justify-center"><i data-lucide="tags" class="w-6 h-6 text-green-500"></i></div>
+        <!-- ================= SECCIÓN CATÁLOGO ================= -->
+        <div id="catalogo" class="mb-8 scroll-mt-32">
+            <h2 class="font-display text-4xl font-bold text-zinc-900 dark:text-white mb-6">Catálogo de Productos</h2>
+            
+            <!-- TABS DE CATEGORÍAS (Deslizables horizontalmente) -->
+            <div class="relative w-full overflow-hidden mb-8">
+                <!-- Sombra para indicar scroll -->
+                <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#fafafa] dark:from-[#09090b] to-transparent pointer-events-none z-10"></div>
+                
+                <div id="category-tabs" class="flex gap-2 overflow-x-auto hide-scroll pb-2 pt-1 px-1">
+                    <!-- Se inyectan por JS -->
+                </div>
             </div>
         </div>
 
         <!-- GRID DE PRODUCTOS -->
-        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5 pb-16 relative z-10">
+        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-20 relative z-10">
             <!-- Inyección de JavaScript -->
         </div>
 
-        <!-- ================= PLANES DE MANTENIMIENTO ================= -->
-        <section id="planes" class="mt-8 mb-16 relative z-10">
-            <div class="text-center mb-10">
-                <div class="inline-flex items-center gap-2 bg-gray-100 dark:bg-slate-800 px-4 py-2 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 font-bold text-xs uppercase tracking-widest mb-4">
-                    <i data-lucide="settings" class="w-4 h-4 text-brand-blue dark:text-blue-400"></i> Soluciones Corporativas
-                </div>
-                <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">Planes de Mantenimiento</h2>
-                <p class="text-gray-500 dark:text-gray-400 mt-2 max-w-xl mx-auto font-medium">Asegura la continuidad de tus operaciones con nuestros contratos técnicos especializados.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                <!-- Plan 1 -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-700 shadow-md hover:shadow-xl transition-shadow relative overflow-hidden group">
-                    <div class="w-14 h-14 bg-gray-50 dark:bg-slate-700 text-brand-blue dark:text-blue-400 rounded-xl border border-gray-100 dark:border-slate-600 flex items-center justify-center mb-6"><i data-lucide="wind" class="w-7 h-7"></i></div>
-                    <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-2">Climatización Básico</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium">Ideal para residencias y oficinas pequeñas. Mantenimiento preventivo.</p>
-                    <ul class="space-y-3 mb-8 text-sm font-medium text-gray-600 dark:text-gray-300">
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i> Limpieza de filtros y serpentines</li>
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i> Medición de gas refrigerante</li>
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i> Revisión eléctrica del equipo</li>
-                    </ul>
-                    <button onclick="window.open('https://wa.me/50587600225?text=Hola,%20deseo%20cotizar%20el%20Plan%20de%20Climatización%20Básico', '_blank')" class="w-full py-3.5 rounded-xl border-2 border-brand-blue text-brand-blue dark:text-blue-400 dark:border-blue-400 font-bold hover:bg-brand-blue hover:text-white dark:hover:bg-blue-400 dark:hover:text-slate-900 transition-colors">Cotizar Plan</button>
-                </div>
-
-                <!-- Plan 2 (Destacado) -->
-                <div class="bg-brand-darkblue dark:bg-slate-900 rounded-2xl p-8 border border-blue-800 dark:border-slate-700 shadow-2xl relative overflow-hidden transform md:-translate-y-4">
-                    <div class="absolute top-0 right-0 bg-gradient-to-r from-orange-500 to-brand-yellow text-brand-dark text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest shadow-md">Recomendado</div>
-                    <div class="w-14 h-14 bg-white/10 border border-white/20 text-brand-yellow rounded-xl flex items-center justify-center mb-6"><i data-lucide="power" class="w-7 h-7"></i></div>
-                    <h3 class="font-bold text-xl text-white mb-2">Industrial Preventivo</h3>
-                    <p class="text-sm text-blue-100 mb-6 font-medium">Cobertura total para generadores, tableros y sistemas críticos.</p>
-                    <ul class="space-y-3 mb-8 text-sm font-medium text-white/90">
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-yellow"></i> Mantenimiento de Generadores</li>
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-yellow"></i> Revisión de Tableros Eléctricos</li>
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-yellow"></i> Inspección de Redes de Tierra</li>
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-yellow"></i> Visitas programadas mensuales</li>
-                    </ul>
-                    <button onclick="window.open('https://wa.me/50587600225?text=Hola,%20deseo%20cotizar%20el%20Plan%20Industrial%20Preventivo%20para%20mi%20empresa', '_blank')" class="w-full py-3.5 rounded-xl bg-brand-yellow text-brand-dark font-black hover:bg-white transition-colors shadow-lg shadow-brand-yellow/20">Solicitar Evaluación</button>
-                </div>
-
-                <!-- Plan 3 -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-700 shadow-md hover:shadow-xl transition-shadow relative overflow-hidden">
-                    <div class="w-14 h-14 bg-red-50 dark:bg-slate-700 text-brand-red border border-red-100 dark:border-slate-600 rounded-xl flex items-center justify-center mb-6"><i data-lucide="zap" class="w-7 h-7"></i></div>
-                    <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-2">Emergencia 24/7</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium">Soporte técnico inmediato para fallas y apagones inesperados.</p>
-                    <ul class="space-y-3 mb-8 text-sm font-medium text-gray-600 dark:text-gray-300">
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-red"></i> Atención técnica prioritaria</li>
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-red"></i> Diagnóstico electromecánico</li>
-                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2" class="w-4 h-4 text-brand-red"></i> Reparaciones correctivas en lugar</li>
-                    </ul>
-                    <button onclick="window.open('https://wa.me/50587600225?text=Hola,%20necesito%20atención%20técnica%20de%20Emergencia%2024/7', '_blank')" class="w-full py-3.5 rounded-xl border-2 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors flex justify-center items-center gap-2">Contactar Urgencias</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= GALERÍA DE PROYECTOS ================= -->
-        <section id="galeria" class="mt-16 mb-16 relative z-10">
-            <div class="flex justify-between items-end mb-8">
-                <div>
-                    <h2 class="font-display text-4xl font-bold text-gray-900 dark:text-white">Proyectos Realizados</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Nuestra calidad en acción industrial</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Imagen 1 -->
-                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md border border-gray-200 dark:border-slate-700">
-                    <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Proyecto Industrial">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 transition-opacity"></div>
-                    <div class="absolute bottom-0 left-0 p-5">
-                        <p class="text-brand-yellow text-[10px] font-black uppercase tracking-widest mb-1">Industrial</p>
-                        <h4 class="text-white font-bold text-lg leading-tight">Montaje de Paneles y Líneas de Fuerza</h4>
-                    </div>
-                </div>
-                <!-- Imagen 2 -->
-                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md border border-gray-200 dark:border-slate-700">
-                    <img src="https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Proyecto Comercial">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 transition-opacity"></div>
-                    <div class="absolute bottom-0 left-0 p-5">
-                        <p class="text-brand-yellow text-[10px] font-black uppercase tracking-widest mb-1">Comercial</p>
-                        <h4 class="text-white font-bold text-lg leading-tight">Instalaciones de Tuberías Eléctricas</h4>
-                    </div>
-                </div>
-                <!-- Imagen 3 -->
-                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md border border-gray-200 dark:border-slate-700">
-                    <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Mantenimiento">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 transition-opacity"></div>
-                    <div class="absolute bottom-0 left-0 p-5">
-                        <p class="text-brand-yellow text-[10px] font-black uppercase tracking-widest mb-1">Mantenimiento</p>
-                        <h4 class="text-white font-bold text-lg leading-tight">Gabinetes y Transferencias Automáticas</h4>
-                    </div>
-                </div>
-                <!-- Imagen 4 -->
-                <div class="group relative rounded-2xl overflow-hidden h-64 lg:h-80 shadow-md border border-gray-200 dark:border-slate-700">
-                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Proyectos Especializados">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-80 transition-opacity"></div>
-                    <div class="absolute bottom-0 left-0 p-5">
-                        <p class="text-brand-yellow text-[10px] font-black uppercase tracking-widest mb-1">Especializado</p>
-                        <h4 class="text-white font-bold text-lg leading-tight">Redes de Tierra y Pararrayos</h4>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Fila de Contacto (Directorio) -->
-        <div class="mt-16 border-t border-gray-200 dark:border-slate-700 pt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-            <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
-                <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-brand-dark dark:text-white flex items-center justify-center flex-shrink-0"><i data-lucide="user" class="w-5 h-5"></i></div>
-                <div>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Gerente Propietario</p>
-                    <p class="text-gray-900 dark:text-white font-bold text-sm">David Otero Solís</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
-                <div class="w-12 h-12 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] flex items-center justify-center flex-shrink-0"><i data-lucide="phone" class="w-5 h-5"></i></div>
-                <div>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Atención al Cliente</p>
-                    <p class="text-gray-900 dark:text-white font-bold text-sm">+505 8760-0225</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
-                <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-brand-blue dark:text-blue-400 flex items-center justify-center flex-shrink-0"><i data-lucide="mail" class="w-5 h-5"></i></div>
-                <div>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Correo Electrónico</p>
-                    <p class="text-gray-900 dark:text-white font-bold text-sm">elecpro505@gmail.com</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
-                <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-brand-dark dark:text-white flex items-center justify-center flex-shrink-0"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
-                <div>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Sede Principal</p>
-                    <p class="text-gray-900 dark:text-white font-bold text-xs leading-tight">Pq. Ferreterías Sur, Mercado Roberto Huembes</p>
-                </div>
-            </div>
-        </div>
     </main>
 
-    <!-- 4. FOOTER PROFESIONAL -->
-    <footer class="mt-16 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-16 relative z-10">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-4 text-center">
-            <div class="w-14 h-14 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl flex items-center justify-center text-brand-blue dark:text-blue-400 font-display text-3xl mb-2 shadow-sm">E</div>
-            <div>
-                <h4 class="font-display text-3xl font-bold text-gray-800 dark:text-white tracking-widest">ELECPRO</h4>
-                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1 uppercase tracking-wider text-[10px]">Soluciones Industriales de Alto Rendimiento</p>
+    <!-- FOOTER MINIMALISTA -->
+    <footer class="border-t border-zinc-200 dark:border-zinc-800/50 bg-white dark:bg-zinc-950 py-16 relative z-10 overflow-hidden">
+        <!-- Texto Gigante Fondo -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] dark:opacity-[0.02] pointer-events-none overflow-hidden">
+            <span class="font-display font-bold text-[20vw] leading-none whitespace-nowrap">ELECPRO</span>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center">
+            <div class="w-12 h-12 bg-brand-blue rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-brand-blue/20">
+                <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
             </div>
-            <p class="text-xs text-gray-400 dark:text-gray-600 mt-6 font-medium">© 2026 Elecpro Nicaragua. Todos los derechos reservados.</p>
+            <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm">Suministros Industriales & Electromecánica</p>
+            <p class="text-xs text-zinc-400 dark:text-zinc-600 mt-6">© 2026 Elecpro Nicaragua. All rights reserved.</p>
             
-            <button onclick="login()" class="text-gray-300 dark:text-gray-700 hover:text-brand-blue dark:hover:text-blue-500 transition-colors p-3 mt-4 rounded-full hover:bg-gray-50 dark:hover:bg-gray-800" title="Acceso Panel Administrativo"><i data-lucide="lock" class="w-4 h-4"></i></button>
+            <!-- Login Admin (Secreto sutil) -->
+            <button onclick="login()" class="w-8 h-8 mt-4 rounded-full flex items-center justify-center text-zinc-300 hover:text-zinc-500 dark:text-zinc-800 dark:hover:text-zinc-600 transition-colors">
+                <i data-lucide="fingerprint" class="w-4 h-4"></i>
+            </button>
         </div>
     </footer>
 
-    <!-- ================= BOTONES FLOTANTES DE ACCIÓN ================= -->
+    <!-- ================= BOTONES FLOTANTES ================= -->
     
-    <!-- Botón de Carrito (Productos) -->
-    <button id="cart-fab" onclick="toggleCart()" class="fixed bottom-8 right-6 w-16 h-16 bg-brand-dark dark:bg-white dark:text-slate-900 text-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.3)] flex items-center justify-center z-30 hidden transition-transform hover:-translate-y-1 active:scale-95 group border border-gray-700 dark:border-gray-200">
-        <i data-lucide="shopping-cart" class="w-6 h-6 group-hover:-rotate-12 transition-transform"></i>
-        <span id="fab-cart-count" class="absolute -top-2 -right-2 bg-brand-red text-white text-xs font-black w-7 h-7 flex items-center justify-center rounded-lg border-2 border-white dark:border-slate-900 shadow-sm">0</span>
-    </button>
-    
-    <!-- Botón Asistente Virtual (ElecBot V2.0) -->
-    <button onclick="toggleChatbot()" class="fixed bottom-28 right-6 w-14 h-14 bg-brand-blue text-white rounded-xl shadow-[0_10px_25px_rgba(0,68,204,0.4)] border border-blue-400/50 flex items-center justify-center z-30 transition-transform hover:-translate-y-1 active:scale-95 group">
-        <i data-lucide="bot" class="w-6 h-6 group-hover:animate-pulse"></i>
+    <!-- Botón Asistente Virtual (ElecBot) -->
+    <button onclick="toggleChatbot()" class="fixed bottom-6 right-6 w-14 h-14 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.15)] flex items-center justify-center z-40 transition-all hover:scale-110 active:scale-95 group">
+        <i data-lucide="sparkles" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
     </button>
 
-    <!-- Botón Dual WhatsApp (Servicios / Soporte) -->
-    <div class="fixed bottom-8 left-6 z-30 flex flex-col items-start wa-container">
-        <!-- Menú Expandible -->
-        <div class="wa-menu flex flex-col gap-2 mb-3 ml-2 origin-bottom-left">
-            <button onclick="window.open('https://wa.me/50587600225?text=Hola,%20deseo%20cotizar%20un%20proyecto%20o%20servicio%20eléctrico', '_blank')" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-xl px-4 py-3 rounded-xl text-sm font-bold text-gray-800 dark:text-white flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
-                <i data-lucide="hard-hat" class="w-5 h-5 text-brand-blue dark:text-blue-400"></i> Cotizar Proyecto
-            </button>
-            <button onclick="window.open('https://wa.me/17472703016?text=Hola,%20tengo%20un%20problema%20técnico%20con%20la%20página%20web', '_blank')" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-xl px-4 py-3 rounded-xl text-sm font-bold text-gray-800 dark:text-white flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
-                <i data-lucide="monitor-x" class="w-5 h-5 text-brand-red"></i> 
-                <div class="flex flex-col items-start leading-none text-left">
-                    <span>Soporte de la Página</span>
-                    <span class="text-[11px] text-gray-500 dark:text-gray-400 mt-1 font-extrabold">+1 (747) 270-3016</span>
-                </div>
-            </button>
-        </div>
-        <!-- Botón Principal Flotante (Icono de Chat) -->
-        <button class="w-16 h-16 bg-[#25D366] text-white rounded-2xl shadow-[0_10px_25px_rgba(37,211,102,0.4)] border border-[#1ebd57] flex items-center justify-center transition-transform hover:-translate-y-1 active:scale-95">
-            <i data-lucide="message-square" class="w-7 h-7"></i>
-        </button>
-    </div>
-
-    <!-- Botón Añadir Admin -->
-    <button id="admin-add-btn" onclick="openNewProduct()" class="hidden fixed bottom-48 left-6 w-14 h-14 bg-brand-dark dark:bg-white dark:text-brand-dark text-white rounded-xl shadow-xl border border-gray-600 dark:border-gray-200 flex items-center justify-center z-30 active:scale-95 hover:bg-brand-blue dark:hover:bg-brand-blue dark:hover:text-white transition-colors">
-        <i data-lucide="plus" class="w-6 h-6"></i>
+    <!-- Botón WhatsApp -->
+    <button onclick="window.open('https://wa.me/50587600225', '_blank')" class="fixed bottom-6 left-6 w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_10px_40px_rgba(37,211,102,0.3)] flex items-center justify-center z-40 transition-all hover:scale-110 active:scale-95">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
     </button>
 
     <!-- ================= SISTEMA DE MODALES Y CHAT ================= -->
 
-    <div id="modal-overlay" onclick="closeAllModals()" class="fixed inset-0 bg-brand-dark/60 dark:bg-black/80 z-[60] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm"></div>
+    <div id="modal-overlay" onclick="closeAllModals()" class="fixed inset-0 bg-zinc-900/40 dark:bg-black/60 backdrop-blur-sm z-[60] hidden transition-opacity duration-300 opacity-0"></div>
 
-    <!-- MODAL VISTA RÁPIDA (QUICK VIEW) -->
-    <div id="quick-view-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-3xl shadow-2xl flex flex-col md:flex-row max-h-[90vh] transition-all duration-300 scale-95 opacity-0 border border-gray-200 dark:border-slate-700 overflow-hidden relative">
-            <button onclick="closeAllModals()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-xl border border-gray-200 dark:border-slate-600 flex items-center justify-center text-gray-500 hover:text-brand-red transition-colors shadow-sm"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <div class="w-full md:w-1/2 bg-gray-50 dark:bg-slate-800 flex items-center justify-center p-8 relative border-b md:border-b-0 md:border-r border-gray-200 dark:border-slate-700 min-h-[300px]">
-                <img id="qv-image" src="" onerror="this.src='https://via.placeholder.com/800?text=Imagen+No+Disponible';" class="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal transition-transform duration-500 hover:scale-110">
-                <div id="qv-no-image" class="hidden flex-col items-center justify-center text-gray-400"><i data-lucide="image" class="w-16 h-16 mb-2"></i><span class="font-bold text-sm">Sin imagen</span></div>
-            </div>
-            <div class="w-full md:w-1/2 p-8 md:p-10 flex flex-col overflow-y-auto hide-scroll">
-                <div id="qv-badge" class="hidden self-start mb-4 bg-gradient-to-r from-orange-500 to-red-600 text-white text-[10px] font-black px-3 py-1.5 rounded-lg border border-orange-400/50 shadow-[0_4px_15px_rgba(234,88,12,0.5)] flex items-center gap-1.5 tracking-widest animate-pulse"><i data-lucide="flame" class="w-3.5 h-3.5"></i> MÁS COMPRADO 🔥</div>
-                <p id="qv-brand" class="text-[10px] font-black text-brand-red uppercase tracking-widest mb-2 bg-red-50 dark:bg-red-900/20 self-start px-2 py-1 rounded"></p>
-                <h2 id="qv-title" class="font-display text-4xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight mb-4"></h2>
-                <div class="font-display text-4xl md:text-5xl font-bold text-brand-blue dark:text-blue-400 leading-none mb-6" id="qv-price"></div>
-                <p id="qv-desc" class="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed font-medium"></p>
-                <div id="qv-variants-container" class="mb-8 hidden">
-                    <label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest block mb-2">Opciones Disponibles</label>
-                    <select id="qv-variants" class="w-full p-3.5 bg-gray-50 dark:bg-slate-800 rounded-xl text-sm font-bold border border-gray-200 dark:border-slate-700 outline-none focus:border-brand-blue text-gray-800 dark:text-white transition-all cursor-pointer shadow-sm"></select>
-                </div>
-                <div class="mt-auto pt-6 border-t border-gray-100 dark:border-slate-800">
-                    <button id="qv-add-btn" class="w-full btn-primary py-4 rounded-xl font-bold shadow-lg hover:-translate-y-1 active:scale-95 transition-all flex justify-center items-center gap-2 text-sm uppercase tracking-widest"><i data-lucide="shopping-cart" class="w-5 h-5"></i> Agregar a Cotización</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- VENTANA DE CHATBOT (ElecBot V2.0 IA) -->
-    <div id="chatbot-window" class="fixed bottom-44 right-6 w-80 sm:w-[400px] h-[500px] max-h-[75vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl z-[70] flex flex-col overflow-hidden transition-all duration-300 transform scale-0 opacity-0 origin-bottom-right border border-gray-200 dark:border-slate-700 hidden">
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-brand-dark to-brand-darkblue p-4 text-white flex justify-between items-center shadow-md z-10 border-b border-white/10">
+    <!-- VENTANA CHATBOT (ElecBot V2) -->
+    <div id="chatbot-window" class="fixed bottom-24 right-6 w-[calc(100%-3rem)] sm:w-[380px] h-[500px] max-h-[75vh] bg-white/95 dark:bg-brand-surface/95 backdrop-blur-xl rounded-[2rem] shadow-2xl z-[70] flex flex-col overflow-hidden transition-all duration-300 transform scale-95 opacity-0 origin-bottom-right border border-zinc-200/50 dark:border-zinc-700/50 hidden">
+        <!-- Header Bot -->
+        <div class="px-5 py-4 bg-transparent border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm"><i data-lucide="bot" class="w-5 h-5 text-brand-yellow"></i></div>
+                <div class="w-8 h-8 bg-brand-blue/10 rounded-full flex items-center justify-center text-brand-blue"><i data-lucide="bot" class="w-4 h-4"></i></div>
                 <div>
-                    <h4 class="font-bold text-sm leading-none flex items-center gap-2">ElecBot <span class="text-[9px] bg-brand-yellow text-brand-dark px-1.5 py-0.5 rounded font-black uppercase tracking-widest">V2.0</span></h4>
-                    <p class="text-[10px] text-gray-300 mt-1 flex items-center gap-1.5 font-medium"><span class="w-1.5 h-1.5 bg-[#25D366] rounded-full animate-pulse shadow-[0_0_5px_#25D366]"></span> Inteligencia Activa</p>
+                    <h4 class="font-bold text-sm text-zinc-900 dark:text-white leading-none">ElecBot <span class="text-[9px] bg-brand-blue text-white px-1.5 py-0.5 rounded-full ml-1">AI</span></h4>
+                    <p class="text-[10px] text-green-500 font-medium flex items-center gap-1 mt-1"><span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online</p>
                 </div>
             </div>
-            <button onclick="toggleChatbot()" class="text-white/70 hover:text-white transition-colors bg-white/5 p-1.5 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <button onclick="toggleChatbot()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
         
         <!-- Mensajes -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-slate-800/50 text-sm">
-            <!-- Se inyectan por JS -->
-        </div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 text-sm hide-scroll"></div>
         
-        <!-- Input con IA Fase 2 -->
-        <div class="p-3 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-            <form onsubmit="handleChatSubmit(event)" class="flex gap-2 relative">
-                <button type="button" id="mic-btn" onclick="startVoiceSearch()" class="bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-200 text-gray-500 dark:text-gray-400 w-11 h-11 rounded-xl flex items-center justify-center transition-colors shadow-sm flex-shrink-0" title="Búsqueda por voz"><i data-lucide="mic" class="w-5 h-5"></i></button>
-                <input type="text" id="chat-input" placeholder="Comando o búsqueda..." class="flex-1 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 outline-none rounded-xl px-4 py-2.5 text-sm font-medium text-gray-800 dark:text-gray-200 placeholder-gray-400 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all">
-                <button type="submit" class="bg-brand-blue hover:bg-brand-darkblue text-white w-11 h-11 rounded-xl flex items-center justify-center transition-colors shadow-md flex-shrink-0"><i data-lucide="send" class="w-4 h-4 ml-0.5"></i></button>
+        <!-- Input Chat -->
+        <div class="p-4 bg-white dark:bg-brand-surface border-t border-zinc-100 dark:border-zinc-800">
+            <form onsubmit="handleChatSubmit(event)" class="relative flex items-center">
+                <button type="button" id="mic-btn" onclick="startVoiceSearch()" class="absolute left-1 w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-brand-blue transition-colors"><i data-lucide="mic" class="w-4 h-4"></i></button>
+                <input type="text" id="chat-input" placeholder="Pregunta algo..." class="w-full bg-zinc-100 dark:bg-zinc-900 border-none rounded-full pl-11 pr-12 py-3 text-sm font-medium outline-none text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 focus:ring-2 focus:ring-brand-blue/20 transition-all">
+                <button type="submit" class="absolute right-1 w-10 h-10 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/30"><i data-lucide="send" class="w-4 h-4 ml-0.5"></i></button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL CARRITO -->
-    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-slate-900 z-[80] transform translate-x-full transition-transform duration-300 shadow-[-20px_0_40px_rgba(0,0,0,0.1)] flex flex-col border-l border-gray-200 dark:border-slate-700">
-        <div class="p-6 border-b border-gray-200 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-            <div>
-                <h2 class="font-display text-4xl font-bold text-gray-900 dark:text-white leading-none">Tu Cotización</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold mt-2 flex items-center gap-1.5 tracking-wide"><i data-lucide="shield-check" class="w-4 h-4 text-green-500"></i> Proceso Rápido y Seguro</p>
-            </div>
-            <button onclick="toggleCart()" class="p-2.5 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl text-gray-500 dark:text-gray-300 transition-colors shadow-sm"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- MODAL CARRITO (Slide over moderno) -->
+    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white/95 dark:bg-brand-surface/95 backdrop-blur-2xl z-[70] transform translate-x-full transition-transform duration-500 cubic-bezier(0.16, 1, 0.3, 1) shadow-[-20px_0_40px_rgba(0,0,0,0.05)] dark:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] flex flex-col border-l border-white/20 dark:border-zinc-800/50">
+        <div class="px-6 py-5 flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800">
+            <h2 class="font-display text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                Tu Carrito <span id="cart-badge-title" class="bg-brand-blue text-white text-xs px-2 py-0.5 rounded-full">0</span>
+            </h2>
+            <button onclick="toggleCart()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
         
-        <div id="cart-items-container" class="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50 dark:bg-slate-900/50"></div>
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 hide-scroll"></div>
         
-        <div class="p-6 border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] z-10">
-            <div class="flex justify-between items-center mb-5 bg-gray-50 dark:bg-slate-800 p-5 rounded-xl border border-gray-200 dark:border-slate-700 shadow-inner">
-                <span class="text-gray-500 dark:text-gray-400 font-bold text-xs tracking-widest uppercase">Total Estimado</span>
-                <span id="cart-total" class="font-display text-4xl md:text-5xl font-bold text-brand-blue dark:text-blue-400 leading-none">C$ 0</span>
+        <div class="p-6 bg-white dark:bg-brand-surface border-t border-zinc-100 dark:border-zinc-800">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-zinc-500 dark:text-zinc-400 font-semibold text-sm">Total a Cotizar</span>
+                <span id="cart-total" class="font-display text-3xl font-bold text-zinc-900 dark:text-white">C$ 0</span>
             </div>
-            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl shadow-[0_8px_20px_rgba(37,211,102,0.3)] border border-[#1ebd57] hover:bg-[#1ebd57] transition-all hover:-translate-y-1 flex justify-center items-center gap-2.5 text-sm uppercase tracking-widest">
-                <i data-lucide="message-square" class="w-5 h-5"></i>
-                <span>Enviar cotización</span>
-            </button>
-            <button onclick="downloadPDF()" class="w-full mt-3 bg-white dark:bg-slate-800 border-2 border-brand-dark dark:border-gray-500 text-brand-dark dark:text-white font-bold py-3.5 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-all flex justify-center items-center gap-2.5 text-sm uppercase tracking-widest">
-                <i data-lucide="file-down" class="w-5 h-5"></i>
-                <span>Descargar PDF Oficial</span>
-            </button>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="downloadPDF()" class="w-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold py-3.5 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex justify-center items-center gap-2 text-sm">
+                    <i data-lucide="file-down" class="w-4 h-4"></i> Guardar PDF
+                </button>
+                <button onclick="checkoutWhatsApp()" class="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold py-3.5 rounded-2xl hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all flex justify-center items-center gap-2 text-sm shadow-lg">
+                    Enviar <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- MODAL EDITOR (Admin) -->
-    <div id="product-modal" class="fixed inset-0 z-[90] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300 scale-95 opacity-0 border border-gray-200 dark:border-slate-700">
-            <div class="p-5 md:p-6 bg-brand-dark dark:bg-slate-900 text-white flex justify-between items-center rounded-t-[2rem] border-b border-gray-700">
-                <h3 class="font-bold flex items-center gap-2 text-sm uppercase tracking-widest"><i data-lucide="box" class="w-4 h-4"></i> Gestor de Producto</h3>
-                <button onclick="closeAllModals()" class="hover:text-red-400 bg-white/10 p-2 rounded-xl border border-white/20"><i data-lucide="x" class="w-4 h-4"></i></button>
+    <div id="product-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-brand-surface w-full max-w-md rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300 scale-95 opacity-0 border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+            <div class="px-6 py-5 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
+                <h3 class="font-bold text-zinc-900 dark:text-white flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-brand-blue"></div> Editor Producto</h3>
+                <button onclick="closeAllModals()" class="text-zinc-400 hover:text-zinc-800 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="p-6 space-y-4 overflow-y-auto bg-gray-50 dark:bg-slate-800 hide-scroll">
+            <div class="p-6 space-y-4 overflow-y-auto hide-scroll">
                 <input type="hidden" id="edit-id">
                 
-                <div class="flex items-center gap-3 bg-white dark:bg-slate-700 p-4 rounded-xl border border-gray-200 dark:border-slate-600 mb-2 shadow-sm">
-                    <input type="checkbox" id="edit-bestseller" class="w-5 h-5 rounded border-gray-300 text-brand-blue focus:ring-brand-blue cursor-pointer">
-                    <label for="edit-bestseller" class="text-sm font-bold text-gray-800 dark:text-white cursor-pointer flex items-center gap-2">
-                        <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Etiqueta "Más Comprado"
+                <div class="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                    <input type="checkbox" id="edit-bestseller" class="w-5 h-5 rounded border-zinc-300 text-brand-blue focus:ring-brand-blue cursor-pointer">
+                    <label for="edit-bestseller" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer flex items-center gap-1.5">
+                        <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Etiqueta Especial
                     </label>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1.5 block">Categoría</label><select id="edit-category" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-medium outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all shadow-sm"></select></div>
-                    <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1.5 block">Marca</label><input id="edit-brand" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-medium outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all shadow-sm" placeholder="Ej: Dong Cheng"></div>
+                    <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Categoría</label><select id="edit-category" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></select></div>
+                    <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Marca</label><input id="edit-brand" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></div>
                 </div>
-                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1.5 block">Nombre del Producto</label><input id="edit-title" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl font-bold text-gray-800 dark:text-white outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue bg-white dark:bg-slate-700 transition-all shadow-sm" placeholder="Ej: Taladro Percutor Industrial"></div>
-                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1.5 block">Precio Neto (C$)</label><input id="edit-price" type="text" inputmode="decimal" class="w-full p-3.5 border border-gray-200 dark:border-slate-600 rounded-xl font-black text-brand-blue dark:text-blue-400 text-lg outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue bg-white dark:bg-slate-700 transition-all shadow-sm" placeholder="Ej: 1500"></div>
+                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Nombre</label><input id="edit-title" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold text-zinc-900 dark:text-white bg-zinc-50 dark:bg-zinc-900 outline-none"></div>
+                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Precio (C$)</label><input id="edit-price" type="text" inputmode="decimal" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-display font-bold text-brand-blue text-xl bg-zinc-50 dark:bg-zinc-900 outline-none"></div>
+                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Variantes (Comas)</label><input id="edit-variants" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></div>
+                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Descripción</label><textarea id="edit-desc" rows="3" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></textarea></div>
                 
-                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1.5 block">Opciones / Variantes (Separadas por coma)</label><input id="edit-variants" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-medium outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all shadow-sm" placeholder="Ej: Rojo, Azul, Verde"></div>
-
-                <div><label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1.5 block">Descripción Técnica</label><textarea id="edit-desc" rows="3" class="w-full p-3 border border-gray-200 dark:border-slate-600 rounded-xl text-sm font-medium outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue bg-white dark:bg-slate-700 dark:text-white transition-all shadow-sm" placeholder="Especificaciones técnicas..."></textarea></div>
-                <div class="border-2 border-dashed border-gray-300 dark:border-slate-500 rounded-xl p-5 bg-white dark:bg-slate-700 hover:border-brand-blue transition-colors group cursor-pointer relative shadow-sm">
+                <div class="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-2xl p-6 bg-zinc-50 dark:bg-zinc-900 hover:border-brand-blue cursor-pointer relative text-center transition-colors">
                     <input type="file" id="edit-image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                    <div class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-300 group-hover:text-brand-blue">
-                        <i data-lucide="upload-cloud" class="w-8 h-8 mb-2"></i>
-                        <span class="text-xs font-bold uppercase tracking-widest">Subir Fotografía</span>
-                    </div>
+                    <div class="w-10 h-10 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-2 text-zinc-400 shadow-sm"><i data-lucide="image-plus" class="w-5 h-5"></i></div>
+                    <span class="text-xs font-bold text-zinc-500">Subir Imagen</span>
                 </div>
             </div>
-            <div class="p-5 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex gap-3 rounded-b-[2rem]">
-                <button onclick="closeAllModals()" class="w-1/3 py-3 rounded-xl font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 text-sm transition-colors shadow-sm">Cancelar</button>
-                <button onclick="saveProduct()" id="btn-save" class="w-2/3 btn-primary py-3 rounded-xl font-bold text-white shadow-lg text-sm uppercase tracking-widest">Guardar Cambios</button>
+            <div class="p-6 border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-brand-surface flex gap-3">
+                <button onclick="closeAllModals()" class="w-1/3 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-bold text-sm">Cancelar</button>
+                <button onclick="saveProduct()" id="btn-save" class="w-2/3 bg-brand-blue text-white py-3 rounded-xl font-bold text-sm shadow-md shadow-blue-500/30 hover:bg-blue-600 transition-colors">Guardar</button>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT: MOTOR DE BASE DE DATOS Y LÓGICA -->
+    <!-- JAVASCRIPT: LOGICA COMPLETA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         lucide.createIcons();
 
-        // Lógica Modo Oscuro
+        // Modo Oscuro Toggle
         const themeToggleBtn = document.getElementById('theme-toggle');
         const darkIcon = document.getElementById('theme-toggle-dark-icon');
         const lightIcon = document.getElementById('theme-toggle-light-icon');
@@ -775,38 +486,32 @@
         // Configuración Base de Datos
         const GLOBAL_CONFIG = { apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4", authDomain: "catalogoelecpro.firebaseapp.com", projectId: "catalogoelecpro", storageBucket: "catalogoelecpro.firebasestorage.app", messagingSenderId: "847606996266", appId: "1:847606996266:web:7e46736011c7b77afb9253" };
         const CATEGORIES = [
-            {id:'all',label:'Mostrar Todo'},{id:'herramientas',label:'Herramientas'},{id:'iluminacion',label:'Iluminación'},
+            {id:'all',label:'Todo'},{id:'herramientas',label:'Herramientas'},{id:'iluminacion',label:'Iluminación'},
             {id:'hogar',label:'Hogar'},{id:'ferreteria',label:'Ferretería'},{id:'electronica',label:'Electrónica'},
             {id:'industrial',label:'Industrial'},{id:'construccion',label:'Construcción'},{id:'pinturas',label:'Pinturas'},
             {id:'fontaneria',label:'Fontanería'},{id:'electricidad',label:'Electricidad'}
         ];
 
         const PDF_PRODUCTS = [
-            { id: 'p1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro Impacto Industrial DZJ16', price: '2450', desc: '16mm (5/8"). Potencia 600W. Diseño ergonómico para uso rudo y continuo en construcción.', image: '', bestseller: true },
-            { id: 'p2', category: 'hogar', brand: 'ORIX', title: 'Extractor de Aire Premium 10"', price: '850', desc: 'Alta eficiencia y motor silencioso. Ideal para mantener ventilados baños, cocinas y espacios cerrados.', image: '', bestseller: false },
-            { id: 'p3', category: 'electricidad', brand: 'ELECPRO', title: 'Protector de Voltaje V199', price: '450', desc: '1000W. Protege tus equipos contra variaciones y picos de voltaje. Indispensable para electrodomésticos.', image: '', bestseller: true },
-            { id: 'p4', category: 'fontaneria', brand: 'ZLHF', title: 'Válvula de Lujo Metálica 104', price: '320', desc: 'Acabado cromado anticorrosión. Materiales de primera calidad para una larga vida útil sin fugas.', image: '', bestseller: false },
-            { id: 'p5', category: 'ferreteria', brand: 'LOCK', title: 'Cerradura de Sobreponer Max 398', price: '580', desc: 'Sistema de doble pestillo. Máxima seguridad para puertas principales de residencias y comercios.', image: '', bestseller: false }
+            { id: 'p1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro Impacto Industrial DZJ16', price: '2450', desc: '16mm (5/8"). Potencia 600W. Diseño ergonómico para uso rudo.', image: '', bestseller: true },
+            { id: 'p2', category: 'hogar', brand: 'ORIX', title: 'Extractor de Aire Premium 10"', price: '850', desc: 'Alta eficiencia y motor silencioso. Ideal para mantener ventilados baños.', image: '', bestseller: false },
+            { id: 'p3', category: 'electricidad', brand: 'ELECPRO', title: 'Protector de Voltaje V199', price: '450', desc: '1000W. Protege tus equipos contra variaciones y picos.', image: '', bestseller: true },
+            { id: 'p4', category: 'fontaneria', brand: 'ZLHF', title: 'Válvula de Lujo Metálica 104', price: '320', desc: 'Acabado cromado anticorrosión. Larga vida útil.', image: '', bestseller: false },
+            { id: 'p5', category: 'ferreteria', brand: 'LOCK', title: 'Cerradura de Sobreponer Max', price: '580', desc: 'Sistema de doble pestillo. Máxima seguridad.', image: '', bestseller: false }
         ];
 
         let products = [], cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [];
         let currentFilter = 'all', searchTerm = '';
         let db, timeoutID;
 
-        // --- ESTADO FASE 2 IA CHATBOT ---
-        let chatOpen = false;
-        let chatState = 'normal'; // Estados: normal, diag_tipo, diag_equipo, diag_desc
-        let diagData = { tipo: '', equipo: '', desc: '' };
+        // ESTADO IA
+        let chatOpen = false, chatState = 'normal', diagData = { tipo: '', equipo: '', desc: '' };
 
         async function init() {
             renderNav(); updateCartUI();
-            
-            // Carga inicial rápida
             products = PDF_PRODUCTS;
             renderGrid();
-            updateAdminStats();
 
-            // Conexión Firebase
             try {
                 const app = initializeApp(GLOBAL_CONFIG);
                 db = getFirestore(app);
@@ -816,25 +521,27 @@
                 onSnapshot(productsCollection, (s) => {
                     const fetched = s.docs.map(d => ({id: d.id, ...d.data()}));
                     if(fetched.length > 0) { products = fetched; renderGrid(); updateAdminStats(); }
-                }, (error) => { console.error("Error BD:", error); });
-            } catch (e) { console.error("Modo offline:", e); }
+                });
+            } catch (e) { console.log("Offline mode"); }
 
+            // Quitar loader animado
             setTimeout(() => {
                 const l = document.getElementById('loader');
-                if(l) { l.style.opacity = '0'; setTimeout(() => l.remove(), 700); }
-            }, 800);
+                if(l) { l.style.opacity = '0'; l.style.transform = 'scale(1.05)'; setTimeout(() => l.remove(), 700); }
+            }, 1200); // 1.2s para que se vea el spinner
         }
 
-        // --- BÚSQUEDA Y FILTROS ESTRUCTURADOS ---
+        // --- BÚSQUEDA ---
         window.handleSearch = (e) => {
             searchTerm = e.target.value.toLowerCase();
             const clearBtn = document.getElementById('clear-search');
             if(searchTerm.length > 0) {
                 clearBtn.classList.remove('hidden');
-                document.getElementById('section-title').innerText = 'Resultados de Búsqueda';
             } else {
                 clearBtn.classList.add('hidden');
-                document.getElementById('section-title').innerText = currentFilter === 'all' ? 'Inventario General' : getCategoryLabel(currentFilter);
+            }
+            if(window.scrollY < document.getElementById('catalogo').offsetTop - 100) {
+                document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'});
             }
             renderGrid();
         }
@@ -843,64 +550,44 @@
             document.getElementById('search-input').value = '';
             searchTerm = '';
             document.getElementById('clear-search').classList.add('hidden');
-            document.getElementById('section-title').innerText = currentFilter === 'all' ? 'Inventario General' : getCategoryLabel(currentFilter);
             renderGrid();
         }
 
-        // --- LÓGICA MENÚ DESPLEGABLE (NUEVO) ---
-        window.toggleDropdown = (e) => {
-            if(e) e.stopPropagation();
-            const drop = document.getElementById('cat-dropdown');
-            if (drop.classList.contains('hidden')) {
-                drop.classList.remove('hidden');
-                setTimeout(() => { drop.classList.remove('opacity-0', 'scale-95'); drop.classList.add('flex'); }, 10);
-            } else {
-                drop.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => { drop.classList.add('hidden'); drop.classList.remove('flex'); }, 200);
-            }
-        }
-
-        // Cerrar menú al hacer clic afuera (Prevención de bugs UX)
-        document.addEventListener('click', (e) => {
-            const drop = document.getElementById('cat-dropdown');
-            const btn = document.getElementById('dropdown-btn');
-            if (drop && !drop.contains(e.target) && !btn.contains(e.target) && !drop.classList.contains('hidden')) {
-                drop.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => { drop.classList.add('hidden'); drop.classList.remove('flex'); }, 200);
-            }
-        });
-
+        // --- NAVEGACIÓN TABS (NUEVA UI PÍLDORAS) ---
         function renderNav() {
-            // Dropdown HTML
-            document.getElementById('cat-dropdown').innerHTML = CATEGORIES.map(c => `
-                <button onclick="setFilter('${c.id}')" class="w-full text-left px-5 py-2.5 text-sm font-bold hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 transition-colors flex items-center justify-between group">
+            const tabsContainer = document.getElementById('category-tabs');
+            tabsContainer.innerHTML = CATEGORIES.map(c => `
+                <button id="tab-${c.id}" onclick="setFilter('${c.id}')" class="cat-tab whitespace-nowrap px-5 py-2 rounded-full text-sm font-semibold border ${c.id === 'all' ? 'active' : 'bg-white dark:bg-brand-surface border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-600'}">
                     ${c.label}
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-brand-blue"></i>
-                </button>`).join('');
+                </button>
+            `).join('');
             
-            // Modal Admin HTML
+            // Para admin
             document.getElementById('edit-category').innerHTML = CATEGORIES.filter(c=>c.id!=='all').map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
         }
 
         window.setFilter = (id) => {
+            // Actualizar UI de los tabs
+            document.querySelectorAll('.cat-tab').forEach(el => {
+                el.classList.remove('active', 'bg-white', 'dark:bg-brand-surface');
+                if(el.id === `tab-${id}`) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.add('bg-white', 'dark:bg-brand-surface');
+                }
+            });
+
             currentFilter = id;
-            document.getElementById('current-cat-label').innerText = id === 'all' ? 'Categorías' : getCategoryLabel(id);
+            if(searchTerm === '') renderGrid();
             
-            if(searchTerm === '') {
-                document.getElementById('section-title').innerText = id === 'all' ? 'Inventario General' : getCategoryLabel(id);
-            }
+            // Scroll hacia el tab para que se vea si está oculto
+            const tab = document.getElementById(`tab-${id}`);
+            if(tab) tab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
             
-            // Cerrar menú
-            const drop = document.getElementById('cat-dropdown');
-            drop.classList.add('opacity-0', 'scale-95');
-            setTimeout(() => { drop.classList.add('hidden'); drop.classList.remove('flex'); }, 200);
-            
-            // Scroll al catálogo
-            document.getElementById('catalog-grid').scrollIntoView({behavior: 'smooth', block: 'start'});
             renderGrid();
         }
 
-        // --- RENDER DE TARJETAS MODERNO ---
+        // --- RENDER DE TARJETAS (Neo-minimalismo) ---
         function renderGrid() {
             const grid = document.getElementById('catalog-grid');
             let filtered = products;
@@ -914,10 +601,8 @@
                 );
             }
 
-            document.getElementById('product-count').innerText = `${filtered.length} Items`;
-            
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center text-gray-400 dark:text-gray-500 flex flex-col items-center"><div class="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 flex items-center justify-center mb-4"><i data-lucide="search-x" class="w-8 h-8 opacity-60"></i></div><h4 class="font-bold text-gray-800 dark:text-gray-200 text-lg mb-1">Sin resultados</h4><p class="font-medium text-sm">No encontramos productos con esa búsqueda.</p><button onclick="clearSearch()" class="mt-4 text-brand-blue font-bold text-sm bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 px-5 py-2.5 rounded-xl hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">Ver todo el catálogo</button></div>`;
+                grid.innerHTML = `<div class="col-span-full py-24 flex flex-col items-center justify-center text-center"><div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center text-zinc-400 mb-4"><i data-lucide="package-search" class="w-8 h-8"></i></div><h3 class="font-display text-2xl font-bold text-zinc-800 dark:text-white mb-2">Sin resultados</h3><p class="text-zinc-500 text-sm">No hay productos que coincidan con la búsqueda.</p><button onclick="clearSearch()" class="mt-6 text-brand-blue font-bold text-sm hover:underline">Limpiar búsqueda</button></div>`;
                 lucide.createIcons(); return;
             }
             
@@ -926,88 +611,44 @@
             grid.innerHTML = filtered.map((p,i) => {
                 const inCart = cart.some(x => String(x.id) === String(p.id));
                 return `
-                <article class="product-card animate-slide-up group relative" style="animation-delay: ${Math.min(i*25, 300)}ms">
-                    ${p.bestseller ? `<div class="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-600 text-white text-[10px] font-black px-3 py-1.5 rounded-lg shadow-[0_4px_15px_rgba(234,88,12,0.5)] flex items-center gap-1.5 z-20 animate-pulse border border-orange-400/50"><i data-lucide="flame" class="w-3.5 h-3.5"></i> MÁS COMPRADO 🔥</div>` : ''}
+                <div class="group relative bg-white dark:bg-brand-surface rounded-[2rem] p-3 border border-zinc-100 dark:border-zinc-800/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.02)] transition-all duration-300 hover:-translate-y-1 animate-reveal" style="animation-delay: ${Math.min(i*30, 200)}ms">
                     
-                    <div onclick="openQuickView('${p.id}')" class="w-full aspect-square bg-gray-50/50 dark:bg-slate-800/50 relative border-b border-gray-100 dark:border-slate-700 flex items-center justify-center p-5 overflow-hidden cursor-pointer">
-                        ${p.image ? `<img src="${p.image}" onerror="this.src='https://via.placeholder.com/800?text=Imagen+No+Disponible';" class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 mix-blend-multiply dark:mix-blend-normal" loading="lazy">` : `<div class="w-16 h-16 rounded-xl bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 shadow-sm flex items-center justify-center text-gray-300 dark:text-gray-500"><i data-lucide="image" class="w-8 h-8"></i></div>`}
-                        <div class="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest shadow-sm z-10">${getCategoryLabel(p.category)}</div>
-                    </div>
+                    ${p.bestseller ? `<div class="absolute top-5 left-5 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 z-20 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50"><span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span> Pop</div>` : ''}
                     
-                    <div class="p-4 md:p-5 flex flex-col flex-grow relative bg-white dark:bg-slate-800">
-                        <div class="text-[9px] font-black text-brand-red uppercase tracking-widest mb-1.5 truncate bg-red-50 dark:bg-red-900/20 inline-block px-2 py-0.5 rounded self-start">${p.brand || 'GENÉRICO'}</div>
-                        <h3 onclick="openQuickView('${p.id}')" class="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-tight mb-2 line-clamp-2 min-h-[2.4em] cursor-pointer hover:text-brand-blue transition-colors">${p.title}</h3>
+                    <div class="w-full aspect-square bg-zinc-50 dark:bg-zinc-900 rounded-[1.5rem] relative flex items-center justify-center overflow-hidden mb-4">
+                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain p-4 mix-blend-multiply dark:mix-blend-normal transition-transform duration-500 group-hover:scale-110" loading="lazy">` : `<i data-lucide="image" class="w-8 h-8 text-zinc-300 dark:text-zinc-700"></i>`}
                         
-                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium line-clamp-2 mb-4 leading-relaxed flex-grow">${p.desc || ''}</p>
-
-                        ${p.variants ? `
-                        <div class="mb-4">
-                            <select id="variant-${p.id}" class="w-full p-2.5 text-xs font-bold border border-gray-200 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-800 dark:text-white outline-none focus:border-brand-blue transition-colors cursor-pointer shadow-sm">
-                                ${p.variants.split(',').map(v => `<option value="${v.trim()}">${v.trim()}</option>`).join('')}
-                            </select>
+                        <!-- Botón flotante Agregar a Carrito (Hover) -->
+                        <div class="absolute bottom-3 right-3 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-20">
+                             <button onclick="addToCart('${p.id}')" class="w-12 h-12 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-transform">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                             </button>
                         </div>
-                        ` : ''}
-
-                        <div class="mt-auto flex items-center justify-between pt-4 border-t border-gray-100/80 dark:border-slate-700">
-                            <div class="font-display text-3xl md:text-4xl font-bold text-brand-blue dark:text-blue-400 leading-none">C$ ${Number(p.price).toLocaleString('en-US')}</div>
-                            
-                            <button onclick="addToCart('${p.id}')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center transition-all shadow-sm active:scale-90 border ${inCart ? 'bg-[#25D366] text-white border-[#1ebd57] shadow-green-200 dark:shadow-green-900/50' : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-slate-600 hover:bg-brand-blue hover:text-white hover:border-brand-blue'}">
-                                <i data-lucide="${inCart ? 'check' : 'shopping-cart'}" class="w-4 h-4 md:w-5 md:h-5"></i>
-                            </button>
+                    </div>
+                    
+                    <div class="px-2 pb-2 flex flex-col">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest truncate max-w-[70%]">${p.brand || 'Elecpro'}</span>
+                            <span class="text-[10px] font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">${getCategoryLabel(p.category)}</span>
+                        </div>
+                        <h3 class="font-bold text-base text-zinc-900 dark:text-white leading-tight mb-2 line-clamp-2 h-10">${p.title}</h3>
+                        
+                        <div class="flex items-end justify-between mt-2">
+                            <div class="font-display text-xl font-bold ${inCart ? 'text-green-500' : 'text-zinc-900 dark:text-white'}">
+                                ${inCart ? '<i data-lucide="check-circle-2" class="w-5 h-5 inline mr-1"></i>' : 'C$ ' + Number(p.price).toLocaleString('en-US')}
+                            </div>
                         </div>
                     </div>
 
-                    ${document.body.classList.contains('is-admin') ? `<div class="absolute top-[50%] right-3 -translate-y-1/2 flex flex-col gap-1.5 z-20"><button onclick="editItem('${p.id}')" class="w-9 h-9 bg-brand-yellow rounded-xl border border-orange-400 flex items-center justify-center shadow-md hover:scale-110 transition"><i data-lucide="pencil" class="w-4 h-4 text-brand-dark"></i></button><button onclick="deleteItem('${p.id}')" class="w-9 h-9 bg-brand-red text-white rounded-xl border border-red-700 flex items-center justify-center shadow-md hover:scale-110 transition"><i data-lucide="trash" class="w-4 h-4"></i></button></div>` : ''}
-                </article>`;
+                    ${document.body.classList.contains('is-admin') ? `<div class="absolute top-[50%] right-5 -translate-y-1/2 flex flex-col gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="editItem('${p.id}')" class="w-8 h-8 bg-white text-zinc-900 rounded-full shadow-lg flex items-center justify-center hover:scale-110"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="deleteItem('${p.id}')" class="w-8 h-8 bg-red-500 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110"><i data-lucide="trash" class="w-4 h-4"></i></button></div>` : ''}
+                </div>`;
             }).join('');
             lucide.createIcons();
         }
 
-        // ================= VISTA RÁPIDA (QUICK VIEW) =================
-        window.openQuickView = (id) => {
-            const p = products.find(x => x.id === id); if(!p) return;
-            
-            const imgEl = document.getElementById('qv-image');
-            const noImgEl = document.getElementById('qv-no-image');
-            if (p.image) {
-                imgEl.src = p.image; 
-                imgEl.classList.remove('hidden'); 
-                noImgEl.classList.add('hidden');
-                noImgEl.classList.remove('flex');
-            } else {
-                imgEl.classList.add('hidden'); 
-                noImgEl.classList.remove('hidden'); 
-                noImgEl.classList.add('flex');
-            }
-            
-            document.getElementById('qv-brand').innerText = `${p.brand || 'GENÉRICO'} • ${getCategoryLabel(p.category)}`;
-            document.getElementById('qv-title').innerText = p.title;
-            document.getElementById('qv-price').innerText = `C$ ${Number(p.price).toLocaleString('en-US')}`;
-            document.getElementById('qv-desc').innerText = p.desc || 'Sin descripción detallada de este producto.';
-            
-            const vCont = document.getElementById('qv-variants-container');
-            const vSel = document.getElementById('qv-variants');
-            if(p.variants) {
-                vCont.classList.remove('hidden');
-                vSel.innerHTML = p.variants.split(',').map(v => `<option value="${v.trim()}">${v.trim()}</option>`).join('');
-            } else { vCont.classList.add('hidden'); }
-
-            document.getElementById('qv-badge').style.display = p.bestseller ? 'flex' : 'none';
-            
-            document.getElementById('qv-add-btn').onclick = () => {
-                addToCart(p.id, p.variants ? vSel.value : '');
-                closeAllModals();
-            };
-
-            const m = document.getElementById('quick-view-modal');
-            document.getElementById('modal-overlay').classList.remove('hidden'); m.classList.remove('hidden');
-            setTimeout(() => { document.getElementById('modal-overlay').classList.remove('opacity-0'); m.querySelector('div').classList.remove('scale-95', 'opacity-0'); }, 10);
-        }
-
-        // ================= FASE 2: INTELIGENCIA DEL BOT (IA) =================
-
+        // ================= IA CHATBOT =================
         const chatMessages = [
-            { sender: 'bot', text: '¡Hola! 👋 Soy **ElecBot V2.0**. ¿En qué te puedo ayudar hoy?' },
+            { sender: 'bot', text: '¡Hola! Soy la IA de Elecpro. ¿Buscas algún equipo o necesitas soporte técnico?' },
             { sender: 'bot', text: '', isOptions: true }
         ];
 
@@ -1017,33 +658,31 @@
             if (chatOpen) {
                 win.classList.remove('hidden');
                 setTimeout(() => {
-                    win.classList.remove('scale-0', 'opacity-0');
+                    win.classList.remove('scale-95', 'opacity-0');
                     if(chatMessages.length <= 2) renderChat();
                     document.getElementById('chat-input').focus();
                 }, 10);
             } else {
-                win.classList.add('scale-0', 'opacity-0');
+                win.classList.add('scale-95', 'opacity-0');
                 setTimeout(() => win.classList.add('hidden'), 300);
             }
         }
 
-        // IDEA 1: BÚSQUEDA POR VOZ
         window.startVoiceSearch = () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) { alert("Tu navegador no soporta búsqueda por voz. Usa Chrome o Safari."); return; }
+            if (!SpeechRecognition) { showToast("Voz no soportada en este navegador"); return; }
             
             const recognition = new SpeechRecognition();
             recognition.lang = 'es-NI';
             const micBtn = document.getElementById('mic-btn');
             
-            recognition.onstart = () => { micBtn.classList.add('bg-red-500', 'text-white', 'animate-pulse', 'border-red-600'); };
+            recognition.onstart = () => { micBtn.classList.add('text-brand-blue', 'animate-pulse'); };
             recognition.onresult = (event) => {
-                const text = event.results[0][0].transcript;
-                document.getElementById('chat-input').value = text;
-                micBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse', 'border-red-600');
+                document.getElementById('chat-input').value = event.results[0][0].transcript;
+                micBtn.classList.remove('text-brand-blue', 'animate-pulse');
                 window.handleChatSubmit(new Event('submit'));
             };
-            recognition.onerror = () => { micBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse', 'border-red-600'); };
+            recognition.onerror = () => { micBtn.classList.remove('text-brand-blue', 'animate-pulse'); };
             recognition.start();
         }
 
@@ -1057,38 +696,31 @@
             chatMessages.push({ sender: 'user', text });
             renderChat();
 
-            // IDEA 2: PROCESAMIENTO DE ESTADO DIAGNÓSTICO
             if (chatState === 'diag_desc') {
-                diagData.desc = text;
-                chatState = 'normal';
-                
+                diagData.desc = text; chatState = 'normal';
                 showTyping(() => {
-                    let reporte = `🚨 *REPORTE TÉCNICO ELECPRO*\n\n*Tipo:* ${diagData.tipo}\n*Equipo:* ${diagData.equipo}\n*Falla:* ${diagData.desc}\n\n_Solicito asistencia técnica urgente._`;
+                    let reporte = `*REPORTE ELECPRO*\nTipo: ${diagData.tipo}\nEq: ${diagData.equipo}\nFalla: ${diagData.desc}`;
                     chatMessages.push({
                         sender: 'bot',
-                        text: `¡Reporte generado! 🛠️\n\nPresiona el botón de abajo para enviar la alerta directamente al WhatsApp de nuestros ingenieros.`,
-                        isLink: true,
-                        linkUrl: `https://wa.me/50587600225?text=${encodeURIComponent(reporte)}`,
-                        linkText: 'Enviar Alerta Técnica'
+                        text: `¡Listo! Haz clic abajo para enviar el reporte a nuestros ingenieros.`,
+                        isLink: true, linkUrl: `https://wa.me/50587600225?text=${encodeURIComponent(reporte)}`, linkText: 'Contactar Soporte'
                     });
                     renderChat();
-                }, 1200);
+                }, 1000);
                 return;
             }
-
-            // Flujo Normal
-            showTyping(() => generateBotResponse(text.toLowerCase()), 1000 + Math.random() * 800);
+            showTyping(() => generateBotResponse(text.toLowerCase()), 800);
         }
 
         function showTyping(callback, delay) {
             const container = document.getElementById('chat-messages');
             const typingId = 'typing-' + Date.now();
             container.innerHTML += `
-                <div id="${typingId}" class="flex justify-start mt-2">
-                    <div class="rounded-xl px-4 py-3 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-tl-sm shadow-sm flex items-center gap-1.5">
-                        <div class="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full typing-dot"></div>
-                        <div class="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full typing-dot"></div>
-                        <div class="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full typing-dot"></div>
+                <div id="${typingId}" class="flex justify-start">
+                    <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1.5 items-center">
+                        <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></div>
+                        <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
                     </div>
                 </div>`;
             container.scrollTop = container.scrollHeight;
@@ -1101,13 +733,13 @@
             showTyping(() => {
                 if (step === 'tipo') {
                     diagData.tipo = value; chatState = 'diag_equipo';
-                    chatMessages.push({ sender: 'bot', text: 'Entendido. ¿Qué equipo presenta la falla?', isDiag: true, diagStep: 'equipo' });
+                    chatMessages.push({ sender: 'bot', text: '¿Qué equipo es?', isDiag: true, diagStep: 'equipo' });
                 } else if (step === 'equipo') {
                     diagData.equipo = value; chatState = 'diag_desc';
-                    chatMessages.push({ sender: 'bot', text: 'Perfecto. Escribe brevemente cuál es el síntoma o problema (ej. "hace un ruido raro", "no arranca"): ' });
+                    chatMessages.push({ sender: 'bot', text: 'Describe la falla brevemente:' });
                 }
                 renderChat();
-            }, 800);
+            }, 600);
         }
 
         window.sendPredefinedMsg = (text) => {
@@ -1116,48 +748,25 @@
         }
 
         function generateBotResponse(text) {
-            let response = '';
-            let isProductSearch = false;
-            let foundProducts = [];
+            let response = ''; let isProductSearch = false; let foundProducts = [];
             const searchTerms = text.replace(/(necesito|busco|quiero|tienes|precio de|un|una|el|la|los|las|para|comprar)/g, '').trim();
 
-            if (text.includes('ubicacion') || text.includes('dónde') || text.includes('direccion') || text.includes('ubicación')) {
-                response = '📍 Estamos en el **Parqueo de las Ferreterías, Costado Sur, Mercado Roberto Huembes**, Managua. ¡Te esperamos!';
-            } 
-            else if (text.includes('soporte') || text.includes('tecnico') || text.includes('falla') || text.includes('ayuda') || text.includes('reparar') || text.includes('emergencia')) {
+            if (text.includes('ubicacion')) {
+                response = 'Estamos en Managua: Parqueo de Ferreterías Sur, Mercado Roberto Huembes.';
+            } else if (text.includes('soporte') || text.includes('falla') || text.includes('ayuda')) {
                 chatState = 'diag_tipo';
-                chatMessages.push({ 
-                    sender: 'bot', 
-                    text: '🛠️ Entiendo que necesitas asistencia técnica. Para enviarte al ingeniero adecuado, por favor responde:\n\n¿El problema es en una residencia o en una industria/empresa?', 
-                    isDiag: true, 
-                    diagStep: 'tipo' 
-                });
-                renderChat();
-                return;
-            } 
-            else if (text.includes('mantenimiento') || text.includes('plan') || text.includes('servicio')) {
-                response = '⚙️ Tenemos planes de **Climatización Básico**, **Industrial Preventivo** y atención de **Emergencias 24/7**. Revisa la sección de "Planes de Mantenimiento" en la página.';
-            } 
-            else if (text.includes('hola') || text.includes('buenos') || text.includes('saludos')) {
-                response = '¡Hola nuevamente! 👋 Puedes buscar productos, pedir soporte o tocar el micrófono para hablarme.';
+                chatMessages.push({ sender: 'bot', text: 'Te ayudo. ¿Es equipo residencial o industrial?', isDiag: true, diagStep: 'tipo' });
+                renderChat(); return;
             } else {
                 if (searchTerms.length > 2) {
-                    foundProducts = products.filter(p => 
-                        p.title.toLowerCase().includes(searchTerms) || 
-                        (p.brand && p.brand.toLowerCase().includes(searchTerms)) ||
-                        (p.category && p.category.toLowerCase().includes(searchTerms))
-                    );
+                    foundProducts = products.filter(p => p.title.toLowerCase().includes(searchTerms) || (p.category && p.category.toLowerCase().includes(searchTerms)));
                 }
                 if (foundProducts.length > 0) {
-                    isProductSearch = true;
-                    response = `¡Claro! Encontré esto en el inventario:`;
-                } else if (text.includes('producto') || text.includes('cotizar')) {
-                    response = '📦 Agrega productos a tu carrito (esquina inferior derecha) y envíanos la cotización por WhatsApp.';
+                    isProductSearch = true; response = `Mira lo que encontré:`;
                 } else {
-                    response = 'No encontré un producto exacto. Para consultas complejas, contáctanos en WhatsApp: <a href="https://wa.me/50587600225" target="_blank" class="text-brand-blue dark:text-blue-400 font-bold underline">+505 8760-0225</a>.';
+                    response = 'No encontré eso en el inventario actual. Para consultas directas escribe al <a href="https://wa.me/50587600225" target="_blank" class="text-brand-blue font-bold">WhatsApp</a>.';
                 }
             }
-            
             chatMessages.push({ sender: 'bot', text: response, products: isProductSearch ? foundProducts.slice(0, 3) : null });
             renderChat();
         }
@@ -1167,65 +776,47 @@
             container.innerHTML = chatMessages.map(m => {
                 if (m.isOptions) {
                     return `
-                    <div class="flex flex-wrap gap-2 mt-2">
-                        <button onclick="sendPredefinedMsg('Ubicación')" class="text-xs font-bold bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-brand-blue dark:text-blue-400 px-3 py-2 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-600 transition-colors shadow-sm">📍 Ubicación</button>
-                        <button onclick="sendPredefinedMsg('Soporte Técnico')" class="text-xs font-bold bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 text-brand-blue dark:text-blue-400 px-3 py-2 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-600 transition-colors shadow-sm">🔧 Soporte Técnico</button>
+                    <div class="flex gap-2">
+                        <button onclick="sendPredefinedMsg('Soporte')" class="text-xs bg-zinc-100 dark:bg-zinc-800 font-semibold px-3 py-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Soporte Técnico</button>
+                        <button onclick="sendPredefinedMsg('Ubicacion')" class="text-xs bg-zinc-100 dark:bg-zinc-800 font-semibold px-3 py-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Ubicación</button>
                     </div>`;
                 }
                 
-                let formattedText = m.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                let html = m.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 
                 if (m.products && m.products.length > 0) {
-                    let productsHtml = '<div class="mt-3 flex flex-col gap-2">';
+                    html += '<div class="mt-3 flex flex-col gap-2">';
                     m.products.forEach(p => {
-                        productsHtml += `
-                        <div class="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl p-2.5 flex items-center gap-3">
-                            <div class="w-10 h-10 bg-white dark:bg-slate-700 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-slate-600">
-                                ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-5 h-5 text-gray-400"></i>`}
-                            </div>
-                            <div class="flex-grow">
-                                <p class="text-[11px] font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight">${p.title}</p>
-                                <p class="text-[11px] text-brand-blue dark:text-blue-400 font-black mt-0.5">C$ ${Number(p.price).toLocaleString('en-US')}</p>
-                            </div>
-                            <button onclick="addToCart('${p.id}')" class="w-8 h-8 bg-[#25D366] text-white rounded-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform flex-shrink-0 shadow-sm border border-[#1ebd57]"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                        html += `
+                        <div class="bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-700 rounded-xl p-2 flex items-center gap-3 shadow-sm">
+                            <div class="w-10 h-10 bg-zinc-50 dark:bg-zinc-800 rounded-lg flex items-center justify-center p-1">${p.image ? `<img src="${p.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-4 h-4 text-zinc-300"></i>`}</div>
+                            <div class="flex-grow"><p class="text-[11px] font-bold line-clamp-1">${p.title}</p><p class="text-[10px] text-brand-blue font-bold mt-0.5">C$ ${p.price}</p></div>
+                            <button onclick="addToCart('${p.id}')" class="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full flex items-center justify-center"><i data-lucide="plus" class="w-3 h-3"></i></button>
                         </div>`;
                     });
-                    productsHtml += '</div>';
-                    formattedText += productsHtml;
+                    html += '</div>';
                 }
 
                 if (m.isDiag) {
+                    html += `<div class="flex flex-col gap-2 mt-2">`;
                     if (m.diagStep === 'tipo') {
-                        formattedText += `
-                        <div class="flex flex-col gap-2 mt-3">
-                            <button onclick="handleDiag('tipo', 'Residencial')" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-brand-blue dark:text-blue-400 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 dark:hover:bg-slate-700 shadow-sm">🏠 Residencial (Hogar)</button>
-                            <button onclick="handleDiag('tipo', 'Industrial')" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-brand-blue dark:text-blue-400 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 dark:hover:bg-slate-700 shadow-sm">🏭 Industrial (Empresa)</button>
-                        </div>`;
+                        html += `<button onclick="handleDiag('tipo', 'Residencial')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Residencial</button>
+                                 <button onclick="handleDiag('tipo', 'Industrial')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Industrial</button>`;
                     } else if (m.diagStep === 'equipo') {
-                        formattedText += `
-                        <div class="flex flex-col gap-2 mt-3">
-                            <button onclick="handleDiag('equipo', 'Generador')" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-brand-blue dark:text-blue-400 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 dark:hover:bg-slate-700 shadow-sm">⚡ Generador</button>
-                            <button onclick="handleDiag('equipo', 'Aire Acondicionado')" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-brand-blue dark:text-blue-400 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 dark:hover:bg-slate-700 shadow-sm">❄️ Aire Acondicionado</button>
-                            <button onclick="handleDiag('equipo', 'Tablero Eléctrico')" class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-brand-blue dark:text-blue-400 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 dark:hover:bg-slate-700 shadow-sm">🔌 Tablero</button>
-                        </div>`;
+                        html += `<button onclick="handleDiag('equipo', 'Generador')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Generador</button>
+                                 <button onclick="handleDiag('equipo', 'Climatización')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Climatización</button>
+                                 <button onclick="handleDiag('equipo', 'Tablero')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Tablero</button>`;
                     }
+                    html += `</div>`;
                 }
 
-                if (m.isLink) {
-                    formattedText += `<a href="${m.linkUrl}" target="_blank" class="mt-3 block text-center bg-[#25D366] text-white py-2.5 rounded-xl text-xs font-bold shadow-sm hover:scale-105 transition-transform border border-[#1ebd57] uppercase tracking-widest"><i data-lucide="message-square" class="w-4 h-4 inline-block align-text-bottom mr-1"></i> ${m.linkText}</a>`;
-                }
-                if (m.isCombo) {
-                    formattedText += `<button onclick="addToCart('${m.comboId}')" class="mt-3 w-full bg-brand-yellow text-brand-dark py-2.5 rounded-xl text-xs font-black shadow-sm flex items-center justify-center gap-2 active:scale-95 uppercase tracking-widest border border-orange-400"><i data-lucide="plus-circle" class="w-4 h-4"></i> Añadir Protector al Carrito</button>`;
-                }
+                if (m.isLink) html += `<a href="${m.linkUrl}" target="_blank" class="mt-3 block text-center bg-zinc-900 text-white py-2.5 rounded-xl text-xs font-bold">${m.linkText}</a>`;
+                if (m.isCombo) html += `<button onclick="addToCart('${m.comboId}')" class="mt-3 w-full bg-brand-yellow text-zinc-900 py-2.5 rounded-xl text-xs font-bold">Añadir Protector</button>`;
 
                 return `
-                <div class="flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in">
-                    <div class="max-w-[85%] rounded-2xl px-4 py-3 ${
-                        m.sender === 'user' 
-                        ? 'bg-brand-blue text-white rounded-tr-sm shadow-md' 
-                        : 'bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-tl-sm shadow-sm border border-gray-200 dark:border-slate-600 font-medium'
-                    }">
-                        ${formattedText}
+                <div class="flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}">
+                    <div class="max-w-[85%] rounded-2xl px-4 py-3 ${m.sender === 'user' ? 'bg-brand-blue text-white rounded-tr-sm' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-tl-sm'}">
+                        ${html}
                     </div>
                 </div>`;
             }).join('');
@@ -1233,30 +824,22 @@
             lucide.createIcons();
         }
 
+        // ================= CARRITO Y UI MODALES =================
         window.closeAllModals = function() {
             const overlay = document.getElementById('modal-overlay');
             const cartM = document.getElementById('cart-modal');
             const prodM = document.getElementById('product-modal');
-            const qvM = document.getElementById('quick-view-modal');
-            const drop = document.getElementById('cat-dropdown');
 
             overlay.classList.add('opacity-0');
             cartM.classList.add('translate-x-full');
-            
             if(chatOpen) toggleChatbot();
-            if(drop && !drop.classList.contains('hidden')) {
-                drop.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => { drop.classList.add('hidden'); drop.classList.remove('flex'); }, 200);
-            }
-            if(prodM) prodM.querySelector('div').classList.add('opacity-0', 'scale-95');
-            if(qvM) qvM.querySelector('div').classList.add('opacity-0', 'scale-95');
+            if(prodM) prodM.classList.add('scale-95', 'opacity-0');
 
             if(timeoutID) clearTimeout(timeoutID);
             timeoutID = setTimeout(() => {
                 overlay.classList.add('hidden');
                 cartM.classList.add('hidden');
                 if(prodM) prodM.classList.add('hidden');
-                if(qvM) qvM.classList.add('hidden');
             }, 300);
         }
 
@@ -1264,63 +847,37 @@
             const cartM = document.getElementById('cart-modal');
             const overlay = document.getElementById('modal-overlay');
 
-            if (cartM.classList.contains('hidden') || cartM.classList.contains('translate-x-full')) {
-                if(timeoutID) clearTimeout(timeoutID);
-                document.getElementById('product-modal').classList.add('hidden');
-                document.getElementById('quick-view-modal').classList.add('hidden');
+            if (cartM.classList.contains('hidden')) {
                 if(chatOpen) toggleChatbot();
-
                 overlay.classList.remove('hidden');
                 cartM.classList.remove('hidden');
-
-                setTimeout(() => {
-                    overlay.classList.remove('opacity-0');
-                    cartM.classList.remove('translate-x-full');
-                }, 10);
+                setTimeout(() => { overlay.classList.remove('opacity-0'); cartM.classList.remove('translate-x-full'); }, 10);
                 renderCartItems();
             } else { closeAllModals(); }
         }
 
-        // --- CARRITO E IDEA 3 (COMBOS INTELIGENTES) ---
-        window.addToCart = (id, forcedVariant = null) => { 
+        window.addToCart = (id) => { 
             const p = products.find(x => String(x.id) === String(id)); 
             if(!p) return; 
             
-            let selectedVariant = '';
-            if (forcedVariant !== null) {
-                selectedVariant = forcedVariant;
-            } else {
-                const variantEl = document.getElementById(`variant-${id}`);
-                if (variantEl && variantEl.value !== "") selectedVariant = variantEl.value;
-                else if (p.variants) selectedVariant = p.variants.split(',')[0].trim();
-            }
-
-            const cartId = selectedVariant ? `${id}_${selectedVariant}` : id;
+            let variant = p.variants ? p.variants.split(',')[0].trim() : '';
+            const cartId = variant ? `${id}_${variant}` : id;
             const existing = cart.find(x => String(x.cartId) === String(cartId));
             
             if (!existing) {
-                cart.push({...p, cartId: cartId, selectedVariant: selectedVariant, qty: 1}); 
-                saveCart(); renderGrid(); showToast("Agregado a la cotización");
+                cart.push({...p, cartId: cartId, selectedVariant: variant, qty: 1}); 
+                saveCart(); renderGrid(); showToast("Añadido al carrito");
 
-                // IDEA 3: LÓGICA DE COMBO (Cross-selling)
-                const esClimatizacion = p.title.toLowerCase().includes('aire') || p.title.toLowerCase().includes('extractor') || p.category === 'hogar';
-                const tieneProtector = cart.some(x => String(x.id) === 'p3' || x.title.toLowerCase().includes('protector'));
-                
-                if (esClimatizacion && !tieneProtector && p.id !== 'p3') {
+                // Smart Combo
+                const esClima = p.title.toLowerCase().includes('aire') || p.category === 'hogar';
+                if (esClima && !cart.some(x => x.id === 'p3') && p.id !== 'p3') {
                     setTimeout(() => {
                         if(!chatOpen) toggleChatbot();
-                        chatMessages.push({
-                            sender: 'bot',
-                            text: '📦 *Sugerencia Inteligente:*\nVeo que agregaste un equipo de ventilación/climatización al carrito. Para proteger el motor contra picos de voltaje, la mayoría de nuestros clientes industriales agrega el **Protector de Voltaje V199**.',
-                            isCombo: true,
-                            comboId: 'p3'
-                        });
+                        chatMessages.push({ sender: 'bot', text: 'Sugerencia: Añade un Protector V199 para cuidar tu equipo nuevo.', isCombo: true, comboId: 'p3' });
                         renderChat();
-                    }, 1200);
+                    }, 1000);
                 }
-            } else { 
-                toggleCart(); 
-            }
+            } else { toggleCart(); }
         }
         
         window.updateQty = (cartId, change) => {
@@ -1335,184 +892,132 @@
 
         function updateCartUI() {
             const count = cart.reduce((a, b) => a + b.qty, 0);
-            const badge = document.getElementById('header-cart-count');
-            const fabBadge = document.getElementById('fab-cart-count');
-            
-            [badge, fabBadge].forEach(el => {
-                if(el) { el.innerText = count; count > 0 ? el.classList.remove('scale-0') : el.classList.add('scale-0'); }
-            });
-            const fab = document.getElementById('cart-fab');
-            if(fab) count > 0 ? fab.classList.remove('hidden') : fab.classList.add('hidden');
+            document.getElementById('header-cart-count').innerText = count;
+            document.getElementById('cart-badge-title').innerText = count;
         }
 
         function renderCartItems() {
             const container = document.getElementById('cart-items-container');
             if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 opacity-50"><div class="w-16 h-16 bg-gray-200 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-300 dark:border-slate-600"><i data-lucide="shopping-bag" class="w-8 h-8 text-gray-500 dark:text-gray-400"></i></div><h4 class="font-bold text-gray-800 dark:text-white text-lg mb-1">Cotización Vacía</h4><p class="font-medium text-sm text-gray-500 dark:text-gray-400">Añade productos para cotizar.</p></div>`;
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-zinc-400"><i data-lucide="shopping-bag" class="w-12 h-12 mb-4 opacity-50"></i><p class="font-medium text-sm">Tu carrito está vacío</p></div>`;
                 document.getElementById('cart-total').innerText = 'C$ 0'; lucide.createIcons(); return;
             }
             
             let total = 0;
-            container.innerHTML = cart.map((item, i) => {
+            container.innerHTML = cart.map((item) => {
                 total += (parseFloat(item.price) || 0) * item.qty;
                 return `
-                <div class="flex gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm animate-slide-up" style="animation-delay: ${i*30}ms">
-                    <div class="w-16 h-16 bg-gray-50 dark:bg-slate-900 rounded-xl p-1.5 flex-shrink-0 flex items-center justify-center border border-gray-200 dark:border-slate-700">
-                        ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-6 h-6 text-gray-300 dark:text-gray-600"></i>`}
+                <div class="flex gap-4 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                    <div class="w-16 h-16 bg-white dark:bg-zinc-800 rounded-xl p-2 flex-shrink-0 flex items-center justify-center border border-zinc-100 dark:border-zinc-700">
+                        ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-5 h-5 text-zinc-300"></i>`}
                     </div>
                     <div class="flex-grow flex flex-col justify-center">
-                        <h4 class="font-bold text-sm text-gray-900 dark:text-white leading-tight line-clamp-2">
-                            ${item.title} 
-                            ${item.selectedVariant ? `<span class="text-brand-blue dark:text-blue-400 block text-[10px] mt-0.5 font-black uppercase tracking-widest">Opción: ${item.selectedVariant}</span>` : ''}
-                        </h4>
-                        <div class="text-brand-blue dark:text-blue-400 font-bold text-[15px] mt-1">C$ ${Number(item.price).toLocaleString('en-US')}</div>
+                        <h4 class="font-bold text-sm text-zinc-900 dark:text-white leading-tight line-clamp-2">${item.title}</h4>
+                        <div class="font-display font-bold text-brand-blue text-sm mt-1">C$ ${Number(item.price).toLocaleString('en-US')}</div>
                     </div>
-                    <div class="flex flex-col items-center justify-between bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl w-9 py-1 shadow-inner">
-                        <button onclick="updateQty('${item.cartId}', 1)" class="w-full text-center text-gray-500 hover:text-brand-blue font-bold transition-colors">+</button>
-                        <span class="font-bold text-xs text-brand-dark dark:text-white">${item.qty}</span>
-                        <button onclick="updateQty('${item.cartId}', -1)" class="w-full text-center text-gray-500 hover:text-brand-red font-bold transition-colors">-</button>
+                    <div class="flex flex-col items-center justify-between bg-white dark:bg-zinc-800 rounded-xl w-8 py-1 shadow-sm">
+                        <button onclick="updateQty('${item.cartId}', 1)" class="w-full text-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white">+</button>
+                        <span class="font-bold text-xs">${item.qty}</span>
+                        <button onclick="updateQty('${item.cartId}', -1)" class="w-full text-center text-zinc-400 hover:text-red-500">-</button>
                     </div>
                 </div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = 'C$ ' + total.toLocaleString('en-US', {minimumFractionDigits: 0});
+            document.getElementById('cart-total').innerText = 'C$ ' + total.toLocaleString();
             lucide.createIcons();
         }
 
         // GENERADOR DE PDF
         window.downloadPDF = () => {
-            if (cart.length === 0) { showToast("Agrega productos para generar PDF"); return; }
+            if (cart.length === 0) { showToast("Carrito vacío"); return; }
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFillColor(0, 68, 204); doc.rect(0, 0, 210, 40, 'F');
-            doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.setFont('helvetica', 'bold'); doc.text("ELECPRO", 15, 25);
-            doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text("Cotización Oficial de Suministros", 15, 32);
-            doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 150, 25); doc.text("M. Roberto Huembes", 150, 32);
-
-            const tableColumn = ["Cant.", "Descripción / Modelo", "P. Unitario (C$)", "Total (C$)"];
+            doc.setFillColor(0, 85, 255); doc.rect(0, 0, 210, 35, 'F');
+            doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.setFont('helvetica', 'bold'); doc.text("ELECPRO", 15, 22);
+            doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text("Cotización de Suministros", 15, 28);
+            
             const tableRows = []; let grandTotal = 0;
             cart.forEach(item => {
                 const itemT = (parseFloat(item.price) || 0) * item.qty; grandTotal += itemT;
-                tableRows.push([item.qty.toString(), `${item.title} ${item.selectedVariant ? `(${item.selectedVariant})` : ''}`, (parseFloat(item.price)||0).toLocaleString('en-US', {minimumFractionDigits:2}), itemT.toLocaleString('en-US', {minimumFractionDigits:2})]);
+                tableRows.push([item.qty.toString(), item.title, (parseFloat(item.price)||0).toLocaleString(), itemT.toLocaleString()]);
             });
 
-            doc.autoTable({ startY: 50, head: [tableColumn], body: tableRows, theme: 'striped', headStyles: { fillColor: [0, 68, 204], textColor: 255 }, styles: { fontSize: 10, cellPadding: 5 }, columnStyles: { 0: { cellWidth: 20, halign: 'center' }, 2: { halign: 'right' }, 3: { halign: 'right' } } });
-            const finalY = doc.lastAutoTable.finalY || 50;
-            doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.text(`TOTAL ESTIMADO: C$ ${grandTotal.toLocaleString('en-US', {minimumFractionDigits:2})}`, 15, finalY + 15);
-            doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(150, 150, 150); doc.text("* Esta cotización está sujeta a disponibilidad de inventario.", 15, finalY + 25); doc.text("* Los precios pueden variar sin previo aviso.", 15, finalY + 30);
-            doc.save(`Cotizacion_ELECPRO_${Date.now()}.pdf`); showToast("PDF Generado con Éxito");
+            doc.autoTable({ startY: 45, head: [["Cant.", "Descripción", "P. Unitario", "Total"]], body: tableRows, theme: 'plain', headStyles: { fillColor: [240, 240, 240], textColor: 0 }, styles: { fontSize: 10, cellPadding: 5 } });
+            doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.text(`TOTAL: C$ ${grandTotal.toLocaleString()}`, 15, doc.lastAutoTable.finalY + 15);
+            doc.save(`Cotizacion_ELECPRO.pdf`); showToast("PDF Guardado");
         };
 
         window.checkoutWhatsApp = () => {
             if (cart.length === 0) return;
-            let msg = "*SOLICITUD DE COTIZACIÓN - ELECPRO:*\n\n";
-            let total = 0;
-            cart.forEach(i => {
-                const sub = (parseFloat(i.price) || 0) * i.qty; total += sub;
-                msg += `🔸 *${i.qty} und* | ${i.title} ${i.selectedVariant ? `(Color/Opción: ${i.selectedVariant})` : ''}\n`;
-            });
-            msg += `\n*TOTAL APROXIMADO: C$ ${total.toLocaleString('en-US', {minimumFractionDigits: 0})}*\n\n_Deseo confirmar stock y envío._`;
+            let msg = "*COTIZACIÓN ELECPRO:*\n\n"; let total = 0;
+            cart.forEach(i => { const sub = (parseFloat(i.price) || 0) * i.qty; total += sub; msg += `🔸 ${i.qty}x ${i.title}\n`; });
+            msg += `\n*TOTAL: C$ ${total.toLocaleString()}*`;
             window.open(`https://wa.me/50587600225?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // --- GESTIÓN ADMIN ROBUSTA E INFO ---
+        // --- GESTIÓN ADMIN ---
         window.updateAdminStats = () => {
-            if(!products || products.length === 0) return;
-            const elItems = document.getElementById('stat-total-items');
-            if(elItems) elItems.innerText = products.length;
-            const elValue = document.getElementById('stat-total-value');
-            if(elValue) elValue.innerText = `C$ ${products.reduce((acc, p) => acc + (parseFloat(p.price) || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 0})}`;
-            const elCats = document.getElementById('stat-categories');
-            if(elCats) elCats.innerText = new Set(products.map(p => p.category)).size;
+            if(!products.length) return;
+            const elItems = document.getElementById('stat-total-items'); if(elItems) elItems.innerText = products.length;
+            const elValue = document.getElementById('stat-total-value'); if(elValue) elValue.innerText = `C$ ${products.reduce((acc, p) => acc + (parseFloat(p.price) || 0), 0).toLocaleString()}`;
         }
 
         window.login = () => {
-            if (prompt("Credenciales de Acceso:") === "elecpro50") {
-                document.getElementById('admin-add-btn').classList.remove('hidden');
+            if (prompt("Clave Admin:") === "elecpro50") {
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                document.getElementById('admin-dashboard').classList.add('grid');
                 document.body.classList.add('is-admin'); 
-                renderGrid(); updateAdminStats(); showToast("Modo Gestor Activado");
+                renderGrid(); updateAdminStats(); showToast("Modo Admin Activado");
             }
         }
         
         window.openNewProduct = () => {
-            const m = document.getElementById('product-modal'); 
-            m.classList.remove('hidden');
-            setTimeout(() => { m.querySelector('div').classList.remove('scale-95', 'opacity-0'); }, 10);
+            const m = document.getElementById('product-modal'); m.classList.remove('hidden');
+            setTimeout(() => { m.classList.remove('scale-95', 'opacity-0'); }, 10);
             ['edit-id', 'edit-brand', 'edit-title', 'edit-price', 'edit-desc', 'edit-image', 'edit-variants'].forEach(i => document.getElementById(i).value = '');
             document.getElementById('edit-bestseller').checked = false;
         }
 
         window.editItem = (id) => {
-            const p = products.find(x => String(x.id) === String(id)); 
-            if(!p) return;
-            const m = document.getElementById('product-modal');
-            m.classList.remove('hidden');
-            setTimeout(() => { m.querySelector('div').classList.remove('scale-95', 'opacity-0'); }, 10);
+            const p = products.find(x => String(x.id) === String(id)); if(!p) return;
+            const m = document.getElementById('product-modal'); m.classList.remove('hidden');
+            setTimeout(() => { m.classList.remove('scale-95', 'opacity-0'); }, 10);
             
-            document.getElementById('edit-id').value = id;
-            document.getElementById('edit-brand').value = p.brand || '';
-            document.getElementById('edit-title').value = p.title || '';
-            document.getElementById('edit-price').value = p.price || '';
-            document.getElementById('edit-category').value = p.category || '';
-            document.getElementById('edit-desc').value = p.desc || '';
-            document.getElementById('edit-variants').value = p.variants || '';
+            document.getElementById('edit-id').value = id; document.getElementById('edit-brand').value = p.brand || '';
+            document.getElementById('edit-title').value = p.title || ''; document.getElementById('edit-price').value = p.price || '';
+            document.getElementById('edit-category').value = p.category || ''; document.getElementById('edit-desc').value = p.desc || '';
             document.getElementById('edit-bestseller').checked = p.bestseller || false;
         }
 
         window.deleteItem = async (id) => {
-            if(confirm("¿Confirmas eliminar este producto permanentemente?")) {
-                try {
-                    await deleteDoc(doc(db, 'products', id));
-                    showToast("Producto eliminado");
-                } catch(e) {
-                    console.error("Error al eliminar:", e);
-                    showToast("No se pudo eliminar el producto.");
-                }
+            if(confirm("¿Eliminar producto?")) {
+                try { await deleteDoc(doc(db, 'products', id)); showToast("Eliminado"); } catch(e) { showToast("Error al eliminar"); }
             }
         }
 
         window.saveProduct = async () => {
-            const btn = document.getElementById('btn-save');
-            btn.innerText = "Guardando..."; btn.disabled = true;
-            
+            const btn = document.getElementById('btn-save'); btn.innerText = "Guardando..."; btn.disabled = true;
             try {
                 const id = document.getElementById('edit-id').value;
                 const file = document.getElementById('edit-image').files[0];
-                let img = null; 
-                if (file) img = await compressImage(file);
+                let img = null; if (file) img = await compressImage(file);
 
                 const item = {
-                    brand: document.getElementById('edit-brand').value,
-                    title: document.getElementById('edit-title').value,
-                    price: document.getElementById('edit-price').value.replace(/,/g, ''),
-                    category: document.getElementById('edit-category').value,
-                    desc: document.getElementById('edit-desc').value,
-                    variants: document.getElementById('edit-variants').value,
-                    bestseller: document.getElementById('edit-bestseller').checked,
-                    updated: new Date().toISOString()
+                    brand: document.getElementById('edit-brand').value, title: document.getElementById('edit-title').value,
+                    price: document.getElementById('edit-price').value.replace(/,/g, ''), category: document.getElementById('edit-category').value,
+                    desc: document.getElementById('edit-desc').value, variants: document.getElementById('edit-variants').value,
+                    bestseller: document.getElementById('edit-bestseller').checked, updated: new Date().toISOString()
                 };
 
-                if (id) { 
-                    if (img) item.image = img; 
-                    await updateDoc(doc(db, 'products', id), item); 
-                } else { 
-                    if (img) item.image = img; 
-                    await addDoc(collection(db, 'products'), item); 
-                }
+                if (id) { if (img) item.image = img; await updateDoc(doc(db, 'products', id), item); } 
+                else { if (img) item.image = img; await addDoc(collection(db, 'products'), item); }
                 
-                closeAllModals();
-                showToast("Base de datos actualizada");
-            } catch (error) {
-                console.error("Error al guardar:", error);
-                showToast("Revisa tu conexión a internet e intenta de nuevo.");
-            } finally {
-                btn.innerText = "Guardar Cambios"; btn.disabled = false;
-            }
+                closeAllModals(); showToast("Guardado con éxito");
+            } catch (error) { showToast("Error de conexión"); } finally { btn.innerText = "Guardar"; btn.disabled = false; }
         }
 
         function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            t.classList.remove('translate-y-[-10px]', 'opacity-0');
-            setTimeout(() => t.classList.add('translate-y-[-10px]', 'opacity-0'), 3000);
+            const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = msg;
+            t.classList.remove('translate-y-[-20px]', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-[-20px]', 'opacity-0'), 3000);
         }
 
         function getCategoryLabel(id) { return CATEGORIES.find(c => c.id === id)?.label || id; }
@@ -1524,8 +1029,7 @@
                     const img = new Image(); img.src = e.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const scale = 800 / img.width;
-                        canvas.width = scale < 1 ? 800 : img.width; canvas.height = scale < 1 ? img.height * scale : img.height;
+                        const scale = 800 / img.width; canvas.width = scale < 1 ? 800 : img.width; canvas.height = scale < 1 ? img.height * scale : img.height;
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height); resolve(canvas.toDataURL('image/jpeg', 0.8));
                     }
                 }
