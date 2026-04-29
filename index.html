@@ -778,6 +778,23 @@
             document.getElementById('chat-input').value = text;
             window.handleChatSubmit(new Event('submit'));
         }
+        
+        // Función ultra-robusta para intentar llamar a la IA varias veces si la red falla
+        async function fetchWithBackoff(url, options, maxRetries = 3) {
+            const delays = [1000, 2000, 4000];
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) return response;
+                    // Si el error es de llaves (Ej. lo probaron descargado sin el sistema), detener reintentos rápidos
+                    if (response.status === 400 || response.status === 403) throw new Error("Auth Error");
+                } catch (error) {
+                    if (i === maxRetries - 1 || error.message === "Auth Error") throw error;
+                }
+                await new Promise(resolve => setTimeout(resolve, delays[i]));
+            }
+            throw new Error("API Connection Failed");
+        }
 
         async function generateBotResponse(text) {
             let response = ''; let isProductSearch = false; let foundProducts = [];
@@ -808,12 +825,14 @@
                 3. Si el producto NO ESTÁ en el catálogo web (como cables, tubos PVC, etc.), NUNCA digas "no encontré eso". Sé un excelente vendedor: dale el consejo técnico de lo que necesita comprar, y dile que en la bodega principal de Elecpro seguramente sí lo tenemos en inventario. Invítalo amablemente a tocar el botón verde de WhatsApp para que un ingeniero le confirme existencias al instante.
                 4. Sé conversacional, usa uno o dos emojis, y mantén la respuesta persuasiva pero breve.`;
 
-                const req = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                
+                // Usar la función segura con retrys automáticos
+                const req = await fetchWithBackoff(url, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: text }] }], systemInstruction: { parts: [{ text: sysPrompt }] } })
                 });
 
-                if(!req.ok) throw new Error("API error");
                 const result = await req.json();
                 const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
                 
@@ -824,14 +843,26 @@
                     response = aiText.replace(idsMatch[0], '').trim();
                     isProductSearch = foundProducts.length > 0;
                 } else {
-                    // Si no mandó IDs, simplemente mostramos el texto amable de la IA
                     response = aiText.trim();
                     isProductSearch = false;
                 }
             } catch(e) {
-                // Sistema de respaldo ultra-amigable por si falla la conexión
-                response = '¡Hola! ⚡ Parece que estoy teniendo un pequeño lapsus de conexión en este momento. Pero no quiero dejarte esperando: si buscas algo específico o necesitas asesoría experta, toca el botón verde de WhatsApp y mis compañeros ingenieros te atenderán con muchísimo gusto.';
+                // =============== NUEVO SISTEMA DE RESPALDO ANTI-FALLOS ===============
+                // Si la IA falla, usamos un filtro súper amigable localmente para no dejarlo en el aire.
+                const cleanTerms = searchTerms.replace(/(necesito|busco|quiero|tienes|precio de|un|una|el|la|los|las|para|comprar|hacer|construir)/g, '').trim();
+                
+                if (cleanTerms.length > 2) {
+                    foundProducts = products.filter(p => p.title.toLowerCase().includes(cleanTerms) || (p.desc && p.desc.toLowerCase().includes(cleanTerms)));
+                }
+
+                if (foundProducts.length > 0) {
+                    isProductSearch = true; 
+                    response = `¡Hola! ⚡ Aunque mi conexión principal está un poquito lenta ahorita, revisé mi inventario súper rápido y encontré esto que te puede servir perfectamente:`;
+                } else {
+                    response = `¡Hola! Qué gusto saludarte. ⚡ Para ese tipo de requerimiento o proyecto preferimos darte una atención 100% experta y personalizada. Aunque no lo veo publicado en el catálogo web en este instante, **estoy seguro que en bodega lo manejamos o te ofrecemos una alternativa mucho mejor**.\n\nToca el botón verde de WhatsApp aquí abajo y uno de mis ingenieros te confirmará existencias en menos de 5 minutos. ¡Estamos a la orden!`;
+                }
             }
+            
             finishBotResponse(response, isProductSearch ? foundProducts.slice(0, 3) : null);
         }
 
