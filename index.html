@@ -784,21 +784,29 @@
             const searchTerms = text.toLowerCase();
 
             if (searchTerms.includes('ubicacion')) {
-                response = 'Estamos en Managua: Parqueo de Ferreterías Sur, Mercado Roberto Huembes.';
+                response = '📍 Estamos ubicados en Managua: Parqueo de Ferreterías Sur, Mercado Roberto Huembes. ¡Te esperamos con un excelente café y la mejor asesoría!';
                 finishBotResponse(response, null);
                 return;
             } else if (searchTerms.includes('soporte') || searchTerms.includes('falla') || searchTerms.includes('ayuda')) {
                 chatState = 'diag_tipo';
-                chatMessages.push({ sender: 'bot', text: 'Te ayudo. ¿Es equipo residencial o industrial?', isDiag: true, diagStep: 'tipo' });
+                chatMessages.push({ sender: 'bot', text: '¡Claro que sí! Con gusto te asisto. ¿El equipo que presenta la falla es de uso Residencial o Industrial?', isDiag: true, diagStep: 'tipo' });
                 renderChat(); 
                 return;
             } 
 
-            // Integración de Inteligencia Artificial Avanzada (Análisis Semántico)
+            // Integración de Inteligencia Artificial Avanzada (Personalidad de Vendedor Estrella)
             try {
                 const apiKey = ""; 
                 const catSnippet = products.map(p => ({id: p.id, t: p.title, d: p.desc, c: p.category})).slice(0, 50);
-                const sysPrompt = "Eres ElecBot, un experto ingeniero y vendedor de la ferretería Elecpro. Ayudas a contratistas y personas comunes. Tienes este catálogo JSON: " + JSON.stringify(catSnippet) + ". El cliente dice: '" + text + "'. Entiende su necesidad profunda (ej. si va a construir, hacer una casa, reparar un tubo). Responde muy amigablemente, dale una recomendación experta y al final de tu respuesta EXACTAMENTE incluye los IDs recomendados en este formato: [IDS: id1, id2].";
+                
+                const sysPrompt = `Eres ElecBot, el asesor estrella, empático y experto electromecánico de la ferretería Elecpro en Nicaragua. Tu objetivo es dar una atención 100% inmersiva, enamorar al cliente, ser muy amable y ayudarlo en su compra aunque no sepa términos técnicos.
+                Catálogo web actual: ${JSON.stringify(catSnippet)}.
+                
+                REGLAS VITALES:
+                1. Si el cliente describe un problema sin saber el nombre (ej: "algo para un tubo"), deduce qué necesita (ej: pegamento Tangit, cinta teflón, adaptadores) y explícaselo de forma sencilla y carismática.
+                2. Si el producto ESTÁ en el catálogo, recomiéndalo y al final de tu respuesta pon EXACTAMENTE esto: [IDS: id1, id2].
+                3. Si el producto NO ESTÁ en el catálogo web (como cables, tubos PVC, etc.), NUNCA digas "no encontré eso". Sé un excelente vendedor: dale el consejo técnico de lo que necesita comprar, y dile que en la bodega principal de Elecpro seguramente sí lo tenemos en inventario. Invítalo amablemente a tocar el botón verde de WhatsApp para que un ingeniero le confirme existencias al instante.
+                4. Sé conversacional, usa uno o dos emojis, y mantén la respuesta persuasiva pero breve.`;
 
                 const req = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -816,19 +824,13 @@
                     response = aiText.replace(idsMatch[0], '').trim();
                     isProductSearch = foundProducts.length > 0;
                 } else {
-                    response = aiText;
+                    // Si no mandó IDs, simplemente mostramos el texto amable de la IA
+                    response = aiText.trim();
+                    isProductSearch = false;
                 }
             } catch(e) {
-                // Sistema de respaldo en caso de desconexión
-                const cleanTerms = searchTerms.replace(/(necesito|busco|quiero|tienes|precio de|un|una|el|la|los|las|para|comprar|hacer|construir)/g, '').trim();
-                if (cleanTerms.length > 2) {
-                    foundProducts = products.filter(p => p.title.toLowerCase().includes(cleanTerms) || (p.desc && p.desc.toLowerCase().includes(cleanTerms)));
-                }
-                if (foundProducts.length > 0) {
-                    isProductSearch = true; response = `Mira lo que encontré que te puede servir:`;
-                } else {
-                    response = 'No encontré exactamente eso. Escribe al <a href="https://wa.me/50587600225" target="_blank" class="text-brand-blue font-bold">WhatsApp</a> para que un ingeniero te asesore.';
-                }
+                // Sistema de respaldo ultra-amigable por si falla la conexión
+                response = '¡Hola! ⚡ Parece que estoy teniendo un pequeño lapsus de conexión en este momento. Pero no quiero dejarte esperando: si buscas algo específico o necesitas asesoría experta, toca el botón verde de WhatsApp y mis compañeros ingenieros te atenderán con muchísimo gusto.';
             }
             finishBotResponse(response, isProductSearch ? foundProducts.slice(0, 3) : null);
         }
