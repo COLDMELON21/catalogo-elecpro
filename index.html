@@ -800,34 +800,34 @@
             let response = ''; let isProductSearch = false; let foundProducts = [];
             const searchTerms = text.toLowerCase();
 
-            if (searchTerms.includes('ubicacion')) {
+            if (searchTerms.includes('ubicacion') || searchTerms.includes('dónde están') || searchTerms.includes('donde estan')) {
                 response = '📍 Estamos ubicados en Managua: Parqueo de Ferreterías Sur, Mercado Roberto Huembes. ¡Te esperamos con un excelente café y la mejor asesoría!';
                 finishBotResponse(response, null);
                 return;
-            } else if (searchTerms.includes('soporte') || searchTerms.includes('falla') || searchTerms.includes('ayuda')) {
+            } else if (searchTerms.includes('soporte técnico') || searchTerms.includes('reportar falla') || searchTerms === 'soporte') {
                 chatState = 'diag_tipo';
-                chatMessages.push({ sender: 'bot', text: '¡Claro que sí! Con gusto te asisto. ¿El equipo que presenta la falla es de uso Residencial o Industrial?', isDiag: true, diagStep: 'tipo' });
+                chatMessages.push({ sender: 'bot', text: '¡Claro que sí! Con gusto te asisto con el soporte técnico. ¿El equipo que presenta la falla es de uso Residencial o Industrial?', isDiag: true, diagStep: 'tipo' });
                 renderChat(); 
                 return;
             } 
 
             // Integración de Inteligencia Artificial Avanzada (Personalidad de Vendedor Estrella)
             try {
-                const apiKey = ""; 
+                const apiKey = "AIzaSyBupPsJC8p926dWcGuGLsd__OFFSXuSgHc"; 
                 const catSnippet = products.map(p => ({id: p.id, t: p.title, d: p.desc, c: p.category})).slice(0, 50);
                 
                 const sysPrompt = `Eres ElecBot, el asesor estrella, empático y experto electromecánico de la ferretería Elecpro en Nicaragua. Tu objetivo es dar una atención 100% inmersiva, enamorar al cliente, ser muy amable y ayudarlo en su compra aunque no sepa términos técnicos.
                 Catálogo web actual: ${JSON.stringify(catSnippet)}.
                 
                 REGLAS VITALES:
-                1. Si el cliente describe un problema sin saber el nombre (ej: "algo para un tubo"), deduce qué necesita (ej: pegamento Tangit, cinta teflón, adaptadores) y explícaselo de forma sencilla y carismática.
-                2. Si el producto ESTÁ en el catálogo, recomiéndalo y al final de tu respuesta pon EXACTAMENTE esto: [IDS: id1, id2].
-                3. Si el producto NO ESTÁ en el catálogo web (como cables, tubos PVC, etc.), NUNCA digas "no encontré eso". Sé un excelente vendedor: dale el consejo técnico de lo que necesita comprar, y dile que en la bodega principal de Elecpro seguramente sí lo tenemos en inventario. Invítalo amablemente a tocar el botón verde de WhatsApp para que un ingeniero le confirme existencias al instante.
-                4. Sé conversacional, usa uno o dos emojis, y mantén la respuesta persuasiva pero breve.`;
+                1. Si el cliente describe un problema sin saber el nombre (ej: "algo para un tubo", "para socar", "para la luz"), deduce qué necesita (ej: cinta teflón, adaptadores, cable, cerradura) y explícaselo de forma sencilla y carismática.
+                2. Busca relacionar sus dudas con tu catálogo. Si piden candado, ofréceles la "Cerradura de Sobreponer". Si piden algo para tubo, ofréceles la "Válvula".
+                3. Si encuentras un producto útil, pon EXACTAMENTE esto al final de tu respuesta: [IDS: id1, id2].
+                4. Si DEFINITIVAMENTE no hay nada ni remotamente relacionado en el catálogo web, NUNCA digas "no encontré eso". Sé un excelente vendedor: dale el consejo técnico de lo que necesita comprar, y dile que en la bodega física de Elecpro seguramente sí lo tenemos en inventario. Invítalo amablemente a tocar el botón verde de WhatsApp.
+                5. Sé conversacional, usa emojis, y mantén la respuesta persuasiva pero concisa.`;
 
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                 
-                // Usar la función segura con retrys automáticos
                 const req = await fetchWithBackoff(url, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: text }] }], systemInstruction: { parts: [{ text: sysPrompt }] } })
@@ -847,19 +847,46 @@
                     isProductSearch = false;
                 }
             } catch(e) {
-                // =============== NUEVO SISTEMA DE RESPALDO ANTI-FALLOS ===============
-                // Si la IA falla, usamos un filtro súper amigable localmente para no dejarlo en el aire.
-                const cleanTerms = searchTerms.replace(/(necesito|busco|quiero|tienes|precio de|un|una|el|la|los|las|para|comprar|hacer|construir)/g, '').trim();
+                // =============== CEREBRO SECUNDARIO DE VENTAS (MODO OFFLINE INTELIGENTE) ===============
+                // Si la IA de Google falla por falta de API Key o conexión, este sistema deduce intenciones.
                 
-                if (cleanTerms.length > 2) {
-                    foundProducts = products.filter(p => p.title.toLowerCase().includes(cleanTerms) || (p.desc && p.desc.toLowerCase().includes(cleanTerms)));
+                const localDictionary = {
+                    "candado": { terms: ["cerradura", "seguridad", "lock"], msg: "¡Hola! Para proteger tus espacios, no manejo candados básicos aquí en la web rápida, pero te recomiendo muchísimo esta Cerradura de alta seguridad que es mucho más resistente y profesional:" },
+                    "tubo": { terms: ["valvula", "fontaneria", "pvc", "agua"], msg: "¡Claro! Para trabajos con tuberías necesitas un acople perfecto. Mira este equipo de fontanería de lujo que te asegura que todo quede bien sellado y ajustado:" },
+                    "socar": { terms: ["valvula", "herramienta", "fontaneria"], msg: "¡Qué tal! Para que todo quede bien 'socado' y sin fugas, necesitas el equipo adecuado. Échale un vistazo a este complemento de alta resistencia:" },
+                    "cable": { terms: ["electricidad", "protector", "voltaje"], msg: "¡Hola! Las bobinas de cable grueso las despachamos directo de bodega por WhatsApp. Sin embargo, si estás trabajando en tu red de luz, ¡no olvides proteger tus equipos! Te recomiendo esto:" },
+                    "luz": { terms: ["electricidad", "protector", "iluminacion"], msg: "¡Hola! Para tu red eléctrica te asesoramos mejor por WhatsApp con los breakers y cables exactos. Pero para proteger toda esa inversión en luz, te sugiero anexar este equipo vital:" },
+                    "brida": { terms: ["herramienta", "industrial", "taladro"], msg: "¡Entendido! Las bridas y acoples industriales las cotizamos exactas a tu medida por WhatsApp. Mientras tanto, mira esta herramienta de nivel industrial que te puede servir muchísimo para el montaje:" }
+                };
+
+                let matchedKey = null;
+                for (const key in localDictionary) {
+                    if (searchTerms.includes(key)) { matchedKey = key; break; }
                 }
 
-                if (foundProducts.length > 0) {
-                    isProductSearch = true; 
-                    response = `¡Hola! ⚡ Aunque mi conexión principal está un poquito lenta ahorita, revisé mi inventario súper rápido y encontré esto que te puede servir perfectamente:`;
+                if (matchedKey) {
+                    const dict = localDictionary[matchedKey];
+                    foundProducts = products.filter(p => dict.terms.some(t => p.category.toLowerCase().includes(t) || p.title.toLowerCase().includes(t) || (p.desc && p.desc.toLowerCase().includes(t))));
+                    
+                    if(foundProducts.length > 0) {
+                        response = dict.msg;
+                        isProductSearch = true;
+                    } else {
+                        response = `¡Hola! ⚡ Te entiendo perfecto. Ese tipo de material específico lo despachamos muchísimo, pero lo manejamos directo desde nuestra bodega central para darte las especificaciones exactas.\n\nToca el botón verde de WhatsApp aquí abajo y un ingeniero te dará el precio y la disponibilidad al instante. ¡Con gusto te ayudamos!`;
+                    }
                 } else {
-                    response = `¡Hola! Qué gusto saludarte. ⚡ Para ese tipo de requerimiento o proyecto preferimos darte una atención 100% experta y personalizada. Aunque no lo veo publicado en el catálogo web en este instante, **estoy seguro que en bodega lo manejamos o te ofrecemos una alternativa mucho mejor**.\n\nToca el botón verde de WhatsApp aquí abajo y uno de mis ingenieros te confirmará existencias en menos de 5 minutos. ¡Estamos a la orden!`;
+                    // Búsqueda general si no está en el diccionario
+                    const cleanTerms = searchTerms.replace(/(necesito|busco|quiero|tienes|precio de|un|una|el|la|los|las|para|comprar|hacer|construir|ayudame|saber|que|me|sirve)/g, '').trim();
+                    if (cleanTerms.length > 2) {
+                        foundProducts = products.filter(p => p.title.toLowerCase().includes(cleanTerms) || (p.desc && p.desc.toLowerCase().includes(cleanTerms)));
+                    }
+
+                    if (foundProducts.length > 0) {
+                        isProductSearch = true; 
+                        response = `¡Hola! ⚡ Revisé mi catálogo digital y encontré estos equipos que coinciden excelente con lo que buscas:`;
+                    } else {
+                        response = `¡Hola! Qué gusto saludarte. ⚡ Te entiendo perfectamente. Ese material preferimos cotizarlo directamente para darte la medida y capacidad exacta que tu proyecto necesita.\n\nAunque no está exhibido en esta galería web ahorita, **en nuestra bodega física tenemos un inventario inmenso**. Toca el botón verde de WhatsApp aquí abajo y mis compañeros ingenieros te confirman existencias en menos de 5 minutos. ¡Estamos para servirte!`;
+                    }
                 }
             }
             
