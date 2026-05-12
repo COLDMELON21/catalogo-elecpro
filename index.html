@@ -1,1260 +1,1436 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ELECPRO | Next-Gen Industrial Suministros</title>
-    
-    <!-- Script Modo Oscuro -->
-    <script>
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CloseOut Nica - Directorio de Sucursales</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Librerías PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
-    <!-- Fuentes Ultra Modernas -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Iconos y Tailwind -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            blue: '#0055FF', /* Azul vibrante tech */
-                            darkblue: '#003399',
-                            yellow: '#F5E100', /* Amarillo neón sutil */
-                            dark: '#09090b', /* Zinc 950 profundo */
-                            surface: '#18181b' /* Zinc 900 para tarjetas oscuras */
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'], 
-                        display: ['Outfit', 'sans-serif'], 
-                    },
-                    animation: {
-                        'spin-slow': 'spin 3s linear infinite',
-                        'reveal-up': 'revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'blob': 'blob 7s infinite',
-                    },
-                    keyframes: {
-                        revealUp: { 
-                            '0%': { opacity: '0', transform: 'translateY(40px)', filter: 'blur(10px)' }, 
-                            '100%': { opacity: '1', transform: 'translateY(0)', filter: 'blur(0)' } 
-                        },
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
-                        }
-                    }
-                }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Configuración -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class', 
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              blue: '#002D72', red: '#E30613', green: '#00A650', yellow: '#FCC71F', pastel: '#FF9B6A'
             }
+          },
+          boxShadow: {
+            'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+            'float': '0 20px 40px -5px rgba(0,0,0,0.15)',
+          }
         }
-    </script>
+      }
+    }
+  </script>
 
-    <style>
-        body { 
-            background-color: #fafafa; 
-            -webkit-tap-highlight-color: transparent; 
-            overflow-x: hidden; 
-            transition: background-color 0.4s ease;
-        }
-        .dark body { background-color: #09090b; }
-        
-        .lucide { stroke-width: 1.5px; } /* Iconos finos y elegantes */
+  <!-- Script Modo Oscuro -->
+  <script>
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+  </script>
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        /* Floating Island Header */
-        .island-header { 
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(0,0,0,0.05); 
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
-        }
-        .dark .island-header {
-            background: rgba(24, 24, 27, 0.7);
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Scrollbar oculta pero funcional */
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Efecto Bento Box Hover */
-        .bento-card {
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-        }
-        .bento-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
-        }
-        .dark .bento-card:hover { box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4); }
+  <style>
+    body { scroll-behavior: smooth; }
+    .font-display { font-family: 'Outfit', sans-serif; }
+    
+    /* Animaciones Generales */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    
+    @keyframes highlightPulse { 0% { box-shadow: 0 0 0 0 rgba(0, 166, 80, 0.5); transform: translateY(-8px) scale(1.02); } 70% { box-shadow: 0 0 0 25px rgba(0, 166, 80, 0); transform: translateY(-8px) scale(1.02); } 100% { box-shadow: 0 0 0 0 rgba(0, 166, 80, 0); transform: translateY(-8px) scale(1.02); } }
+    .animate-highlight { animation: highlightPulse 2s infinite; z-index: 40; position: relative; border: 3px solid #00A650 !important; }
 
-        /* Categorías Tabs (Píldoras) */
-        .cat-tab {
-            transition: all 0.3s ease;
-        }
-        .cat-tab.active {
-            background-color: #0055FF;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);
-            border-color: #0055FF;
-        }
+    @keyframes shimmerSweep { 0% { transform: translateX(-150%) skewX(-15deg); } 100% { transform: translateX(250%) skewX(-15deg); } }
+    .shimmer-effect { position: relative; overflow: hidden; }
+    .shimmer-effect::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); animation: shimmerSweep 3s infinite ease-in-out; pointer-events: none; z-index: 20; }
 
-        /* Input Moderno */
-        .modern-input {
-            background: transparent;
-            transition: all 0.3s ease;
-        }
-        .modern-input:focus-within {
-            background: white;
-            box-shadow: 0 0 0 2px rgba(0,85,255,0.2);
-        }
-        .dark .modern-input:focus-within {
-            background: #18181b;
-            box-shadow: 0 0 0 2px rgba(0,85,255,0.4);
-        }
+    .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Animación de carga SVG */
-        .loader-ring {
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-top-color: #0055FF;
-            border-right-color: #0055FF;
-            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-        }
+    @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+    .animate-pulse-soft { animation: pulseSoft 2.5s infinite ease-in-out; }
 
-        /* Gradientes Modernos text */
-        .text-gradient {
-            background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-image: linear-gradient(135deg, #0055FF, #00C2FF);
-        }
-        .dark .text-gradient { background-image: linear-gradient(135deg, #4da6ff, #00ffff); }
-    </style>
+    /* Fondo Malla Líquida (Liquid Mesh) */
+    @keyframes blobBounce {
+      0% { transform: translate(0px, 0px) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+      100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-blob { animation: blobBounce 12s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+    .animation-delay-2000 { animation-delay: 2s; }
+    .animation-delay-4000 { animation-delay: 4s; }
+
+    /* Efecto Tilt 3D para Tarjetas */
+    .store-card { 
+        transform-style: preserve-3d; 
+        will-change: transform; 
+        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
+    }
+    .store-card.tilt-active { 
+        transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.1s ease; 
+        z-index: 20; 
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+    }
+    .store-card.tilt-reset { 
+        transition: transform 0.5s ease, box-shadow 0.5s ease; 
+        transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1); 
+    }
+    /* Añadir algo de profundidad a los elementos internos de la tarjeta al hacer hover */
+    .store-card.tilt-active > div {
+        transform: translateZ(20px);
+    }
+
+    /* Estilos Toggle Switch */
+    input:checked ~ .toggle-bg { background-color: #00A650; border-color: #00A650; }
+    input:checked ~ .toggle-dot { transform: translateX(100%); }
+
+    /* Fondos y utilidades */
+    .bg-grid-pattern { background-image: radial-gradient(rgba(0, 45, 114, 0.08) 1px, transparent 1px); background-size: 24px 24px; }
+    .dark .bg-grid-pattern { background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px); }
+    
+    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); }
+    .dark .glass { background: rgba(17, 24, 39, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); }
+
+    .hidden-view { display: none !important; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
 </head>
-<body class="text-zinc-800 dark:text-zinc-200 antialiased pb-24 selection:bg-brand-blue selection:text-white">
+<body class="bg-[#F8FAFC] dark:bg-[#0B1121] font-sans text-gray-800 dark:text-gray-200 min-h-screen overflow-x-hidden transition-colors duration-500 relative">
 
-    <!-- FONDOS ABSTRACTOS (BLOBS) PARA ESTÉTICA MODERNA -->
-    <div class="fixed top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-0 opacity-40 dark:opacity-20">
-        <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-400/20 mix-blend-multiply filter blur-[80px] animate-blob"></div>
-        <div class="absolute top-[20%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-cyan-400/20 mix-blend-multiply filter blur-[80px] animate-blob" style="animation-delay: 2s"></div>
-        <div class="absolute bottom-[-20%] left-[20%] w-[45vw] h-[45vw] rounded-full bg-indigo-400/20 mix-blend-multiply filter blur-[80px] animate-blob" style="animation-delay: 4s"></div>
+  <!-- INDICADOR DE PROGRESO DE SCROLL -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-1.5 w-0 bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow z-50 transition-all duration-150 rounded-r-full shadow-[0_0_15px_rgba(227,6,19,0.6)] pointer-events-none"></div>
+
+  <!-- BANNER DE PROMOCIONES -->
+  <div id="promo-banner" class="bg-brand-red text-white font-display font-bold text-center py-2.5 px-4 shadow-md hidden-view relative z-40 text-sm md:text-base animate-fade-in-up mt-1.5"></div>
+
+  <!-- Toasts -->
+  <div id="toast-container" class="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 z-[60] flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- FONDO MALLA LÍQUIDA (Liquid Mesh) -->
+  <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-grid-pattern">
+    <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-brand-blue/20 dark:bg-brand-blue/30 blur-[100px] md:blur-[150px] animate-blob mix-blend-multiply dark:mix-blend-screen transition-all duration-1000"></div>
+    <div class="absolute top-[20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-brand-red/15 dark:bg-brand-red/20 blur-[100px] md:blur-[150px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen transition-all duration-1000"></div>
+    <div class="absolute bottom-[-20%] left-[20%] w-[55vw] h-[55vw] rounded-full bg-brand-yellow/15 dark:bg-brand-yellow/20 blur-[100px] md:blur-[150px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen transition-all duration-1000"></div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="glass shadow-sm sticky top-0 z-30 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4 flex items-center justify-between">
+      <div class="flex items-center cursor-pointer group relative" onclick="toggleAdminView()">
+        <img src="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png" alt="CloseOut Nica Logo" class="h-10 md:h-12 w-auto object-contain transition-transform duration-500 hover:rotate-2 hover:scale-110 drop-shadow-md">
+      </div>
+      <div class="flex items-center space-x-3">
+        <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 hover:text-brand-blue dark:hover:text-blue-400 hover:rotate-12 hover:scale-110 transition-all duration-300">
+          <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-sm"></i>
+          <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-sm"></i>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <!-- 1. PANTALLA DE CARGA (Minimalista y Fluida) -->
-    <div id="loader" class="fixed inset-0 bg-[#fafafa] dark:bg-[#09090b] z-[999999] flex flex-col justify-center items-center transition-all duration-700 ease-in-out">
-        <div class="relative flex justify-center items-center w-32 h-32 mb-4">
-            <div class="absolute loader-ring"></div>
-            <i data-lucide="zap" class="w-8 h-8 text-brand-blue animate-pulse"></i>
-        </div>
-        <h1 class="font-display text-2xl font-bold tracking-widest text-zinc-900 dark:text-white uppercase">Elecpro</h1>
-    </div>
-
-    <!-- 2. HEADER DYNAMIC ISLAND -->
-    <header class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 island-header rounded-full px-2 py-2 transition-all">
-        <div class="flex items-center justify-between gap-4 w-full">
-            
-            <!-- Logo Sutil -->
-            <div class="flex items-center cursor-pointer pl-2 group" onclick="window.scrollTo(0,0)">
-                <div class="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
-                    <i data-lucide="zap" class="w-5 h-5 fill-current"></i>
-                </div>
-                <span class="ml-3 font-display font-bold text-xl tracking-tight hidden md:block text-zinc-900 dark:text-white">ELECPRO</span>
-            </div>
-
-            <!-- Buscador Integrado -->
-            <div class="flex-grow max-w-xl">
-                <div class="modern-input relative flex items-center bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/80 rounded-full px-4 py-2.5 h-11">
-                    <i data-lucide="search" class="w-4 h-4 text-zinc-400"></i>
-                    <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Buscar productos..." class="w-full bg-transparent border-none outline-none text-sm font-medium px-3 text-zinc-800 dark:text-zinc-200 placeholder-zinc-400">
-                    <button id="clear-search" onclick="clearSearch()" class="hidden text-zinc-400 hover:text-red-500 transition-colors"><i data-lucide="x-circle" class="w-4 h-4"></i></button>
-                </div>
-            </div>
-
-            <!-- Controles (Dark Mode + Cart) -->
-            <div class="flex items-center pr-1 gap-1">
-                <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors">
-                    <i id="theme-toggle-dark-icon" data-lucide="moon" class="hidden w-4 h-4"></i>
-                    <i id="theme-toggle-light-icon" data-lucide="sun" class="hidden w-4 h-4"></i>
-                </button>
-                
-                <div class="w-[1px] h-5 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
-
-                <button onclick="toggleCart()" class="relative flex items-center justify-center h-10 px-4 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:scale-105 active:scale-95 transition-all gap-2 group">
-                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-                    <span id="header-cart-count" class="font-bold text-sm">0</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- TOAST NOTIFICACIONES -->
-    <div id="toast" class="fixed top-28 left-1/2 transform -translate-x-1/2 bg-zinc-900/95 dark:bg-white/95 backdrop-blur-md text-white dark:text-zinc-900 px-5 py-3 rounded-full shadow-2xl z-[100] text-sm font-medium transition-all duration-400 opacity-0 pointer-events-none translate-y-[-20px] flex items-center gap-2 border border-zinc-800 dark:border-zinc-200">
-        <i data-lucide="check-circle-2" class="w-4 h-4 text-green-400 dark:text-green-500"></i> <span id="toast-msg">Hecho</span>
-    </div>
-
-    <!-- 3. MAIN CONTENIDO -->
-    <main class="max-w-7xl mx-auto px-4 pt-40 md:pt-48 min-h-screen relative z-10">
-        
-        <!-- HERO SECTION (Ultra Minimalista) -->
-        <div class="text-center max-w-4xl mx-auto mb-20 animate-reveal">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-blue/10 text-brand-blue dark:bg-blue-500/10 dark:text-blue-400 text-xs font-bold uppercase tracking-widest mb-6 border border-brand-blue/20">
-                <span class="w-2 h-2 rounded-full bg-brand-blue animate-pulse"></span> Sistema B2B
-            </div>
-            <h1 class="font-display text-6xl md:text-8xl font-bold tracking-tight text-zinc-900 dark:text-white leading-[1.05] mb-6">
-                Energía que <br/>
-                <span class="text-gradient">Transforma.</span>
-            </h1>
-            <p class="text-zinc-500 dark:text-zinc-400 text-base md:text-lg max-w-2xl mx-auto font-medium leading-relaxed mb-10">
-                Catálogo especializado de suministros eléctricos y soluciones electromecánicas para la industria, construcción y desarrollo corporativo.
-            </p>
-            <div class="flex justify-center gap-4">
-                <button onclick="document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'})" class="bg-brand-blue text-white px-8 py-4 rounded-full font-bold text-sm hover:bg-blue-600 transition-all hover:shadow-[0_0_30px_rgba(0,85,255,0.4)] hover:-translate-y-1">
-                    Ver Catálogo
-                </button>
-                <button onclick="window.open('https://wa.me/50587600225', '_blank')" class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-800 px-8 py-4 rounded-full font-bold text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all flex items-center gap-2">
-                    <i data-lucide="phone" class="w-4 h-4"></i> Asesoría
-                </button>
-            </div>
-        </div>
-
-        <!-- ABOUT US (BENTO GRID MODERNO) -->
-        <section class="mb-24 animate-reveal" style="animation-delay: 0.2s">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 auto-rows-[200px]">
-                
-                <!-- Caja Principal Info -->
-                <div class="md:col-span-2 md:row-span-2 bg-white dark:bg-brand-surface rounded-[2rem] p-8 md:p-10 border border-zinc-100 dark:border-zinc-800/50 shadow-sm bento-card relative overflow-hidden flex flex-col justify-between group">
-                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-brand-blue/5 rounded-full blur-3xl group-hover:bg-brand-blue/10 transition-colors"></div>
-                    <div>
-                        <div class="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-brand-blue mb-6"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
-                        <h2 class="font-display text-3xl font-bold text-zinc-900 dark:text-white mb-4">Ingeniería de Confianza</h2>
-                        <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">Desde 2012, ELECPRO es sinónimo de eficiencia técnica. No solo vendemos equipos, diseñamos soluciones integrales en baja tensión, tableros y climatización para proyectos de alta demanda.</p>
-                    </div>
-                    <div class="mt-8 flex items-center gap-4">
-                        <div class="flex -space-x-3">
-                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold">P</div>
-                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold">C</div>
-                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-xs font-bold">L</div>
-                        </div>
-                        <p class="text-xs font-semibold text-zinc-400">Puma, Claro, LaFise y más confían en nosotros.</p>
-                    </div>
-                </div>
-
-                <!-- Caja Tableros -->
-                <div class="md:col-span-1 md:row-span-1 bg-gradient-to-br from-brand-blue to-blue-600 rounded-[2rem] p-6 text-white shadow-lg bento-card flex flex-col justify-between relative overflow-hidden">
-                    <i data-lucide="server" class="w-24 h-24 absolute -bottom-4 -right-4 opacity-10"></i>
-                    <i data-lucide="server" class="w-6 h-6 mb-4"></i>
-                    <div>
-                        <h3 class="font-bold text-lg font-display">Tableros</h3>
-                        <p class="text-blue-100 text-xs mt-1">Montaje electromecánico</p>
-                    </div>
-                </div>
-
-                <!-- Caja Clima -->
-                <div class="md:col-span-1 md:row-span-1 bg-white dark:bg-brand-surface rounded-[2rem] p-6 border border-zinc-100 dark:border-zinc-800/50 shadow-sm bento-card flex flex-col justify-between group">
-                    <div class="w-10 h-10 bg-cyan-50 dark:bg-cyan-500/10 text-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="wind" class="w-5 h-5"></i></div>
-                    <div>
-                        <h3 class="font-bold text-zinc-900 dark:text-white text-lg font-display">Climatización</h3>
-                        <p class="text-zinc-500 dark:text-zinc-400 text-xs mt-1">Mantenimiento preventivo</p>
-                    </div>
-                </div>
-
-                <!-- Caja Stats -->
-                <div class="md:col-span-2 md:row-span-1 bg-zinc-900 dark:bg-black rounded-[2rem] p-8 border border-zinc-800 shadow-xl bento-card flex items-center justify-around text-white">
-                    <div class="text-center">
-                        <p class="text-4xl font-display font-bold text-brand-yellow">12+</p>
-                        <p class="text-xs font-medium text-zinc-400 mt-1 uppercase tracking-wider">Años Experiencia</p>
-                    </div>
-                    <div class="w-px h-12 bg-zinc-800"></div>
-                    <div class="text-center">
-                        <p class="text-4xl font-display font-bold text-brand-blue">24/7</p>
-                        <p class="text-xs font-medium text-zinc-400 mt-1 uppercase tracking-wider">Soporte Técnico</p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- DASHBOARD ADMIN (Oculto por defecto) -->
-        <div id="admin-dashboard" class="hidden grid-cols-1 md:grid-cols-3 gap-4 mb-10 animate-reveal">
-            <div class="bg-white dark:bg-brand-surface rounded-[2rem] p-6 border border-brand-blue/20 shadow-sm flex items-center gap-5">
-                <div class="w-12 h-12 bg-brand-blue/10 rounded-full flex items-center justify-center text-brand-blue"><i data-lucide="package" class="w-5 h-5"></i></div>
-                <div><p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Inventario</p><h4 class="text-2xl font-display font-bold text-zinc-900 dark:text-white" id="stat-total-items">0</h4></div>
-            </div>
-            <div class="bg-white dark:bg-brand-surface rounded-[2rem] p-6 border border-green-500/20 shadow-sm flex items-center gap-5">
-                <div class="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center text-green-500"><i data-lucide="dollar-sign" class="w-5 h-5"></i></div>
-                <div><p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Valor</p><h4 class="text-2xl font-display font-bold text-zinc-900 dark:text-white" id="stat-total-value">C$ 0</h4></div>
-            </div>
-            <button onclick="openNewProduct()" class="bg-brand-blue text-white rounded-[2rem] p-6 shadow-lg flex items-center justify-center gap-3 hover:bg-brand-darkblue transition-colors">
-                <i data-lucide="plus" class="w-5 h-5"></i> <span class="font-bold">Añadir Producto</span>
-            </button>
-        </div>
-
-        <!-- ================= SECCIÓN CATÁLOGO ================= -->
-        <div id="catalogo" class="mb-8 scroll-mt-32">
-            <h2 class="font-display text-4xl font-bold text-zinc-900 dark:text-white mb-6">Catálogo de Productos</h2>
-            
-            <!-- TABS DE CATEGORÍAS (Deslizables horizontalmente) -->
-            <div class="relative w-full overflow-hidden mb-8">
-                <!-- Sombra para indicar scroll -->
-                <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#fafafa] dark:from-[#09090b] to-transparent pointer-events-none z-10"></div>
-                
-                <div id="category-tabs" class="flex gap-2 overflow-x-auto hide-scroll pb-2 pt-1 px-1">
-                    <!-- Se inyectan por JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- GRID DE PRODUCTOS -->
-        <div id="catalog-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-20 relative z-10">
-            <!-- Inyección de JavaScript -->
-        </div>
-
-    </main>
-
-    <!-- FOOTER MINIMALISTA -->
-    <footer class="border-t border-zinc-200 dark:border-zinc-800/50 bg-white dark:bg-zinc-950 py-16 relative z-10 overflow-hidden">
-        <!-- Texto Gigante Fondo -->
-        <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] dark:opacity-[0.02] pointer-events-none overflow-hidden">
-            <span class="font-display font-bold text-[20vw] leading-none whitespace-nowrap">ELECPRO</span>
-        </div>
-        
-        <div class="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center">
-            <div class="w-12 h-12 bg-brand-blue rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-brand-blue/20">
-                <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
-            </div>
-            <p class="text-zinc-500 dark:text-zinc-400 font-medium text-sm">Suministros Industriales & Electromecánica</p>
-            <p class="text-xs text-zinc-400 dark:text-zinc-600 mt-6">© 2026 Elecpro Nicaragua. All rights reserved.</p>
-            
-            <!-- Login Admin (Secreto sutil) -->
-            <button onclick="login()" class="w-8 h-8 mt-4 rounded-full flex items-center justify-center text-zinc-300 hover:text-zinc-500 dark:text-zinc-800 dark:hover:text-zinc-600 transition-colors">
-                <i data-lucide="fingerprint" class="w-4 h-4"></i>
-            </button>
-        </div>
-    </footer>
-
-    <!-- ================= BOTONES FLOTANTES ================= -->
+  <!-- =========================================
+       VISTA CLIENTE (PÚBLICA)
+       ========================================= -->
+  <main id="client-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 relative z-10">
     
-    <!-- Botón Asistente Virtual (ElecBot) -->
-    <button onclick="toggleChatbot()" class="fixed bottom-6 right-6 w-14 h-14 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.15)] flex items-center justify-center z-40 transition-all hover:scale-110 active:scale-95 group">
-        <i data-lucide="sparkles" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
-    </button>
+    <!-- Hero / Bienvenida -->
+    <div class="text-center mb-8 md:mb-14 opacity-0 animate-fade-in-up" style="animation-delay: 0.1s;">
+      <span id="dynamic-greeting" class="inline-block py-1.5 px-5 rounded-full bg-brand-blue/5 dark:bg-brand-blue/20 text-brand-blue dark:text-blue-400 font-bold text-xs md:text-sm mb-4 border border-brand-blue/10 dark:border-brand-blue/30 shadow-sm transition-all hover:scale-105 backdrop-blur-md">
+        ¡Hola! 👋
+      </span>
+      <h1 class="text-4xl md:text-6xl font-display font-black text-gray-900 dark:text-white mb-4 tracking-tight drop-shadow-sm">Close Out Nicaragua</h1>
+      <p class="text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium max-w-2xl mx-auto px-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md py-3.5 rounded-full border border-gray-200/50 dark:border-gray-700/50 shadow-sm inline-block transition-transform hover:scale-105 duration-300">
+        <i class="fas fa-shopping-bag mr-2 text-brand-blue animate-bounce"></i> Tienda de ropa y accesorios para toda la familia.
+      </p>
 
-    <!-- Botón WhatsApp -->
-    <button onclick="window.open('https://wa.me/50587600225', '_blank')" class="fixed bottom-6 left-6 w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_10px_40px_rgba(37,211,102,0.3)] flex items-center justify-center z-40 transition-all hover:scale-110 active:scale-95">
-        <i data-lucide="message-circle" class="w-6 h-6"></i>
-    </button>
-
-    <!-- ================= SISTEMA DE MODALES Y CHAT ================= -->
-
-    <div id="modal-overlay" onclick="closeAllModals()" class="fixed inset-0 bg-zinc-900/40 dark:bg-black/60 backdrop-blur-sm z-[60] hidden transition-opacity duration-300 opacity-0"></div>
-
-    <!-- VENTANA CHATBOT (ElecBot V2) -->
-    <div id="chatbot-window" class="fixed bottom-24 right-6 w-[calc(100%-3rem)] sm:w-[380px] h-[500px] max-h-[75vh] bg-white/95 dark:bg-brand-surface/95 backdrop-blur-xl rounded-[2rem] shadow-2xl z-[70] flex flex-col overflow-hidden transition-all duration-300 transform scale-95 opacity-0 origin-bottom-right border border-zinc-200/50 dark:border-zinc-700/50 hidden">
-        <!-- Header Bot -->
-        <div class="px-5 py-4 bg-transparent border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-brand-blue/10 rounded-full flex items-center justify-center text-brand-blue"><i data-lucide="bot" class="w-4 h-4"></i></div>
-                <div>
-                    <h4 class="font-bold text-sm text-zinc-900 dark:text-white leading-none">ElecBot <span class="text-[9px] bg-brand-blue text-white px-1.5 py-0.5 rounded-full ml-1">AI</span></h4>
-                    <p class="text-[10px] text-green-500 font-medium flex items-center gap-1 mt-1"><span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online</p>
-                </div>
-            </div>
-            <button onclick="toggleChatbot()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
-        </div>
-        
-        <!-- Mensajes -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 text-sm hide-scroll"></div>
-        
-        <!-- Input Chat -->
-        <div class="p-4 bg-white dark:bg-brand-surface border-t border-zinc-100 dark:border-zinc-800">
-            <form onsubmit="handleChatSubmit(event)" class="relative flex items-center">
-                <button type="button" id="mic-btn" onclick="startVoiceSearch()" class="absolute left-1 w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-brand-blue transition-colors"><i data-lucide="mic" class="w-4 h-4"></i></button>
-                <input type="text" id="chat-input" placeholder="Pregunta algo..." class="w-full bg-zinc-100 dark:bg-zinc-900 border-none rounded-full pl-11 pr-12 py-3 text-sm font-medium outline-none text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 focus:ring-2 focus:ring-brand-blue/20 transition-all">
-                <button type="submit" class="absolute right-1 w-10 h-10 bg-brand-blue text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/30"><i data-lucide="send" class="w-4 h-4 ml-0.5"></i></button>
-            </form>
-        </div>
+      <!-- Redes Sociales (Movidas al principio) -->
+      <div class="mt-8 flex justify-center gap-4 md:gap-6">
+        <a id="link-fb" href="#" target="_blank" rel="noopener noreferrer" class="group relative w-12 h-12 md:w-14 md:h-14 rounded-2xl md:rounded-[1.2rem] bg-white dark:bg-gray-800 flex items-center justify-center text-blue-600 shadow-soft hover:shadow-lg transform hover:-translate-y-2 hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-500 overflow-hidden">
+          <div class="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+          <i class="fab fa-facebook-f text-xl md:text-2xl relative z-10 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        <a id="link-ig" href="#" target="_blank" rel="noopener noreferrer" class="group relative w-12 h-12 md:w-14 md:h-14 rounded-2xl md:rounded-[1.2rem] bg-white dark:bg-gray-800 flex items-center justify-center text-pink-600 shadow-soft hover:shadow-lg transform hover:-translate-y-2 hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-pink-500 overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+          <i class="fab fa-instagram text-xl md:text-2xl relative z-10 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        <a id="link-tk" href="#" target="_blank" rel="noopener noreferrer" class="group relative w-12 h-12 md:w-14 md:h-14 rounded-2xl md:rounded-[1.2rem] bg-white dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white shadow-soft hover:shadow-lg transform hover:-translate-y-2 hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-gray-900 dark:hover:border-white overflow-hidden">
+          <div class="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+          <i class="fab fa-tiktok text-xl md:text-2xl relative z-10 group-hover:text-white dark:group-hover:text-black transition-colors duration-300"></i>
+        </a>
+      </div>
     </div>
 
-    <!-- MODAL CARRITO (Slide over moderno) -->
-    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white/95 dark:bg-brand-surface/95 backdrop-blur-2xl z-[70] transform translate-x-full transition-transform duration-500 cubic-bezier(0.16, 1, 0.3, 1) shadow-[-20px_0_40px_rgba(0,0,0,0.05)] dark:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] flex flex-col border-l border-white/20 dark:border-zinc-800/50">
-        <div class="px-6 py-5 flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800">
-            <h2 class="font-display text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                Tu Carrito <span id="cart-badge-title" class="bg-brand-blue text-white text-xs px-2 py-0.5 rounded-full">0</span>
+    <!-- Buscador General -->
+    <div class="max-w-3xl mx-auto mb-10 md:mb-14 relative group px-2 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+      <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+        <i class="fas fa-search text-gray-400 group-focus-within:text-brand-blue group-focus-within:scale-125 transition-all duration-300 text-lg"></i>
+      </div>
+      <input type="text" id="search-input" class="w-full pl-14 pr-12 py-4 rounded-full border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-brand-blue outline-none shadow-soft hover:shadow-lg focus:shadow-xl transition-all duration-300 text-base md:text-lg font-medium" placeholder="Buscar sucursal por nombre o ubicación...">
+      <button id="clear-search" class="absolute inset-y-0 right-0 pr-6 flex items-center hidden-view">
+         <i class="fas fa-times-circle text-gray-300 hover:text-brand-red transition-colors text-xl hover:rotate-90 duration-300"></i>
+      </button>
+    </div>
+
+    <!-- Categorías Rápidas -->
+    <div class="mb-8 md:mb-14 reveal">
+      <div class="flex items-center mb-6">
+        <div class="w-2 h-8 bg-brand-blue rounded-full mr-3 transform origin-bottom hover:scale-y-110 transition-transform"></div>
+        <h3 class="text-xl md:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight">Filtrar Colección</h3>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" id="category-buttons"></div>
+    </div>
+
+    <!-- Geolocalización Banner -->
+    <div class="reveal shimmer-effect bg-gradient-to-br from-brand-red via-red-800 to-red-950 dark:from-red-900 dark:to-black relative overflow-hidden rounded-[2rem] p-6 md:p-10 text-white mb-14 shadow-2xl flex flex-col md:flex-row items-center justify-between border border-red-500/30 group">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-1000 ease-out"></div>
+      <div class="relative z-10 mb-6 md:mb-0 md:mr-8 text-center md:text-left w-full">
+        <span class="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-bold tracking-widest uppercase mb-3 text-white shadow-sm">Ubicación Inteligente</span>
+        <h2 class="text-3xl md:text-4xl font-display font-black mb-2 text-white">¿No sabes a dónde ir?</h2>
+        <p class="text-white/80 text-sm md:text-base max-w-md mx-auto md:mx-0 font-medium">Encuentra la sucursal operativa más cercana a ti.</p>
+        <p id="location-error" class="mt-3 flex items-center justify-center md:justify-start text-white font-bold text-sm bg-black/30 py-2 px-4 rounded-lg backdrop-blur-sm hidden-view w-fit mx-auto md:mx-0 animate-pulse">
+          <i class="fas fa-exclamation-triangle mr-2 text-brand-yellow"></i> <span id="location-error-text"></span>
+        </p>
+      </div>
+      <button id="btn-locate" class="relative z-10 w-full md:w-auto flex-shrink-0 inline-flex justify-center items-center space-x-3 bg-white text-brand-red px-8 py-4 rounded-full font-extrabold shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:shadow-[0_0_50px_rgba(255,255,255,0.6)] text-base md:text-lg animate-pulse-soft hover:animate-none transform hover:-translate-y-1 transition-all duration-300">
+        <i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>
+      </button>
+    </div>
+
+    <!-- Nearest Store Result -->
+    <div id="nearest-store-container" class="mb-14 hidden-view">
+      <div class="glass relative overflow-hidden rounded-[2rem] p-6 md:p-8 shadow-soft border-2 border-brand-green/50 flex flex-col md:flex-row items-center justify-between animate-fade-in-up">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-green/10 rounded-full blur-[40px] animate-pulse"></div>
+        <div class="w-full relative z-10 text-center md:text-left mb-6 md:mb-0">
+          <div class="inline-flex items-center px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-xs font-black uppercase tracking-widest mb-3">
+            <i class="fas fa-street-view mr-2"></i> Tu Mejor Opción
+          </div>
+          <h4 id="nearest-name" class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white leading-tight mb-2"></h4>
+          <p id="nearest-address" class="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium flex items-center justify-center md:justify-start">
+            <i class="fas fa-map-marker-alt text-brand-green mr-2"></i> <span id="nearest-address-text"></span>
+          </p>
+        </div>
+        <div class="w-full md:w-auto relative z-10 text-center bg-white dark:bg-gray-800 px-8 py-5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 transform hover:scale-105 transition-transform duration-300 min-w-[160px]">
+          <p class="text-xs text-gray-400 uppercase font-black tracking-widest mb-1">A tan solo</p>
+          <p class="text-4xl font-display font-black text-brand-green tracking-tighter">
+            <span id="nearest-distance"></span><span class="text-xl text-gray-400 ml-1">km</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-10 md:gap-14">
+      
+      <!-- Mapa Cliente -->
+      <div class="w-full animate-fade-in-up" style="animation-delay: 0.3s;">
+        <div class="glass rounded-[2rem] shadow-soft border border-gray-200/50 p-4 md:p-6 lg:p-8 hover:shadow-float transition-shadow duration-500">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center mr-4">
+                <i class="fas fa-map-marked-alt text-brand-blue text-xl"></i>
+              </div>
+              <h3 class="font-display font-bold text-gray-900 dark:text-white text-xl md:text-2xl">Explorar Mapa</h3>
+            </div>
+            <div class="w-full md:w-auto flex items-center bg-gray-100 dark:bg-gray-800 p-1.5 rounded-xl overflow-x-auto custom-scrollbar">
+              <div class="flex space-x-1" id="depto-buttons"></div>
+            </div>
+          </div>
+          <div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-gray-200 dark:bg-gray-800 rounded-2xl md:rounded-[1.5rem] overflow-hidden shadow-inner ring-1 ring-gray-900/5 transition-transform hover:scale-[1.01] duration-500">
+            <div id="client-map" class="absolute inset-0 w-full h-full"></div>
+            <div class="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.1)]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grilla Tiendas Cliente -->
+      <div class="w-full animate-fade-in-up" style="animation-delay: 0.4s;">
+        <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 pb-4 border-b border-gray-200 dark:border-gray-800 gap-4">
+          <div>
+            <h2 id="grid-title" class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white transition-all flex items-center gap-3">
+              Sucursales Disponibles 
+              <span id="grid-count" class="bg-brand-blue/10 text-brand-blue text-sm px-3 py-1 rounded-full border border-brand-blue/20">0</span>
             </h2>
-            <button onclick="toggleCart()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1 font-medium">Descubre nuestras tiendas y horarios</p>
+          </div>
+          
+          <!-- Filtro Abierto Ahora -->
+          <div class="glass flex items-center gap-3 px-4 py-2.5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <span class="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400"><i class="fas fa-door-open mr-1.5"></i> Abierto Ahora</span>
+            <label class="flex items-center cursor-pointer relative group">
+              <input type="checkbox" id="toggle-open-only" class="sr-only" onchange="toggleOpenFilter(this.checked)">
+              <div class="toggle-bg block w-11 h-6 rounded-full bg-gray-300 dark:bg-gray-600 transition-colors border-2 border-transparent"></div>
+              <div class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform shadow-sm group-hover:scale-110"></div>
+            </label>
+          </div>
         </div>
         
-        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 hide-scroll"></div>
+        <div id="stores-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <!-- Render Skeletons initially -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer / Copyright -->
+    <div class="mt-16 md:mt-24 pt-6 md:pt-8 border-t border-gray-200/60 dark:border-gray-800/60 text-center reveal">
+      <p class="text-xs md:text-sm text-gray-400 dark:text-gray-500 font-medium pb-8">© 2026 Close Out Nicaragua. Todos los derechos reservados.</p>
+    </div>
+  </main>
+
+  <!-- =========================================
+       VISTA ADMINISTRADOR
+       ========================================= -->
+  <main id="admin-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up hidden-view relative z-10">
+    
+    <!-- Configuración Web General -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Editor de Banner -->
+      <div class="glass rounded-3xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-bullhorn text-brand-red text-xl mr-3"></i>
+          <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Banner Promocional</h3>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium">Aparece en la parte más alta de la página. Déjalo en blanco para ocultar.</p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input type="text" id="admin-banner-input" placeholder="Ej: 🔥 Descuentos de Fin de Semana 🔥" class="flex-grow px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-sm focus:border-brand-blue dark:focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+          <button onclick="saveBanner()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-md text-sm whitespace-nowrap">Guardar</button>
+        </div>
+      </div>
+
+      <!-- Editor de Redes Sociales -->
+      <div class="glass rounded-3xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-link text-brand-blue text-xl mr-3"></i>
+          <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Enlaces de Redes Sociales</h3>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium">Actualiza los links del pie de página (Footer).</p>
+        <div class="space-y-3">
+          <div class="flex relative">
+            <i class="fab fa-facebook-f absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-600"></i>
+            <input type="text" id="admin-fb" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-blue-500 transition-colors text-gray-900 dark:text-white" placeholder="Link de Facebook">
+          </div>
+          <div class="flex relative">
+            <i class="fab fa-instagram absolute left-4 top-1/2 transform -translate-y-1/2 text-pink-500"></i>
+            <input type="text" id="admin-ig" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-pink-500 transition-colors text-gray-900 dark:text-white" placeholder="Link de Instagram">
+          </div>
+          <div class="flex gap-3 relative">
+            <div class="flex-grow relative">
+              <i class="fab fa-tiktok absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-800 dark:text-gray-300"></i>
+              <input type="text" id="admin-tk" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-gray-800 dark:focus:border-white transition-colors text-gray-900 dark:text-white" placeholder="Link de TikTok">
+            </div>
+            <button onclick="saveSocials()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2 rounded-xl font-bold hover:scale-105 transition-transform shadow-md text-sm shrink-0">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Control Principal -->
+    <div class="glass rounded-3xl p-6 md:p-8 shadow-soft border border-gray-200/50 dark:border-gray-700/50 mb-8">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div class="flex items-center">
+          <div class="w-14 h-14 rounded-2xl bg-gray-900 dark:bg-white flex items-center justify-center mr-5 shadow-lg flex-shrink-0">
+            <i class="fas fa-user-shield text-white dark:text-gray-900 text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white">Panel de Control</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Gestión avanzada de sucursales.</p>
+          </div>
+        </div>
         
-        <div class="p-6 bg-white dark:bg-brand-surface border-t border-zinc-100 dark:border-zinc-800">
-            <div class="flex justify-between items-center mb-6">
-                <span class="text-zinc-500 dark:text-zinc-400 font-semibold text-sm">Total a Cotizar</span>
-                <span id="cart-total" class="font-display text-3xl font-bold text-zinc-900 dark:text-white">C$ 0</span>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="downloadPDF()" class="w-full bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold py-3.5 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors flex justify-center items-center gap-2 text-sm">
-                    <i data-lucide="file-down" class="w-4 h-4"></i> Guardar PDF
-                </button>
-                <button onclick="checkoutWhatsApp()" class="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold py-3.5 rounded-2xl hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all flex justify-center items-center gap-2 text-sm shadow-lg">
-                    Enviar <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-            </div>
+        <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <div class="relative w-full lg:w-64 mb-2 lg:mb-0">
+             <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+             <input type="text" id="admin-search-input" placeholder="Buscar en tabla..." class="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-sm focus:border-brand-blue dark:focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+          </div>
+          
+          <!-- Botón Cerrar Todas -->
+          <button onclick="panicCloseAll()" class="flex-1 lg:flex-none justify-center bg-red-50 dark:bg-red-900/30 text-brand-red dark:text-red-400 px-5 py-3 rounded-xl font-bold flex items-center hover:bg-brand-red hover:text-white border border-red-200 dark:border-red-800 transition-all text-sm transform hover:-translate-y-1 hover:shadow-md group">
+            <i class="fas fa-exclamation-triangle mr-2 group-hover:animate-pulse"></i> Cerrar Todas
+          </button>
+          
+          <button onclick="openAddModal()" class="flex-1 lg:flex-none justify-center bg-brand-blue text-white px-6 py-3 rounded-xl font-bold flex items-center hover:bg-[#001f52] shadow-lg shadow-brand-blue/30 transition-all text-sm transform hover:-translate-y-1">
+            <i class="fas fa-plus mr-2"></i> Nueva
+          </button>
         </div>
+      </div>
     </div>
 
-    <!-- MODAL EDITOR (Admin) -->
-    <div id="product-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-brand-surface w-full max-w-md rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300 scale-95 opacity-0 border border-zinc-100 dark:border-zinc-800 overflow-hidden">
-            <div class="px-6 py-5 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center">
-                <h3 class="font-bold text-zinc-900 dark:text-white flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-brand-blue"></div> Editor Producto</h3>
-                <button onclick="closeAllModals()" class="text-zinc-400 hover:text-zinc-800 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div class="p-6 space-y-4 overflow-y-auto hide-scroll">
-                <input type="hidden" id="edit-id">
-                
-                <div class="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-                    <input type="checkbox" id="edit-bestseller" class="w-5 h-5 rounded border-zinc-300 text-brand-blue focus:ring-brand-blue cursor-pointer">
-                    <label for="edit-bestseller" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer flex items-center gap-1.5">
-                        <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Etiqueta Especial
-                    </label>
-                </div>
-                
-                <div class="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 mt-2">
-                    <input type="checkbox" id="edit-out-of-stock" class="w-5 h-5 rounded border-zinc-300 text-red-500 focus:ring-red-500 cursor-pointer">
-                    <label for="edit-out-of-stock" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 cursor-pointer flex items-center gap-1.5">
-                        <i data-lucide="ban" class="w-4 h-4 text-red-500"></i> Marcar como Agotado
-                    </label>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Categoría</label><select id="edit-category" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></select></div>
-                    <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Marca</label><input id="edit-brand" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></div>
-                </div>
-                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Nombre</label><input id="edit-title" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-bold text-zinc-900 dark:text-white bg-zinc-50 dark:bg-zinc-900 outline-none"></div>
-                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Precio (C$)</label><input id="edit-price" type="text" inputmode="decimal" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-display font-bold text-brand-blue text-xl bg-zinc-50 dark:bg-zinc-900 outline-none"></div>
-                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Variantes (Comas)</label><input id="edit-variants" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></div>
-                <div><label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Descripción</label><textarea id="edit-desc" rows="3" class="w-full p-3 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm bg-zinc-50 dark:bg-zinc-900 dark:text-white outline-none"></textarea></div>
-                
-                <div class="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-2xl p-6 bg-zinc-50 dark:bg-zinc-900 hover:border-brand-blue cursor-pointer relative text-center transition-colors">
-                    <input type="file" id="edit-image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                    <div class="w-10 h-10 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-2 text-zinc-400 shadow-sm"><i data-lucide="image-plus" class="w-5 h-5"></i></div>
-                    <span class="text-xs font-bold text-zinc-500">Subir Imagen</span>
-                </div>
-            </div>
-            <div class="p-6 border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-brand-surface flex gap-3">
-                <button onclick="closeAllModals()" class="w-1/3 py-3 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-bold text-sm">Cancelar</button>
-                <button onclick="saveProduct()" id="btn-save" class="w-2/3 bg-brand-blue text-white py-3 rounded-xl font-bold text-sm shadow-md shadow-blue-500/30 hover:bg-blue-600 transition-colors">Guardar</button>
-            </div>
-        </div>
+    <!-- Tabla de Sucursales -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
+          <thead class="bg-gray-50/50 dark:bg-gray-900/50">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Información de Sucursal</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Detalles</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest hidden sm:table-cell">Ubicación</th>
+              <th class="px-6 py-4 text-right text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body" class="divide-y divide-gray-100 dark:divide-gray-700">
+          </tbody>
+        </table>
+      </div>
     </div>
+  </main>
 
-    <!-- MODAL VISTA RÁPIDA (QUICK VIEW) -->
-    <div id="quickview-modal" class="fixed inset-0 z-[75] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-brand-surface w-full max-w-lg rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300 scale-95 opacity-0 border border-zinc-100 dark:border-zinc-800 overflow-hidden relative">
-            <button onclick="closeAllModals()" class="absolute top-4 right-4 w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors z-20"><i data-lucide="x" class="w-4 h-4"></i></button>
-            <div class="relative w-full aspect-video bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center border-b border-zinc-100 dark:border-zinc-800 overflow-hidden p-6">
-                <img id="qv-image" src="" class="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal hidden">
-                <i id="qv-no-image" data-lucide="image" class="w-12 h-12 text-zinc-300 dark:text-zinc-700 hidden"></i>
-            </div>
-            <div class="p-6 overflow-y-auto hide-scroll flex-grow">
-                <div class="flex justify-between items-start mb-2">
-                    <span id="qv-brand" class="text-xs font-bold text-zinc-400 uppercase tracking-widest"></span>
-                    <span id="qv-category" class="text-[10px] font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full"></span>
-                </div>
-                <h3 id="qv-title" class="font-bold text-xl text-zinc-900 dark:text-white leading-tight mb-2"></h3>
-                <div id="qv-price" class="font-display text-2xl font-bold text-brand-blue mb-4"></div>
-                <div class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6 whitespace-pre-wrap" id="qv-desc"></div>
-            </div>
-            <div class="p-6 border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-brand-surface">
-                <button id="qv-add-btn" class="w-full bg-brand-blue text-white py-3.5 rounded-2xl font-bold text-sm shadow-md hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
-                    Añadir al Carrito
-                </button>
-            </div>
+  <!-- MODAL DE CONTRASEÑA -->
+  <div id="password-modal" class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-md items-center justify-center p-4 z-50 hidden-view flex">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-sm p-8 relative animate-fade-in-up border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300">
+      <button onclick="closePasswordModal()" class="absolute top-5 right-5 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-white bg-gray-100 dark:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center hover:rotate-90 transition-all">
+        <i class="fas fa-times text-sm"></i>
+      </button>
+      
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 mx-auto bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform hover:scale-110 transition-transform">
+          <i class="fas fa-lock text-white text-2xl"></i>
         </div>
+        <h3 class="text-2xl font-display font-black text-gray-900 dark:text-white">Acceso Restringido</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Área exclusiva para administradores.</p>
+      </div>
+      
+      <form id="password-form">
+        <div class="relative">
+          <i class="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+          <input type="password" id="admin-password" placeholder="Contraseña..." class="w-full pl-11 pr-4 py-3.5 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none focus:border-gray-800 dark:focus:border-gray-600 transition-colors text-lg font-bold tracking-widest text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
+        </div>
+        <p id="password-error" class="text-brand-red text-xs mt-3 font-bold text-center hidden-view bg-red-50 dark:bg-red-900/30 py-2 rounded-lg animate-bounce">
+          <i class="fas fa-exclamation-circle mr-1"></i> Contraseña incorrecta.
+        </p>
+        <button type="submit" class="w-full mt-6 bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-black dark:hover:bg-gray-200 font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 uppercase tracking-widest text-sm">
+          Desbloquear Panel
+        </button>
+      </form>
     </div>
+  </div>
 
-    <!-- JAVASCRIPT: LOGICA COMPLETA -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  <!-- MODAL AGREGAR / EDITAR SUCURSAL -->
+  <div id="add-modal" class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-md items-center justify-center p-4 z-50 hidden-view flex">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-5xl max-h-[90vh] md:max-h-[95vh] overflow-hidden flex flex-col md:flex-row animate-fade-in-up border border-gray-100 dark:border-gray-700">
+      
+      <div class="w-full md:w-1/2 p-5 md:p-8 overflow-y-auto flex-1 custom-scrollbar">
+        <div class="flex justify-between items-center mb-6 md:mb-8">
+          <div>
+            <h3 id="modal-title" class="text-xl md:text-2xl font-display font-black text-gray-900 dark:text-white flex items-center">
+               Nueva Sucursal
+            </h3>
+            <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Completa los datos y marca en el mapa.</p>
+          </div>
+          <button onclick="closeAddModal()" class="text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-white bg-gray-100 dark:bg-gray-700 rounded-full w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:rotate-90 transition-all shrink-0">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
 
-        lucide.createIcons();
+        <form id="add-store-form" class="space-y-4 md:space-y-5">
+          <div>
+            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Nombre de Tienda</label>
+            <input type="text" id="f-name" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl focus:border-brand-blue dark:focus:border-brand-blue outline-none text-sm font-bold transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" placeholder="Ej: Close Out Linda Vista" />
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Categoría</label>
+              <select id="f-type" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors appearance-none cursor-pointer text-gray-900 dark:text-white">
+                <option value="normal">Full Price</option>
+                <option value="liquidacion">Liquidación</option>
+                <option value="ninos">Niños</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Departamento</label>
+              <select id="f-depto" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors appearance-none cursor-pointer text-gray-900 dark:text-white">
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2 text-brand-red dark:text-red-400">ESTADO</label>
+              <select id="f-status" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-red dark:focus:border-brand-red transition-colors appearance-none cursor-pointer text-gray-900 dark:text-white">
+                <option value="open">Operativa</option>
+                <option value="closed_temp">En Remodelación</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Dirección Exacta</label>
+            <textarea id="f-address" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-medium focus:border-brand-blue dark:focus:border-brand-blue transition-colors resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Horario Principal</label>
+              <div class="relative">
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                <input type="text" id="f-schedule" required placeholder="Ej: Lun-Sab: 9:30-6:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Secundario <span class="normal-case font-medium">(Opc)</span></label>
+              <div class="relative">
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                <input type="text" id="f-schedule-2" placeholder="Ej: Dom: 9:00-3:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Tercero <span class="normal-case font-medium">(Opc)</span></label>
+              <div class="relative">
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                <input type="text" id="f-schedule-3" placeholder="Ej: Feriados: Cerrado" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" />
+              </div>
+            </div>
+          </div>
 
-        // Modo Oscuro Toggle
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const darkIcon = document.getElementById('theme-toggle-dark-icon');
-        const lightIcon = document.getElementById('theme-toggle-light-icon');
+          <div class="pt-6 mt-2 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 dark:border-gray-700 gap-4">
+            <div id="modal-map-status" class="text-sm font-bold text-gray-400 dark:text-gray-500 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg transition-colors">
+              <i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉
+            </div>
+            <button type="submit" id="btn-save-store" disabled class="w-full sm:w-auto bg-brand-blue text-white px-8 py-3.5 rounded-xl font-black disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-lg hover:bg-[#001f52] transition-all transform hover:-translate-y-1">
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
 
-        if (document.documentElement.classList.contains('dark')) { lightIcon.classList.remove('hidden'); } 
-        else { darkIcon.classList.remove('hidden'); }
+      <div class="w-full md:w-1/2 bg-gray-200 dark:bg-gray-700 h-[250px] md:h-auto relative shrink-0 border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700">
+        <div class="absolute top-4 inset-x-0 flex justify-center z-10 pointer-events-none">
+          <div class="glass dark:bg-gray-800 text-gray-900 dark:text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg flex items-center animate-pulse-soft border dark:border-gray-600">
+            <i class="fas fa-crosshairs mr-2 text-brand-red"></i> Ubicar
+          </div>
+        </div>
+        <div id="admin-map" class="absolute inset-0 w-full h-full"></div>
+      </div>
+    </div>
+  </div>
 
-        themeToggleBtn.addEventListener('click', function() {
-            darkIcon.classList.toggle('hidden'); lightIcon.classList.toggle('hidden');
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark'); localStorage.setItem('color-theme', 'light');
+  <!-- BOTÓN VOLVER ARRIBA -->
+  <button id="btn-back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-4 md:bottom-10 md:right-10 z-[65] w-12 h-12 md:w-14 md:h-14 rounded-full glass bg-white/90 dark:bg-gray-800/90 shadow-float border border-gray-200 dark:border-gray-700 flex items-center justify-center text-brand-blue dark:text-blue-400 hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue transform translate-y-20 opacity-0 transition-all duration-500 hover:scale-110 pointer-events-none focus:outline-none">
+    <i class="fas fa-chevron-up text-lg md:text-xl"></i>
+  </button>
+
+  <!-- FIREBASE & LOGIC SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- MODO OSCURO LÓGICA ---
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        themeToggleLightIcon.classList.remove('hidden');
+    } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+    }
+
+    themeToggleBtn.addEventListener('click', function() {
+        themeToggleDarkIcon.classList.toggle('hidden');
+        themeToggleLightIcon.classList.toggle('hidden');
+        if (localStorage.getItem('color-theme')) {
+            if (localStorage.getItem('color-theme') === 'light') { document.documentElement.classList.add('dark'); localStorage.setItem('color-theme', 'dark');
+            } else { document.documentElement.classList.remove('dark'); localStorage.setItem('color-theme', 'light'); }
+        } else {
+            if (document.documentElement.classList.contains('dark')) { document.documentElement.classList.remove('dark'); localStorage.setItem('color-theme', 'light');
+            } else { document.documentElement.classList.add('dark'); localStorage.setItem('color-theme', 'dark'); }
+        }
+        if(window.updateMapStyles) window.updateMapStyles();
+    });
+
+    // --- LÓGICA DE ANIMACIÓN SCROLL (REVEAL) ---
+    function initReveal() {
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, { threshold: 0.1 });
+      reveals.forEach(reveal => observer.observe(reveal));
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        initReveal();
+        setDynamicGreeting();
+    });
+
+    // --- SALUDO DINÁMICO ---
+    function setDynamicGreeting() {
+        const greetingEl = document.getElementById('dynamic-greeting');
+        if(!greetingEl) return;
+        const hour = new Date().getHours();
+        let greeting = "";
+        if (hour >= 5 && hour < 12) {
+            greeting = "Buenos días ☀️ ¡Listo para estrenar hoy?";
+        } else if (hour >= 12 && hour < 18) {
+            greeting = "Buenas tardes 🌤️ Encuentra tu estilo ideal.";
+        } else {
+            greeting = "Buenas noches 🌙 Planea tus compras de mañana.";
+        }
+        greetingEl.innerHTML = greeting;
+    }
+
+    // --- INDICADOR PROGRESO SCROLL & BOTÓN VOLVER ARRIBA ---
+    window.addEventListener('scroll', () => {
+        const scrollPx = document.documentElement.scrollTop || document.body.scrollTop;
+        const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        
+        // Progreso de Barra Superior
+        const scrolled = `${(scrollPx / winHeightPx) * 100}%`;
+        const scrollProgressEl = document.getElementById('scroll-progress');
+        if(scrollProgressEl) scrollProgressEl.style.width = scrolled;
+
+        // Mostrar/Ocultar Botón Volver Arriba
+        const btnBackToTop = document.getElementById('btn-back-to-top');
+        if(btnBackToTop) {
+            if (scrollPx > 400) {
+                btnBackToTop.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+                btnBackToTop.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
             } else {
-                document.documentElement.classList.add('dark'); localStorage.setItem('color-theme', 'dark');
+                btnBackToTop.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                btnBackToTop.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
             }
+        }
+    });
+
+    // --- EFECTO TILT 3D PARA TARJETAS ---
+    function initTiltEffect() {
+        const cards = document.querySelectorAll('.store-card');
+        
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Calculamos cuánto rotar basado en qué tan lejos está el mouse del centro
+                const rotateX = ((y - centerY) / centerY) * -12; // Inclinación en eje X (máximo 12 grados)
+                const rotateY = ((x - centerX) / centerX) * 12;  // Inclinación en eje Y
+                
+                card.classList.remove('tilt-reset');
+                card.classList.add('tilt-active');
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('tilt-active');
+                card.classList.add('tilt-reset');
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+    }
+
+    // --- CONFIGURACIONES FIREBASE Y MAPAS ---
+    const GOOGLE_MAPS_API_KEY = 'AIzaSyBf6lATeECejIkEBntQyu2-jmYAy-xXggQ';
+    const ADMIN_PASSWORD = 'admin';
+
+    const userFirebaseConfig = {
+      apiKey: "AIzaSyCm_fYhRxmyQvVfWyNCCs1cPTcLZujhy6E",
+      authDomain: "closeout-56aef.firebaseapp.com",
+      projectId: "closeout-56aef",
+      storageBucket: "closeout-56aef.firebasestorage.app",
+      messagingSenderId: "267289908386",
+      appId: "1:267289908386:web:c46f30e3231f0cec01f3fb",
+      measurementId: "G-G89517RSC9"
+    };
+
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : userFirebaseConfig;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'close-out-app';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const lightMapStyle = [
+      { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] }, { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] }, { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+      { featureType: "administrative.land_parcel", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] }, { featureType: "poi", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
+      { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] }, { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] },
+      { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] }, { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+      { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] }, { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#dadada" }] },
+      { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] }, { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+      { featureType: "transit.line", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] }, { featureType: "transit.station", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
+      { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] }, { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] }
+    ];
+
+    const darkMapStyle = [
+      { elementType: "geometry", stylers: [{ color: "#242f3e" }] }, { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] }, { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+      { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+      { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+      { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+      { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+      { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+      { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+      { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+      { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
+      { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+      { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+      { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+      { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+      { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+      { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
+      { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
+    ];
+
+    window.updateMapStyles = function() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const currentStyle = isDark ? darkMapStyle : lightMapStyle;
+      if (clientMap) clientMap.setOptions({ styles: currentStyle });
+      if (adminMap) adminMap.setOptions({ styles: currentStyle });
+    };
+
+    const initialStoresData = [];
+    const departmentsList = ["Todos", "Managua", "León", "Chinandega", "Masaya", "Jinotepe", "Nagarote", "Granada", "Rivas", "Matagalpa", "Estelí"];
+    
+    const categories = [
+      { id: 'all', name: 'Todas', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-white dark:bg-gray-800', hoverBg: 'hover:bg-gray-50 dark:hover:bg-gray-700', activeRing: 'ring-gray-300 dark:ring-gray-600' },
+      { id: 'normal', name: 'Full Price', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-brand-red/5 dark:bg-brand-red/10', hoverBg: 'hover:bg-red-50 dark:hover:bg-brand-red/20', activeRing: 'ring-brand-red/50 dark:ring-red-400/50' },
+      { id: 'liquidacion', name: 'Liquidación', imgUrl: 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png', bgColor: 'bg-brand-yellow/10 dark:bg-brand-yellow/20', hoverBg: 'hover:bg-[#FCC71F]/10 dark:hover:bg-brand-yellow/30', activeRing: 'ring-brand-yellow/50' },
+      { id: 'ninos', name: 'Niños', imgUrl: 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-green-50 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
+    ];
+
+    let localStoresCache = JSON.parse(localStorage.getItem('closeout_local_stores')) || [];
+    localStoresCache = localStoresCache.filter(s => !s.id.match(/^local-([0-9]|1[0-2])$/));
+    localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache));
+    
+    let stores = [...localStoresCache];
+    let bannerText = localStorage.getItem('closeout_banner') || '';
+    
+    let defaultSocials = {
+        fb: 'https://www.facebook.com/share/1BNEEkVvDX/',
+        ig: 'https://www.instagram.com/closeoutnicaragua?igsh=MWp5MHVmMzM3a3R6cg==',
+        tk: 'https://www.tiktok.com/@close.out.nicarag?_r=1&_t=ZS-96H7VuYCrXs'
+    };
+    let socialLinks = { ...defaultSocials };
+
+    let activeCategory = 'all';
+    let activeDepto = 'Todos';
+    let searchQuery = '';
+    let adminSearchQuery = '';
+    let filterOpenOnly = false;
+    let isLoading = true; 
+    let nearestStore = null;
+    let isAdminView = false;
+    let clientMap = null, adminMap = null, clientMarkers = [], adminClickMarker = null, adminSelectedLocation = null, adminExistingMarkers = [];
+    let editStoreId = null;
+
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      if (searchQuery.length > 0) clearSearchBtn.classList.remove('hidden-view');
+      else clearSearchBtn.classList.add('hidden-view');
+      renderStoresList();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = ''; searchQuery = '';
+      clearSearchBtn.classList.add('hidden-view');
+      renderStoresList();
+    });
+
+    const adminSearchInput = document.getElementById('admin-search-input');
+    if (adminSearchInput) {
+        adminSearchInput.addEventListener('input', (e) => {
+            adminSearchQuery = e.target.value.toLowerCase().trim(); renderAdminTable();
+        });
+    }
+
+    window.toggleOpenFilter = function(isChecked) {
+        filterOpenOnly = isChecked;
+        renderStoresList();
+    };
+
+    window.showToast = function(msg, isError = false) {
+      const container = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = `glass px-5 py-4 rounded-2xl shadow-xl font-bold animate-fade-in-up text-sm flex items-center border-l-4 ${isError ? 'border-brand-red text-red-900 dark:text-red-300' : 'border-brand-green text-gray-900 dark:text-white'}`;
+      t.innerHTML = isError ? `<div class="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center mr-3 transform hover:rotate-12 transition-transform"><i class="fas fa-exclamation text-brand-red"></i></div>${msg}` : `<div class="w-8 h-8 rounded-full bg-brand-green/20 flex items-center justify-center mr-3 transform hover:scale-110 transition-transform"><i class="fas fa-check text-brand-green"></i></div>${msg}`;
+      container.appendChild(t);
+      setTimeout(() => t.remove(), 4000);
+    };
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; 
+      const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    function isStoreOpenNow(schedule) {
+      if (!schedule) return false;
+      const now = new Date(); 
+      const currentDay = now.getDay(); 
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      
+      // Separar por comas (cada horario es un bloque)
+      const parts = schedule.toLowerCase().split(/,/);
+
+      for (let i = 0; i < parts.length; i++) {
+          // Limpiar tildes y puntos de a.m./p.m. para que el detector no se confunda
+          let part = parts[i].normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\./g, "").trim();
+          if (!part) continue;
+
+          // Detector de horas ultra flexible (admite guiones, "a", "hasta", etc.)
+          const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:-|\u2013|\u2014|a|al|hasta|y|:|\/)\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/;
+          const timeMatch = part.match(timeRegex);
+
+          if (timeMatch) {
+              let appliesToday = false;
+              
+              // Lógica infalible de días
+              if (part.includes('lunes a domingo') || part.includes('todos los dias') || part.includes('siempre') || part.match(/lun.*dom/)) {
+                  appliesToday = true;
+              } else if (part.includes('lunes a sabado') || part.match(/lun.*sab/)) {
+                  if (currentDay >= 1 && currentDay <= 6) appliesToday = true;
+              } else if (part.includes('lunes a jueves') || part.match(/lun.*jue/)) {
+                  if (currentDay >= 1 && currentDay <= 4) appliesToday = true;
+              } else {
+                  // Verificar si el día actual está escrito literalmente (ej: "dom")
+                  const daysMap = { 'dom': 0, 'lun': 1, 'mar': 2, 'mie': 3, 'jue': 4, 'vie': 5, 'sab': 6 };
+                  let isExplicitlyMentioned = false;
+                  for (const [dayStr, dayNum] of Object.entries(daysMap)) {
+                     if (part.includes(dayStr)) { 
+                         isExplicitlyMentioned = true; 
+                         if (currentDay === dayNum) appliesToday = true; 
+                     }
+                  }
+
+                  // EL SECRETO PARA EL BUG: Si el usuario no escribió el día en el 2do o 3er horario, lo deduce inteligentemente
+                  if (!isExplicitlyMentioned) {
+                      if (i === 0) appliesToday = true; // Primer bloque sin día = aplica hoy
+                      if (i === 1 && currentDay === 6) appliesToday = true; // Segundo bloque sin día asume Sábado
+                      if (i === 2 && currentDay === 0) appliesToday = true; // Tercer bloque sin día asume Domingo
+                  }
+              }
+
+              // Si el horario aplica para hoy, hacemos la matemática de los minutos
+              if (appliesToday) {
+                  let startH = parseInt(timeMatch[1]); let startM = timeMatch[2] ? parseInt(timeMatch[2]) : 0;
+                  let startMod = timeMatch[3];
+                  
+                  let endH = parseInt(timeMatch[4]); let endM = timeMatch[5] ? parseInt(timeMatch[5]) : 0;
+                  let endMod = timeMatch[6];
+
+                  // Ajustes automáticos de 12 horas si no se puso AM/PM
+                  if (startMod === 'pm' && startH !== 12) startH += 12;
+                  if (startMod === 'am' && startH === 12) startH = 0;
+                  if (!startMod && startH < 6 && startH !== 12) startH += 12;
+
+                  if (endMod === 'pm' && endH !== 12) endH += 12;
+                  if (endMod === 'am' && endH === 12) endH = 0;
+                  if (!endMod && endH <= 11) endH += 12;
+
+                  const startTotal = startH * 60 + startM; 
+                  const endTotal = endH * 60 + endM;
+                  
+                  if (currentMinutes >= startTotal && currentMinutes <= endTotal) { 
+                      return true; // ¡LA TIENDA ESTÁ ABIERTA!
+                  }
+              }
+          }
+      }
+      return false; // Si recorrió todo y no encajó, está cerrado.
+    }
+
+    function getOpenStatusHtml(schedule) {
+      if (!schedule) return '';
+      const isOpen = isStoreOpenNow(schedule);
+      if (isOpen) {
+          return `<span class="bg-brand-green/90 text-white text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm inline-flex items-center gap-1.5 backdrop-blur-sm shrink-0 leading-none"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Abierto</span>`;
+      } else {
+          return `<span class="bg-brand-red/90 text-white text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm inline-flex items-center gap-1.5 backdrop-blur-sm shrink-0 leading-none"><span class="w-1.5 h-1.5 rounded-full bg-white"></span> Cerrado</span>`;
+      }
+    }
+
+    function updateBannerUI() {
+      const bannerEl = document.getElementById('promo-banner');
+      const adminInput = document.getElementById('admin-banner-input');
+      
+      if (bannerEl) {
+        if (bannerText && bannerText.trim().length > 0) {
+          bannerEl.innerHTML = `<i class="fas fa-star mr-2 text-brand-yellow animate-pulse"></i> ${bannerText} <i class="fas fa-star ml-2 text-brand-yellow animate-pulse"></i>`;
+          bannerEl.classList.remove('hidden-view');
+        } else {
+          bannerEl.classList.add('hidden-view');
+        }
+      }
+      if (adminInput) adminInput.value = bannerText;
+    }
+
+    function updateSocialsUI() {
+      document.getElementById('link-fb').href = socialLinks.fb;
+      document.getElementById('link-ig').href = socialLinks.ig;
+      document.getElementById('link-tk').href = socialLinks.tk;
+      
+      const adminFb = document.getElementById('admin-fb');
+      if(adminFb) {
+          adminFb.value = socialLinks.fb;
+          document.getElementById('admin-ig').value = socialLinks.ig;
+          document.getElementById('admin-tk').value = socialLinks.tk;
+      }
+    }
+
+    window.saveBanner = async () => {
+      const newVal = document.getElementById('admin-banner-input').value;
+      try {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'banner'), { text: newVal });
+        showToast("Banner actualizado con éxito.");
+      } catch (e) {
+        try {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'banner'), { text: newVal });
+          showToast("Banner creado y actualizado.");
+        } catch (err) {
+          bannerText = newVal; localStorage.setItem('closeout_banner', newVal); updateBannerUI(); showToast("Banner actualizado (Modo local).");
+        }
+      }
+    };
+
+    window.saveSocials = async () => {
+      const fb = document.getElementById('admin-fb').value;
+      const ig = document.getElementById('admin-ig').value;
+      const tk = document.getElementById('admin-tk').value;
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'socials'), { fb, ig, tk });
+        showToast("Redes sociales actualizadas con éxito.");
+      } catch (e) {
+        socialLinks = {fb, ig, tk}; updateSocialsUI(); showToast("Redes actualizadas (Modo local).");
+      }
+    };
+
+    window.panicCloseAll = async () => {
+        if(!confirm("⚠️ ¿ATENCIÓN! Estás a punto de marcar TODAS las sucursales como 'En Remodelación'. Los clientes las verán como cerradas temporalmente. ¿Estás seguro?")) return;
+        
+        showToast("Actualizando sucursales...");
+        try {
+            let promises = [];
+            stores.forEach(s => {
+                if (s.status !== 'closed_temp') {
+                    promises.push(updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', s.id), { status: 'closed_temp' }));
+                }
+            });
+            await Promise.all(promises);
+            showToast("Todas las sucursales han sido cerradas temporalmente.");
+        } catch (error) {
+            console.error(error);
+            showToast("Hubo un error al cerrar todas. Intenta de nuevo.", true);
+        }
+    };
+
+    window.shareStore = function(id) {
+        const store = stores.find(s => s.id === id);
+        if (!store) return;
+        
+        const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}`;
+        const text = `¡Nos vemos en Close Out ${store.name}!\n📍 Ubicación: ${store.address}\n🗺️ Mapa: ${mapUrl}`;
+        
+        if (navigator.share) {
+            navigator.share({ title: `Close Out - ${store.name}`, text: text })
+                .catch((error) => console.log('Error sharing', error));
+        } else {
+            const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select();
+            document.execCommand('copy'); document.body.removeChild(el);
+            showToast("Información copiada al portapapeles. ¡Lista para pegar!");
+        }
+    };
+
+    function renderFilters() {
+      const catContainer = document.getElementById('category-buttons');
+      catContainer.innerHTML = categories.map((cat, index) => `
+        <button onclick="setCategory('${cat.id}')" class="group relative flex flex-col items-center justify-center p-4 md:p-6 rounded-[1.5rem] transition-all duration-300 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-float hover:-translate-y-2 animate-fade-in-up ${activeCategory === cat.id ? `ring-2 ring-offset-4 dark:ring-offset-gray-900 ${cat.activeRing} ${cat.bgColor} transform scale-105` : `bg-white dark:bg-gray-800 ${cat.hoverBg}`}" style="animation-delay: ${index * 0.1}s">
+          <div class="mb-4 w-28 h-28 md:w-36 md:h-36 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-md group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500 overflow-hidden p-3 border-2 border-gray-100 dark:border-gray-700">
+            <img src="${cat.imgUrl}" alt="${cat.name}" class="w-full h-full object-contain drop-shadow-md transition-transform duration-500 group-hover:rotate-[3deg] group-hover:scale-110">
+          </div>
+          <span class="font-display font-black text-sm md:text-lg text-center text-gray-800 dark:text-gray-200 tracking-wide mt-2">${cat.name}</span>
+        </button>
+      `).join('');
+
+      const deptContainer = document.getElementById('depto-buttons');
+      deptContainer.innerHTML = departmentsList.map(dep => `
+        <button onclick="setDepto('${dep}')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 hover:-translate-y-1 ${activeDepto === dep ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md transform scale-105' : 'bg-transparent text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'}">${dep}</button>
+      `).join('');
+    }
+
+    function renderSkeletons() {
+        const grid = document.getElementById('stores-grid');
+        grid.innerHTML = Array(4).fill(0).map(() => `
+            <div class="bg-gray-200 dark:bg-gray-800 rounded-[1.5rem] shadow-sm animate-pulse h-[360px] p-6 flex flex-col border border-gray-100 dark:border-gray-700">
+                <div class="flex justify-between items-start mb-6 w-full">
+                    <div class="h-5 w-20 bg-gray-300 dark:bg-gray-700 rounded-md"></div>
+                    <div class="h-10 w-24 bg-gray-300 dark:bg-gray-700 rounded-lg"></div>
+                </div>
+                <div class="h-8 w-3/4 bg-gray-300 dark:bg-gray-700 rounded-md mb-4"></div>
+                <div class="h-4 w-full bg-gray-300 dark:bg-gray-700 rounded-md mb-2"></div>
+                <div class="h-4 w-5/6 bg-gray-300 dark:bg-gray-700 rounded-md mt-auto"></div>
+                <div class="mt-6 border-t border-gray-300 dark:border-gray-700 pt-4 flex gap-2">
+                    <div class="h-12 w-full bg-gray-300 dark:bg-gray-700 rounded-xl"></div>
+                    <div class="h-12 w-12 shrink-0 bg-gray-300 dark:bg-gray-700 rounded-xl"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderStoresList() {
+      if (isLoading) { renderSkeletons(); return; }
+
+      let filtered = stores.filter(store => 
+        (activeCategory === 'all' || store.type === activeCategory) && 
+        (activeDepto === 'Todos' || store.depto === activeDepto) &&
+        (searchQuery === '' || store.name.toLowerCase().includes(searchQuery) || store.address.toLowerCase().includes(searchQuery))
+      );
+
+      if (filterOpenOnly) {
+          filtered = filtered.filter(store => store.status !== 'closed_temp' && isStoreOpenNow(store.schedule));
+      }
+
+      let gridStores = filtered;
+      if (nearestStore) {
+        gridStores = filtered.filter(store => store.id !== nearestStore.id);
+      }
+
+      const sortOrder = { 'normal': 1, 'liquidacion': 2, 'ninos': 3 };
+      gridStores.sort((a, b) => {
+        return (sortOrder[a.type] || 99) - (sortOrder[b.type] || 99);
+      });
+
+      const gridCount = document.getElementById('grid-count');
+      gridCount.innerText = `${gridStores.length}`;
+      gridCount.classList.remove('animate-pulse'); void gridCount.offsetWidth; gridCount.classList.add('animate-pulse');
+
+      const grid = document.getElementById('stores-grid');
+
+      if (gridStores.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white dark:bg-gray-800 p-12 rounded-[2rem] text-center border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center animate-fade-in-up">
+            <div class="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4"><i class="fas fa-search text-gray-300 dark:text-gray-600 text-3xl animate-pulse"></i></div>
+            <h3 class="text-xl font-display font-black text-gray-900 dark:text-white mb-2">Sin resultados</h3>
+            <p class="text-sm text-gray-500 font-medium max-w-xs">No se encontraron tiendas para tu búsqueda o filtro actual.</p>
+          </div>`;
+      } else {
+        grid.innerHTML = gridStores.map((store, index) => {
+          const imgUrl = store.type === 'normal' ? 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png' : store.type === 'liquidacion' ? 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png' : 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png';
+          const isNormal = store.type === 'normal'; const isLiq = store.type === 'liquidacion';
+          const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
+          
+          const isClosedTemp = store.status === 'closed_temp';
+          
+          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : isLiq ? 'bg-[#FCC71F] dark:bg-[#B38C15]' : 'bg-brand-green dark:bg-[#008A40]';
+          const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
+          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-[#D4A000]' : 'bg-green-800';
+
+          const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5 text-white/80"></i>${s.trim()}</span>`).join('');
+          
+          const statusHtml = isClosedTemp 
+             ? `<span class="bg-gray-800 text-brand-yellow text-[10px] px-2.5 py-1 rounded-md font-black shadow-sm inline-flex items-center gap-1.5 shrink-0 leading-none uppercase tracking-wider border border-brand-yellow/30"><i class="fas fa-hard-hat"></i> Remodelación</span>` 
+             : getOpenStatusHtml(store.schedule);
+
+          const opacityClass = isClosedTemp ? 'opacity-80 grayscale-[0.4]' : '';
+
+          const buttonHtml = isClosedTemp
+             ? `<button disabled class="w-full bg-gray-800 text-gray-400 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-md flex items-center justify-center cursor-not-allowed border border-gray-700">Cerrado Temporalmente</button>`
+             : `<div class="flex gap-2 w-full relative z-30">
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}" target="_blank" rel="noopener noreferrer" class="flex-grow bg-white text-gray-900 hover:bg-gray-100 py-3 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 group-hover:shadow-lg">
+                    <i class="fas fa-location-arrow mr-1.5 text-brand-blue group-hover:animate-bounce"></i> Llévame
+                  </a>
+                  <button onclick="shareStore('${store.id}')" title="Compartir sucursal" class="w-12 shrink-0 bg-white/20 text-white hover:bg-white/40 py-3 rounded-xl transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 hover:rotate-6 backdrop-blur-sm border border-white/30">
+                    <i class="fas fa-share-alt"></i>
+                  </button>
+                </div>`;
+
+          return `
+          <div class="store-card tilt-reset ${cardBgClass} ${opacityClass} rounded-[1.5rem] border border-white/10 overflow-hidden group flex flex-col relative animate-fade-in-up" style="animation-delay: ${index * 0.05}s">
+            <div class="p-6 md:p-7 flex flex-col flex-grow relative z-10 transition-transform duration-300">
+              <div class="flex justify-between items-start mb-4 w-full relative z-20">
+                <div class="flex flex-col gap-1.5 items-start">
+                   <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${tagTextColorClass} bg-white shadow-sm leading-none">${label}</span>
+                   ${statusHtml}
+                </div>
+                <div class="w-[88px] h-[36px] md:w-[104px] md:h-[40px] rounded-lg flex-shrink-0 bg-white shadow-md border border-white/40 p-1.5 flex items-center justify-center transform transition-transform duration-500">
+                  <img src="${imgUrl}" alt="${label}" class="w-full h-full object-contain ${isClosedTemp ? 'grayscale opacity-60' : ''}">
+                </div>
+              </div>
+              <h4 class="text-[22px] md:text-[26px] font-display font-black text-white leading-tight tracking-tight mb-1 transition-colors relative z-20 ${isClosedTemp ? 'text-gray-300 line-through decoration-brand-yellow decoration-2' : ''}">${store.name}</h4>
+              <div class="space-y-3 flex-grow mt-2 relative z-20">
+                <div class="flex items-start text-sm text-white/95 font-medium">
+                  <i class="fas fa-map-pin mr-2 mt-1 text-white/80 group-hover:text-white transition-colors ${!isClosedTemp && 'animate-pulse'}"></i>
+                  <span class="line-clamp-2 leading-relaxed">${store.address}</span>
+                </div>
+              </div>
+              <div class="pt-4 mt-5 border-t border-white/20 flex flex-col gap-3 relative z-20">
+                <div class="flex items-start justify-between gap-2">
+                  <div class="text-xs font-bold text-white/90 flex flex-col gap-1 ${isClosedTemp ? 'opacity-50' : ''}">
+                    ${scheduleHTML}
+                  </div>
+                  <span class="bg-black/20 text-white px-3 py-1 rounded-lg text-xs font-bold shrink-0 mt-0.5">${store.depto}</span>
+                </div>
+                <div class="mt-1">${buttonHtml}</div>
+              </div>
+            </div>
+            <div class="h-1.5 w-full ${bgSolidClass} mt-auto relative z-10 brightness-110"></div>
+          </div>`;
+        }).join('');
+      }
+
+      renderClientMarkers(filtered);
+      initReveal(); 
+      initTiltEffect(); // Inicializar efecto 3D después de cargar tarjetas
+    }
+
+    function renderAdminTable() {
+      const filteredAdminStores = stores.filter(store => 
+        adminSearchQuery === '' || 
+        store.name.toLowerCase().includes(adminSearchQuery) || store.address.toLowerCase().includes(adminSearchQuery) || store.depto.toLowerCase().includes(adminSearchQuery)
+      );
+
+      const tbody = document.getElementById('admin-table-body');
+      
+      if (filteredAdminStores.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-bold">No se encontraron tiendas en tu búsqueda.</td></tr>`; return;
+      }
+
+      tbody.innerHTML = filteredAdminStores.map(store => {
+        const isNormal = store.type === 'normal'; const isLiq = store.type === 'liquidacion';
+        const textColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-[#D4A000] dark:text-brand-yellow' : 'text-brand-green';
+        const bgLightClass = isNormal ? 'bg-brand-red/10' : isLiq ? 'bg-[#FCC71F]/20' : 'bg-brand-green/10';
+        const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
+        const scheduleAdminHTML = store.schedule.split(/,\s*/).map(s => `<div class="mb-0.5"><i class="far fa-clock mr-1"></i>${s.trim()}</div>`).join('');
+        const statusBadge = store.status === 'closed_temp' 
+            ? `<span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-800 text-brand-yellow uppercase"><i class="fas fa-hard-hat mr-1"></i> Remodelación</span>` 
+            : `<span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand-green/10 text-brand-green uppercase"><i class="fas fa-check-circle mr-1"></i> Activa</span>`;
+
+        return `
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors animate-fade-in-up ${store.status === 'closed_temp' ? 'bg-gray-50/50 dark:bg-gray-900/50 opacity-80' : ''}">
+            <td class="px-6 py-4">
+              <div class="font-display font-bold text-gray-900 dark:text-white ${store.status === 'closed_temp' ? 'text-gray-500 line-through' : ''}">${store.name}</div>
+              <div class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded inline-block">Lat: ${store.lat.toFixed(4)}</div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-3 py-1 inline-flex text-[10px] font-black rounded-lg uppercase tracking-widest ${bgLightClass} ${textColorClass}">${label}</span>
+              <br>
+              ${statusBadge}
+            </td>
+            <td class="px-6 py-4 hidden sm:table-cell">
+              <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium"><i class="fas fa-map-marker-alt mr-1 text-gray-300 dark:text-gray-600"></i>${store.depto} - ${store.address}</div>
+              <div class="text-[10px] text-gray-400 mt-1 font-bold">${scheduleAdminHTML}</div>
+            </td>
+            <td class="px-6 py-4 text-right whitespace-nowrap">
+              <button onclick="editStore('${store.id}')" class="text-brand-blue hover:text-white bg-blue-50 dark:bg-brand-blue/10 dark:text-blue-400 dark:hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue p-2.5 rounded-xl transition-all shadow-sm mr-2 transform hover:scale-110"><i class="fas fa-edit"></i></button>
+              <button onclick="deleteStore('${store.id}')" class="text-brand-red hover:text-white bg-red-50 dark:bg-brand-red/10 dark:text-red-400 dark:hover:text-white hover:bg-brand-red dark:hover:bg-brand-red p-2.5 rounded-xl transition-all shadow-sm transform hover:scale-110"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.initMaps = function() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const mapOptions = {
+        center: { lat: 12.136, lng: -86.251 }, zoom: 12, mapTypeControl: false, streetViewControl: false, gestureHandling: 'greedy',
+        styles: isDark ? darkMapStyle : lightMapStyle
+      };
+
+      clientMap = new google.maps.Map(document.getElementById('client-map'), mapOptions);
+      adminMap = new google.maps.Map(document.getElementById('admin-map'), { ...mapOptions, cursor: 'crosshair' });
+
+      adminMap.addListener('click', (e) => {
+        const lat = e.latLng.lat(); const lon = e.latLng.lng(); adminSelectedLocation = { lat, lon };
+        if (adminClickMarker) adminClickMarker.setMap(null);
+        adminClickMarker = new google.maps.Marker({ position: { lat, lng: lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', animation: google.maps.Animation.DROP });
+        const statusEl = document.getElementById('modal-map-status');
+        statusEl.className = 'text-sm font-bold text-brand-green flex items-center bg-green-50 dark:bg-green-900/30 py-2 px-4 rounded-lg transition-colors';
+        statusEl.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Coordenadas capturadas';
+        document.getElementById('btn-save-store').disabled = false;
+      });
+      renderClientMarkers();
+    };
+
+    function renderClientMarkers(filtered = stores) {
+      if (!clientMap || !window.google) return;
+      clientMarkers.forEach(m => m.setMap(null)); clientMarkers = [];
+      if (filtered.length === 0) { clientMap.setCenter({ lat: 12.8654, lng: -85.2072 }); clientMap.setZoom(7); return; }
+
+      const bounds = new google.maps.LatLngBounds();
+      filtered.forEach(store => {
+        const isNearest = nearestStore && nearestStore.id === store.id;
+        const isClosedTemp = store.status === 'closed_temp';
+        
+        let pinIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+        if (isNearest) pinIcon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+        else if (isClosedTemp) pinIcon = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+
+        const marker = new google.maps.Marker({
+          position: { lat: store.lat, lng: store.lon }, map: clientMap, title: store.name,
+          icon: pinIcon,
+          animation: isNearest ? google.maps.Animation.BOUNCE : google.maps.Animation.DROP
+        });
+        
+        const statusText = isClosedTemp ? `<p style="color: #FCC71F; font-weight: bold; font-size: 11px; margin-top: 4px;">⚠️ En Remodelación</p>` : '';
+        const infoWindow = new google.maps.InfoWindow({ content: `<div style="padding: 5px; font-family: 'Plus Jakarta Sans', sans-serif; max-width: 240px;"><h3 style="font-weight: 800; font-size: 15px; margin-bottom: 4px; color: #002D72; font-family: 'Outfit', sans-serif;">${store.name}</h3><p style="font-size: 13px; margin: 0; line-height: 1.4; color: #4b5563;">${store.address}</p>${statusText}</div>` });
+        
+        marker.addListener('click', () => infoWindow.open(clientMap, marker));
+        clientMarkers.push(marker); bounds.extend({ lat: store.lat, lng: store.lon });
+      });
+
+      if (nearestStore) {
+        clientMap.setCenter({ lat: nearestStore.lat, lng: nearestStore.lon }); clientMap.setZoom(16);
+        setTimeout(() => clientMarkers.find(m => m.title === nearestStore.name)?.setAnimation(null), 3000); 
+      } else if (filtered.length === 1) { clientMap.setCenter({ lat: filtered[0].lat, lng: filtered[0].lon }); clientMap.setZoom(15);
+      } else {
+        clientMap.fitBounds(bounds);
+        const listener = google.maps.event.addListener(clientMap, 'idle', function() { if (clientMap.getZoom() > 14) clientMap.setZoom(14); google.maps.event.removeListener(listener); });
+      }
+    }
+
+    const mapScript = document.createElement('script'); mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMaps`; mapScript.async = true; document.head.appendChild(mapScript);
+
+    window.setCategory = function(catId) {
+      activeCategory = catId; nearestStore = null; document.getElementById('nearest-store-container').classList.add('hidden-view');
+      document.getElementById('btn-locate').innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
+      renderFilters(); renderStoresList(); document.getElementById('client-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    window.setDepto = function(dep) {
+      activeDepto = dep; nearestStore = null; document.getElementById('nearest-store-container').classList.add('hidden-view');
+      document.getElementById('btn-locate').innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
+      renderFilters(); renderStoresList();
+    };
+
+    document.getElementById('btn-locate').onclick = () => {
+      const btn = document.getElementById('btn-locate'); const errCont = document.getElementById('location-error');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin text-brand-red"></i> <span id="btn-locate-text">Calculando...</span>';
+      errCont.classList.add('hidden-view'); nearestStore = null;
+
+      if (!navigator.geolocation) {
+        document.getElementById('location-error-text').innerText = 'Geolocalización no soportada.'; errCont.classList.remove('hidden-view'); btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>'; return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude; const userLon = position.coords.longitude;
+          let minDistance = Infinity; let closest = null;
+          
+          const storesToSearch = stores.filter(s => (activeCategory === 'all' || s.type === activeCategory) && s.status !== 'closed_temp');
+          
+          if (storesToSearch.length === 0) {
+             document.getElementById('location-error-text').innerText = 'No hay tiendas operativas en esta categoría.'; errCont.classList.remove('hidden-view'); btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>'; return;
+          }
+
+          storesToSearch.forEach(s => { const distance = calculateDistance(userLat, userLon, s.lat, s.lon); if (distance < minDistance) { minDistance = distance; closest = { ...s, distance: distance.toFixed(1) }; } });
+          
+          if(closest) {
+            nearestStore = closest; activeDepto = closest.depto;
+            document.getElementById('nearest-name').innerText = closest.name; document.getElementById('nearest-address-text').innerText = closest.address; document.getElementById('nearest-distance').innerText = closest.distance;
+            document.getElementById('nearest-store-container').classList.remove('hidden-view');
+            renderFilters(); renderStoresList(); document.getElementById('nearest-store-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            btn.innerHTML = '<i class="fas fa-sync-alt text-brand-red"></i> <span id="btn-locate-text">Actualizar ubicación</span>';
+          } else {
+            btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
+          }
+        },
+        () => {
+          document.getElementById('location-error-text').innerText = 'Revisa permisos de ubicación.'; errCont.classList.remove('hidden-view'); btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
+        }
+      );
+    };
+
+    window.toggleAdminView = function(forceClient = false) {
+      if (forceClient || isAdminView) {
+        isAdminView = false; document.getElementById('client-view').classList.remove('hidden-view'); document.getElementById('admin-view').classList.add('hidden-view');
+        if(clientMap) google.maps.event.trigger(clientMap, "resize"); initReveal();
+      } else {
+        document.body.classList.add('overflow-hidden');
+        document.getElementById('password-modal').classList.remove('hidden-view'); document.getElementById('admin-password').focus();
+      }
+    };
+
+    window.closePasswordModal = function() { 
+      document.body.classList.remove('overflow-hidden');
+      document.getElementById('password-modal').classList.add('hidden-view'); 
+      document.getElementById('password-error').classList.add('hidden-view'); 
+      document.getElementById('admin-password').value = ''; 
+    };
+
+    document.getElementById('password-form').onsubmit = (e) => {
+      e.preventDefault(); const val = document.getElementById('admin-password').value;
+      if (val === ADMIN_PASSWORD) {
+        closePasswordModal(); isAdminView = true; document.getElementById('client-view').classList.add('hidden-view'); document.getElementById('admin-view').classList.remove('hidden-view'); renderAdminTable();
+      } else { document.getElementById('password-error').classList.remove('hidden-view'); }
+    };
+
+    function clearAdminMarkers() {
+        if (adminClickMarker) adminClickMarker.setMap(null);
+        adminExistingMarkers.forEach(m => m.setMap(null));
+        adminExistingMarkers = [];
+    }
+
+    function renderAdminBackgroundMarkers() {
+        if (!adminMap || !window.google) return;
+        stores.forEach(s => {
+            if (editStoreId && s.id === editStoreId) return; // No pintar el pin actual como fondo
+            const pin = new google.maps.Marker({
+                position: { lat: s.lat, lng: s.lon }, map: adminMap, title: s.name,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/ltblue-dot.png', opacity: 0.5 // Pin fantasma
+            });
+            adminExistingMarkers.push(pin);
+        });
+    }
+
+    window.openAddModal = function(isEdit = false) {
+      document.body.classList.add('overflow-hidden');
+      const select = document.getElementById('f-depto'); select.innerHTML = departmentsList.filter(d => d !== 'Todos').map(d => `<option value="${d}">${d}</option>`).join('');
+      clearAdminMarkers();
+
+      if (!isEdit) {
+        document.getElementById('modal-title').innerHTML = 'Nueva Sucursal'; document.getElementById('add-store-form').reset(); adminSelectedLocation = null; editStoreId = null;
+        document.getElementById('f-status').value = 'open';
+        document.getElementById('btn-save-store').disabled = true;
+        document.getElementById('modal-map-status').className = 'text-sm font-bold text-gray-400 dark:text-gray-500 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉';
+      }
+      document.getElementById('add-modal').classList.remove('hidden-view');
+      if(adminMap) { 
+          google.maps.event.trigger(adminMap, "resize"); 
+          renderAdminBackgroundMarkers(); // Dibujar pines fantasma
+          if (!isEdit) { adminMap.setCenter({ lat: 12.136, lng: -86.251 }); } 
+          else if (adminSelectedLocation) { adminMap.setCenter(adminSelectedLocation); } 
+      }
+    };
+
+    window.editStore = function(id) {
+      const store = stores.find(s => s.id === id); if (!store) return;
+      editStoreId = id; document.getElementById('f-name').value = store.name; document.getElementById('f-type').value = store.type; document.getElementById('f-address').value = store.address;
+      
+      const scheduleParts = store.schedule.split(/,\s*/); 
+      document.getElementById('f-schedule').value = scheduleParts[0] || ''; 
+      document.getElementById('f-schedule-2').value = scheduleParts[1] || '';
+      document.getElementById('f-schedule-3').value = scheduleParts.slice(2).join(', ') || '';
+
+      document.getElementById('f-status').value = store.status || 'open';
+      
+      openAddModal(true); document.getElementById('f-depto').value = store.depto; document.getElementById('modal-title').innerHTML = 'Editar Sucursal';
+      adminSelectedLocation = { lat: store.lat, lon: store.lon };
+      
+      if (adminMap && window.google) { adminClickMarker = new google.maps.Marker({ position: { lat: store.lat, lng: store.lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', animation: google.maps.Animation.DROP }); }
+      document.getElementById('btn-save-store').disabled = false;
+      document.getElementById('modal-map-status').className = 'text-sm font-bold text-brand-blue flex items-center bg-blue-50 dark:bg-brand-blue/10 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-edit mr-2"></i> Ubicación cargada';
+    };
+
+    window.closeAddModal = function() {
+      document.body.classList.remove('overflow-hidden');
+      document.getElementById('add-modal').classList.add('hidden-view'); document.getElementById('add-store-form').reset(); adminSelectedLocation = null; editStoreId = null; 
+      clearAdminMarkers();
+      document.getElementById('modal-map-status').className = 'text-sm font-bold text-gray-400 dark:text-gray-500 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉'; document.getElementById('btn-save-store').disabled = true;
+    };
+
+    const initFirebaseData = async () => {
+      renderSkeletons(); // Activar skeletons al inicio
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await signInWithCustomToken(auth, __initial_auth_token); } else { await signInAnonymously(auth); }
+        
+        // Cargar Tiendas
+        const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
+        onSnapshot(storesRef, (snapshot) => {
+          isLoading = false; // Ya tenemos data
+          if (!snapshot.empty) { const fbStores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); stores = [...localStoresCache, ...fbStores]; } else { stores = [...localStoresCache]; }
+          renderFilters(); renderStoresList(); if (isAdminView) renderAdminTable();
+        }, (err) => { isLoading = false; console.error("Firebase error. Usando local."); renderStoresList(); });
+
+        // Cargar Banner
+        const bannerRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'banner');
+        onSnapshot(bannerRef, (docSnap) => {
+          if (docSnap.exists()) { bannerText = docSnap.data().text || ''; localStorage.setItem('closeout_banner', bannerText); } updateBannerUI();
         });
 
-        // Configuración Base de Datos
-        const GLOBAL_CONFIG = { apiKey: "AIzaSyARvTeCY-dZLvMfnZgbW6tIcq4lyAsDRP4", authDomain: "catalogoelecpro.firebaseapp.com", projectId: "catalogoelecpro", storageBucket: "catalogoelecpro.firebasestorage.app", messagingSenderId: "847606996266", appId: "1:847606996266:web:7e46736011c7b77afb9253" };
-        const CATEGORIES = [
-            {id:'all',label:'Todo'},{id:'herramientas',label:'Herramientas'},{id:'iluminacion',label:'Iluminación'},
-            {id:'hogar',label:'Hogar'},{id:'ferreteria',label:'Ferretería'},{id:'electronica',label:'Electrónica'},
-            {id:'industrial',label:'Industrial'},{id:'construccion',label:'Construcción'},{id:'pinturas',label:'Pinturas'},
-            {id:'fontaneria',label:'Fontanería'},{id:'electricidad',label:'Electricidad'}
-        ];
+        // Cargar Redes
+        const socialRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'socials');
+        onSnapshot(socialRef, (docSnap) => {
+          if (docSnap.exists()) { socialLinks = { ...defaultSocials, ...docSnap.data() }; } updateSocialsUI();
+        });
 
-        const PDF_PRODUCTS = [
-            { id: 'p1', category: 'herramientas', brand: 'DONG CHENG', title: 'Taladro Impacto Industrial DZJ16', price: '2450', desc: '16mm (5/8"). Potencia 600W. Diseño ergonómico para uso rudo.', image: '', bestseller: true },
-            { id: 'p2', category: 'hogar', brand: 'ORIX', title: 'Extractor de Aire Premium 10"', price: '850', desc: 'Alta eficiencia y motor silencioso. Ideal para mantener ventilados baños.', image: '', bestseller: false },
-            { id: 'p3', category: 'electricidad', brand: 'ELECPRO', title: 'Protector de Voltaje V199', price: '450', desc: '1000W. Protege tus equipos contra variaciones y picos.', image: '', bestseller: true },
-            { id: 'p4', category: 'fontaneria', brand: 'ZLHF', title: 'Válvula de Lujo Metálica 104', price: '320', desc: 'Acabado cromado anticorrosión. Larga vida útil.', image: '', bestseller: false },
-            { id: 'p5', category: 'ferreteria', brand: 'LOCK', title: 'Cerradura de Sobreponer Max', price: '580', desc: 'Sistema de doble pestillo. Máxima seguridad.', image: '', bestseller: false }
-        ];
+      } catch (error) { isLoading = false; renderStoresList(); }
+    };
+    initFirebaseData();
 
-        let products = [], cart = JSON.parse(localStorage.getItem('elecpro_cart')) || [];
-        let currentFilter = 'all', searchTerm = '';
-        let db, timeoutID;
+    document.getElementById('add-store-form').onsubmit = async (e) => {
+      e.preventDefault(); if (!adminSelectedLocation) return;
+      
+      const sched1 = document.getElementById('f-schedule').value.trim(); 
+      const sched2 = document.getElementById('f-schedule-2').value.trim(); 
+      const sched3 = document.getElementById('f-schedule-3').value.trim(); 
+      
+      let finalSchedule = sched1;
+      if (sched2) finalSchedule += `, ${sched2}`;
+      if (sched3) finalSchedule += `, ${sched3}`;
 
-        // ESTADO IA
-        let chatOpen = false, chatState = 'normal', diagData = { tipo: '', equipo: '', desc: '' };
+      const storeData = { 
+          name: document.getElementById('f-name').value, 
+          type: document.getElementById('f-type').value, 
+          depto: document.getElementById('f-depto').value, 
+          status: document.getElementById('f-status').value,
+          address: document.getElementById('f-address').value, 
+          schedule: finalSchedule, 
+          lat: adminSelectedLocation.lat, 
+          lon: adminSelectedLocation.lon 
+      };
 
-        async function init() {
-            renderNav(); updateCartUI();
-            products = PDF_PRODUCTS;
-            renderGrid();
+      if (editStoreId && editStoreId.startsWith('local-')) {
+          const index = localStoresCache.findIndex(s => s.id === editStoreId);
+          if (index !== -1) { localStoresCache[index] = { ...localStoresCache[index], ...storeData }; localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache)); const globalIndex = stores.findIndex(s => s.id === editStoreId); if(globalIndex !== -1) stores[globalIndex] = { ...stores[globalIndex], ...storeData }; }
+          showToast("Sucursal actualizada correctamente."); closeAddModal(); renderFilters(); renderStoresList(); if(isAdminView) renderAdminTable(); return;
+      }
+      try {
+        if (editStoreId) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', editStoreId), storeData); showToast("Sucursal actualizada en la nube");
+        } else { const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores'); await addDoc(storesRef, storeData); showToast("Sucursal guardada exitosamente"); }
+        closeAddModal();
+      } catch (error) {
+        if (!editStoreId) { const newLocalId = 'local-' + Date.now(); const newLocalStore = { id: newLocalId, ...storeData }; localStoresCache.push(newLocalStore); localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache)); stores.push(newLocalStore); showToast("Guardado localmente. (Sin conexión)"); }
+        closeAddModal(); renderFilters(); renderStoresList(); if(isAdminView) renderAdminTable();
+      }
+    };
 
-            try {
-                const app = initializeApp(GLOBAL_CONFIG);
-                db = getFirestore(app);
-                try { await enableIndexedDbPersistence(db); } catch (err) { }
-                const productsCollection = collection(db, 'products');
-                
-                onSnapshot(productsCollection, (s) => {
-                    const fetched = s.docs.map(d => ({id: d.id, ...d.data()}));
-                    if(fetched.length > 0) { products = fetched; renderGrid(); updateAdminStats(); }
-                });
-            } catch (e) { console.log("Offline mode"); }
-
-            // Quitar loader animado
-            setTimeout(() => {
-                const l = document.getElementById('loader');
-                if(l) { l.style.opacity = '0'; l.style.transform = 'scale(1.05)'; setTimeout(() => l.remove(), 700); }
-            }, 1200); 
+    window.deleteStore = async (id) => {
+      if(confirm("¿Eliminar esta sucursal permanentemente?")) {
+        if (id.startsWith('local-')) {
+           localStoresCache = localStoresCache.filter(s => s.id !== id); localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache)); stores = stores.filter(s => s.id !== id);
+           renderFilters(); renderStoresList(); if(isAdminView) renderAdminTable(); showToast("Sucursal eliminada."); return;
         }
+        try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', id)); showToast("Sucursal eliminada de la nube"); } 
+        catch (error) { showToast("Error al eliminar", true); }
+      }
+    };
 
-        // --- BÚSQUEDA ---
-        window.handleSearch = (e) => {
-            searchTerm = e.target.value.toLowerCase();
-            const clearBtn = document.getElementById('clear-search');
-            if(searchTerm.length > 0) {
-                clearBtn.classList.remove('hidden');
-            } else {
-                clearBtn.classList.add('hidden');
-            }
-            if(window.scrollY < document.getElementById('catalogo').offsetTop - 100) {
-                document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'});
-            }
-            renderGrid();
-        }
-
-        window.clearSearch = () => {
-            document.getElementById('search-input').value = '';
-            searchTerm = '';
-            document.getElementById('clear-search').classList.add('hidden');
-            renderGrid();
-        }
-
-        // --- NAVEGACIÓN TABS ---
-        function renderNav() {
-            const tabsContainer = document.getElementById('category-tabs');
-            tabsContainer.innerHTML = CATEGORIES.map(c => `
-                <button id="tab-${c.id}" onclick="setFilter('${c.id}')" class="cat-tab whitespace-nowrap px-5 py-2 rounded-full text-sm font-semibold border ${c.id === 'all' ? 'active' : 'bg-white dark:bg-brand-surface border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-600'}">
-                    ${c.label}
-                </button>
-            `).join('');
-            
-            // Para admin
-            document.getElementById('edit-category').innerHTML = CATEGORIES.filter(c=>c.id!=='all').map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
-        }
-
-        window.setFilter = (id) => {
-            document.querySelectorAll('.cat-tab').forEach(el => {
-                el.classList.remove('active', 'bg-white', 'dark:bg-brand-surface');
-                if(el.id === `tab-${id}`) {
-                    el.classList.add('active');
-                } else {
-                    el.classList.add('bg-white', 'dark:bg-brand-surface');
-                }
-            });
-
-            currentFilter = id;
-            if(searchTerm === '') renderGrid();
-            
-            const tab = document.getElementById(`tab-${id}`);
-            if(tab) tab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-            
-            renderGrid();
-        }
-
-        // --- RENDER DE TARJETAS ---
-        function renderGrid() {
-            const grid = document.getElementById('catalog-grid');
-            let filtered = products;
-            
-            if (currentFilter !== 'all') filtered = filtered.filter(p => p.category === currentFilter);
-            if (searchTerm) {
-                filtered = filtered.filter(p => 
-                    p.title.toLowerCase().includes(searchTerm) || 
-                    (p.brand && p.brand.toLowerCase().includes(searchTerm)) ||
-                    (p.desc && p.desc.toLowerCase().includes(searchTerm))
-                );
-            }
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-24 flex flex-col items-center justify-center text-center"><div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center text-zinc-400 mb-4"><i data-lucide="package-search" class="w-8 h-8"></i></div><h3 class="font-display text-2xl font-bold text-zinc-800 dark:text-white mb-2">Sin resultados</h3><p class="text-zinc-500 text-sm">No hay productos que coincidan con la búsqueda.</p><button onclick="clearSearch()" class="mt-6 text-brand-blue font-bold text-sm hover:underline">Limpiar búsqueda</button></div>`;
-                lucide.createIcons(); return;
-            }
-            
-            filtered.sort((a,b)=>(b.updated||"").localeCompare(a.updated||""));
-
-            grid.innerHTML = filtered.map((p,i) => {
-                const inCart = cart.some(x => String(x.id) === String(p.id));
-                return `
-                <div class="group relative bg-white dark:bg-brand-surface rounded-[2rem] p-3 border border-zinc-100 dark:border-zinc-800/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.02)] transition-all duration-300 hover:-translate-y-1 animate-reveal" style="animation-delay: ${Math.min(i*30, 200)}ms">
-                    
-                    ${p.bestseller ? `<div class="absolute top-5 left-5 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 z-20 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50"><span class="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span> Pop</div>` : ''}
-                    
-                    <div class="w-full aspect-square bg-zinc-50 dark:bg-zinc-900 rounded-[1.5rem] relative flex items-center justify-center overflow-hidden mb-4 cursor-pointer" onclick="openQuickView('${p.id}')">
-                        ${p.outOfStock ? `<div class="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-[2px] z-10 flex items-center justify-center"><span class="bg-red-500 text-white font-bold text-xs px-3 py-1 rounded-full shadow-lg border border-red-400">AGOTADO</span></div>` : ''}
-                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-contain p-4 mix-blend-multiply dark:mix-blend-normal transition-transform duration-500 group-hover:scale-110" loading="lazy">` : `<i data-lucide="image" class="w-8 h-8 text-zinc-300 dark:text-zinc-700"></i>`}
-                        
-                        <!-- Botón flotante Agregar a Carrito (Hover) -->
-                        <div class="absolute bottom-3 right-3 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-20">
-                             <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="w-12 h-12 ${p.outOfStock ? 'bg-zinc-300 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed' : 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:scale-105 active:scale-95'} rounded-full flex items-center justify-center shadow-xl transition-transform" ${p.outOfStock ? 'disabled' : ''}>
-                                <i data-lucide="${p.outOfStock ? 'ban' : 'plus'}" class="w-5 h-5"></i>
-                             </button>
-                        </div>
-                    </div>
-                    
-                    <div class="px-2 pb-2 flex flex-col">
-                        <div class="flex justify-between items-start mb-1">
-                            <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest truncate max-w-[70%]">${p.brand || 'Elecpro'}</span>
-                            <span class="text-[10px] font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">${getCategoryLabel(p.category)}</span>
-                        </div>
-                        <h3 class="font-bold text-base text-zinc-900 dark:text-white leading-tight mb-2 line-clamp-2 h-10">${p.title}</h3>
-                        
-                        <div class="flex items-end justify-between mt-2">
-                            <div class="font-display text-xl font-bold ${inCart ? 'text-green-500' : 'text-zinc-900 dark:text-white'}">
-                                ${inCart ? '<i data-lucide="check-circle-2" class="w-5 h-5 inline mr-1"></i>' : 'C$ ' + Number(p.price).toLocaleString('en-US')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botones Admin Totalmente Separados (Esquina Superior Derecha) -->
-                    ${document.body.classList.contains('is-admin') ? `<div class="absolute top-3 right-3 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity"><button onclick="editItem('${p.id}')" class="w-8 h-8 bg-white text-blue-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 border border-blue-100"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="deleteItem('${p.id}')" class="w-8 h-8 bg-red-500 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110"><i data-lucide="trash" class="w-4 h-4"></i></button></div>` : ''}
-                </div>`;
-            }).join('');
-            lucide.createIcons();
-        }
-
-        // ================= IA CHATBOT =================
-        const chatMessages = [
-            { sender: 'bot', text: '¡Hola! Soy la IA de Elecpro. ¿Buscas algún equipo o necesitas soporte técnico?' },
-            { sender: 'bot', text: '', isOptions: true }
-        ];
-
-        window.toggleChatbot = () => {
-            const win = document.getElementById('chatbot-window');
-            chatOpen = !chatOpen;
-            if (chatOpen) {
-                win.classList.remove('hidden');
-                setTimeout(() => {
-                    win.classList.remove('scale-95', 'opacity-0');
-                    if(chatMessages.length <= 2) renderChat();
-                    document.getElementById('chat-input').focus();
-                }, 10);
-            } else {
-                win.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => win.classList.add('hidden'), 300);
-            }
-        }
-
-        window.startVoiceSearch = () => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) { showToast("Voz no soportada en este navegador"); return; }
-            
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'es-NI';
-            const micBtn = document.getElementById('mic-btn');
-            
-            recognition.onstart = () => { micBtn.classList.add('text-brand-blue', 'animate-pulse'); };
-            recognition.onresult = (event) => {
-                document.getElementById('chat-input').value = event.results[0][0].transcript;
-                micBtn.classList.remove('text-brand-blue', 'animate-pulse');
-                window.handleChatSubmit(new Event('submit'));
-            };
-            recognition.onerror = () => { micBtn.classList.remove('text-brand-blue', 'animate-pulse'); };
-            recognition.start();
-        }
-
-        window.handleChatSubmit = (e) => {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text) return;
-            input.value = '';
-            
-            chatMessages.push({ sender: 'user', text });
-            renderChat();
-
-            if (chatState === 'diag_desc') {
-                diagData.desc = text; chatState = 'normal';
-                showTyping(() => {
-                    let reporte = `*REPORTE ELECPRO*\nTipo: ${diagData.tipo}\nEq: ${diagData.equipo}\nFalla: ${diagData.desc}`;
-                    chatMessages.push({
-                        sender: 'bot',
-                        text: `¡Listo! Haz clic abajo para enviar el reporte a nuestros ingenieros.`,
-                        isLink: true, linkUrl: `https://wa.me/50587600225?text=${encodeURIComponent(reporte)}`, linkText: 'Contactar Soporte'
-                    });
-                    renderChat();
-                }, 1000);
-                return;
-            }
-            showTyping(async () => { await generateBotResponse(text); }, 800);
-        }
-
-        function showTyping(callback, delay) {
-            const container = document.getElementById('chat-messages');
-            const typingId = 'typing-' + Date.now();
-            container.innerHTML += `
-                <div id="${typingId}" class="flex justify-start">
-                    <div class="bg-zinc-100 dark:bg-zinc-800 rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1.5 items-center">
-                        <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></div>
-                        <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                        <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                    </div>
-                </div>`;
-            container.scrollTop = container.scrollHeight;
-            setTimeout(() => { document.getElementById(typingId)?.remove(); callback(); }, delay);
-        }
-
-        window.handleDiag = (step, value) => {
-            chatMessages.push({ sender: 'user', text: value });
-            renderChat();
-            showTyping(() => {
-                if (step === 'tipo') {
-                    diagData.tipo = value; chatState = 'diag_equipo';
-                    chatMessages.push({ sender: 'bot', text: '¿Qué equipo es?', isDiag: true, diagStep: 'equipo' });
-                } else if (step === 'equipo') {
-                    diagData.equipo = value; chatState = 'diag_desc';
-                    chatMessages.push({ sender: 'bot', text: 'Describe la falla brevemente:' });
-                }
-                renderChat();
-            }, 600);
-        }
-
-        window.sendPredefinedMsg = (text) => {
-            document.getElementById('chat-input').value = text;
-            window.handleChatSubmit(new Event('submit'));
-        }
-        
-        // Función ultra-robusta para intentar llamar a la IA varias veces si la red falla
-        async function fetchWithBackoff(url, options, maxRetries = 3) {
-            const delays = [1000, 2000, 4000];
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (response.ok) return response;
-                    // Si el error es de llaves (Ej. lo probaron descargado sin el sistema), detener reintentos rápidos
-                    if (response.status === 400 || response.status === 403) throw new Error("Auth Error");
-                } catch (error) {
-                    if (i === maxRetries - 1 || error.message === "Auth Error") throw error;
-                }
-                await new Promise(resolve => setTimeout(resolve, delays[i]));
-            }
-            throw new Error("API Connection Failed");
-        }
-
-        async function generateBotResponse(text) {
-            let response = ''; let isProductSearch = false; let foundProducts = [];
-            const searchTerms = text.toLowerCase();
-
-            if (searchTerms.includes('ubicacion') || searchTerms.includes('dónde están') || searchTerms.includes('donde estan')) {
-                response = '📍 Estamos ubicados en Managua: Parqueo de Ferreterías Sur, Mercado Roberto Huembes. ¡Te esperamos con un excelente café y la mejor asesoría!';
-                finishBotResponse(response, null);
-                return;
-            } else if (searchTerms.includes('soporte técnico') || searchTerms.includes('reportar falla') || searchTerms === 'soporte') {
-                chatState = 'diag_tipo';
-                chatMessages.push({ sender: 'bot', text: '¡Claro que sí! Con gusto te asisto con el soporte técnico. ¿El equipo que presenta la falla es de uso Residencial o Industrial?', isDiag: true, diagStep: 'tipo' });
-                renderChat(); 
-                return;
-            } 
-
-            // Integración de Inteligencia Artificial Avanzada (Personalidad de Vendedor Estrella)
-            try {
-                const apiKey = "AIzaSyBupPsJC8p926dWcGuGLsd__OFFSXuSgHc"; 
-                const catSnippet = products.map(p => ({id: p.id, t: p.title, d: p.desc, c: p.category})).slice(0, 50);
-                
-                const sysPrompt = `Eres ElecBot, el asesor estrella, empático y experto electromecánico de la ferretería Elecpro en Nicaragua. Tu objetivo es dar una atención 100% inmersiva, enamorar al cliente, ser muy amable y ayudarlo en su compra aunque no sepa términos técnicos.
-                Catálogo web actual: ${JSON.stringify(catSnippet)}.
-                
-                REGLAS VITALES:
-                1. Si el cliente describe un problema sin saber el nombre (ej: "algo para un tubo", "para socar", "para la luz"), deduce qué necesita (ej: cinta teflón, adaptadores, cable, cerradura) y explícaselo de forma sencilla y carismática.
-                2. Busca relacionar sus dudas con tu catálogo. Si piden candado, ofréceles la "Cerradura de Sobreponer". Si piden algo para tubo, ofréceles la "Válvula".
-                3. Si encuentras un producto útil, pon EXACTAMENTE esto al final de tu respuesta: [IDS: id1, id2].
-                4. Si DEFINITIVAMENTE no hay nada ni remotamente relacionado en el catálogo web, NUNCA digas "no encontré eso". Sé un excelente vendedor: dale el consejo técnico de lo que necesita comprar, y dile que en la bodega física de Elecpro seguramente sí lo tenemos en inventario. Invítalo amablemente a tocar el botón verde de WhatsApp.
-                5. Sé conversacional, usa emojis, y mantén la respuesta persuasiva pero concisa.`;
-
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                
-                const req = await fetchWithBackoff(url, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: text }] }], systemInstruction: { parts: [{ text: sysPrompt }] } })
-                });
-
-                const result = await req.json();
-                const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                
-                const idsMatch = aiText.match(/\[IDS:\s*(.*?)\]/);
-                if(idsMatch) {
-                    const ids = idsMatch[1].split(',').map(id => id.trim());
-                    foundProducts = products.filter(p => ids.includes(p.id));
-                    response = aiText.replace(idsMatch[0], '').trim();
-                    isProductSearch = foundProducts.length > 0;
-                } else {
-                    response = aiText.trim();
-                    isProductSearch = false;
-                }
-            } catch(e) {
-                // =============== CEREBRO SECUNDARIO DE VENTAS (MODO OFFLINE INTELIGENTE) ===============
-                // Si la IA de Google falla por falta de API Key o conexión, este sistema deduce intenciones.
-                
-                const localDictionary = {
-                    "candado": { terms: ["cerradura", "seguridad", "lock"], msg: "¡Hola! Para proteger tus espacios, no manejo candados básicos aquí en la web rápida, pero te recomiendo muchísimo esta Cerradura de alta seguridad que es mucho más resistente y profesional:" },
-                    "tubo": { terms: ["valvula", "fontaneria", "pvc", "agua"], msg: "¡Claro! Para trabajos con tuberías necesitas un acople perfecto. Mira este equipo de fontanería de lujo que te asegura que todo quede bien sellado y ajustado:" },
-                    "socar": { terms: ["valvula", "herramienta", "fontaneria"], msg: "¡Qué tal! Para que todo quede bien 'socado' y sin fugas, necesitas el equipo adecuado. Échale un vistazo a este complemento de alta resistencia:" },
-                    "cable": { terms: ["electricidad", "protector", "voltaje"], msg: "¡Hola! Las bobinas de cable grueso las despachamos directo de bodega por WhatsApp. Sin embargo, si estás trabajando en tu red de luz, ¡no olvides proteger tus equipos! Te recomiendo esto:" },
-                    "luz": { terms: ["electricidad", "protector", "iluminacion"], msg: "¡Hola! Para tu red eléctrica te asesoramos mejor por WhatsApp con los breakers y cables exactos. Pero para proteger toda esa inversión en luz, te sugiero anexar este equipo vital:" },
-                    "brida": { terms: ["herramienta", "industrial", "taladro"], msg: "¡Entendido! Las bridas y acoples industriales las cotizamos exactas a tu medida por WhatsApp. Mientras tanto, mira esta herramienta de nivel industrial que te puede servir muchísimo para el montaje:" }
-                };
-
-                let matchedKey = null;
-                for (const key in localDictionary) {
-                    if (searchTerms.includes(key)) { matchedKey = key; break; }
-                }
-
-                if (matchedKey) {
-                    const dict = localDictionary[matchedKey];
-                    foundProducts = products.filter(p => dict.terms.some(t => p.category.toLowerCase().includes(t) || p.title.toLowerCase().includes(t) || (p.desc && p.desc.toLowerCase().includes(t))));
-                    
-                    if(foundProducts.length > 0) {
-                        response = dict.msg;
-                        isProductSearch = true;
-                    } else {
-                        response = `¡Hola! ⚡ Te entiendo perfecto. Ese tipo de material específico lo despachamos muchísimo, pero lo manejamos directo desde nuestra bodega central para darte las especificaciones exactas.\n\nToca el botón verde de WhatsApp aquí abajo y un ingeniero te dará el precio y la disponibilidad al instante. ¡Con gusto te ayudamos!`;
-                    }
-                } else {
-                    // Búsqueda general si no está en el diccionario
-                    const cleanTerms = searchTerms.replace(/(necesito|busco|quiero|tienes|precio de|un|una|el|la|los|las|para|comprar|hacer|construir|ayudame|saber|que|me|sirve)/g, '').trim();
-                    if (cleanTerms.length > 2) {
-                        foundProducts = products.filter(p => p.title.toLowerCase().includes(cleanTerms) || (p.desc && p.desc.toLowerCase().includes(cleanTerms)));
-                    }
-
-                    if (foundProducts.length > 0) {
-                        isProductSearch = true; 
-                        response = `¡Hola! ⚡ Revisé mi catálogo digital y encontré estos equipos que coinciden excelente con lo que buscas:`;
-                    } else {
-                        response = `¡Hola! Qué gusto saludarte. ⚡ Te entiendo perfectamente. Ese material preferimos cotizarlo directamente para darte la medida y capacidad exacta que tu proyecto necesita.\n\nAunque no está exhibido en esta galería web ahorita, **en nuestra bodega física tenemos un inventario inmenso**. Toca el botón verde de WhatsApp aquí abajo y mis compañeros ingenieros te confirman existencias en menos de 5 minutos. ¡Estamos para servirte!`;
-                    }
-                }
-            }
-            
-            finishBotResponse(response, isProductSearch ? foundProducts.slice(0, 3) : null);
-        }
-
-        function finishBotResponse(text, products) {
-            chatMessages.push({ sender: 'bot', text: text, products: products });
-            renderChat();
-        }
-
-        function renderChat() {
-            const container = document.getElementById('chat-messages');
-            container.innerHTML = chatMessages.map(m => {
-                if (m.isOptions) {
-                    return `
-                    <div class="flex gap-2">
-                        <button onclick="sendPredefinedMsg('Soporte')" class="text-xs bg-zinc-100 dark:bg-zinc-800 font-semibold px-3 py-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Soporte Técnico</button>
-                        <button onclick="sendPredefinedMsg('Ubicacion')" class="text-xs bg-zinc-100 dark:bg-zinc-800 font-semibold px-3 py-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Ubicación</button>
-                    </div>`;
-                }
-                
-                let html = m.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                
-                if (m.products && m.products.length > 0) {
-                    html += '<div class="mt-3 flex flex-col gap-2">';
-                    m.products.forEach(p => {
-                        html += `
-                        <div class="bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-700 rounded-xl p-2 flex items-center gap-3 shadow-sm">
-                            <div class="w-10 h-10 bg-zinc-50 dark:bg-zinc-800 rounded-lg flex items-center justify-center p-1">${p.image ? `<img src="${p.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-4 h-4 text-zinc-300"></i>`}</div>
-                            <div class="flex-grow"><p class="text-[11px] font-bold line-clamp-1">${p.title}</p><p class="text-[10px] text-brand-blue font-bold mt-0.5">C$ ${p.price}</p></div>
-                            <button onclick="addToCart('${p.id}')" class="w-7 h-7 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full flex items-center justify-center"><i data-lucide="plus" class="w-3 h-3"></i></button>
-                        </div>`;
-                    });
-                    html += '</div>';
-                }
-
-                if (m.isDiag) {
-                    html += `<div class="flex flex-col gap-2 mt-2">`;
-                    if (m.diagStep === 'tipo') {
-                        html += `<button onclick="handleDiag('tipo', 'Residencial')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Residencial</button>
-                                 <button onclick="handleDiag('tipo', 'Industrial')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Industrial</button>`;
-                    } else if (m.diagStep === 'equipo') {
-                        html += `<button onclick="handleDiag('equipo', 'Generador')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Generador</button>
-                                 <button onclick="handleDiag('equipo', 'Climatización')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Climatización</button>
-                                 <button onclick="handleDiag('equipo', 'Tablero')" class="bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-sm font-semibold py-2 rounded-xl shadow-sm">Tablero</button>`;
-                    }
-                    html += `</div>`;
-                }
-
-                if (m.isLink) html += `<a href="${m.linkUrl}" target="_blank" class="mt-3 block text-center bg-zinc-900 text-white py-2.5 rounded-xl text-xs font-bold">${m.linkText}</a>`;
-                if (m.isCombo) html += `<button onclick="addToCart('${m.comboId}')" class="mt-3 w-full bg-brand-yellow text-zinc-900 py-2.5 rounded-xl text-xs font-bold">Añadir Protector</button>`;
-
-                return `
-                <div class="flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}">
-                    <div class="max-w-[85%] rounded-2xl px-4 py-3 ${m.sender === 'user' ? 'bg-brand-blue text-white rounded-tr-sm' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-tl-sm'}">
-                        ${html}
-                    </div>
-                </div>`;
-            }).join('');
-            container.scrollTop = container.scrollHeight;
-            lucide.createIcons();
-        }
-
-        // ================= CARRITO Y UI MODALES =================
-        window.closeAllModals = function() {
-            const overlay = document.getElementById('modal-overlay');
-            const cartM = document.getElementById('cart-modal');
-            const prodM = document.getElementById('product-modal');
-            const qvM = document.getElementById('quickview-modal');
-
-            overlay.classList.add('opacity-0');
-            cartM.classList.add('translate-x-full');
-            if(chatOpen) toggleChatbot();
-            
-            // Corrige el cierre de la ventana modal aplicando las clases al contenedor interno
-            if(prodM && !prodM.classList.contains('hidden')) {
-                prodM.querySelector('div').classList.add('scale-95', 'opacity-0');
-            }
-            if(qvM && !qvM.classList.contains('hidden')) {
-                qvM.querySelector('div').classList.add('scale-95', 'opacity-0');
-            }
-
-            if(timeoutID) clearTimeout(timeoutID);
-            timeoutID = setTimeout(() => {
-                overlay.classList.add('hidden');
-                cartM.classList.add('hidden');
-                if(prodM) prodM.classList.add('hidden');
-                if(qvM) qvM.classList.add('hidden');
-            }, 300);
-        }
-
-        window.toggleCart = function() {
-            const cartM = document.getElementById('cart-modal');
-            const overlay = document.getElementById('modal-overlay');
-
-            if (cartM.classList.contains('hidden')) {
-                if(chatOpen) toggleChatbot();
-                
-                // Cierra los demas modales si están abiertos
-                document.getElementById('product-modal').classList.add('hidden');
-
-                overlay.classList.remove('hidden');
-                cartM.classList.remove('hidden');
-                setTimeout(() => { overlay.classList.remove('opacity-0'); cartM.classList.remove('translate-x-full'); }, 10);
-                renderCartItems();
-            } else { closeAllModals(); }
-        }
-
-        window.addToCart = (id) => { 
-            const p = products.find(x => String(x.id) === String(id)); 
-            if(!p || p.outOfStock) return; 
-            
-            let variant = p.variants ? p.variants.split(',')[0].trim() : '';
-            const cartId = variant ? `${id}_${variant}` : id;
-            const existing = cart.find(x => String(x.cartId) === String(cartId));
-            
-            if (!existing) {
-                cart.push({...p, cartId: cartId, selectedVariant: variant, qty: 1}); 
-                saveCart(); renderGrid(); showToast("Añadido al carrito");
-
-                // Smart Combo
-                const esClima = p.title.toLowerCase().includes('aire') || p.category === 'hogar';
-                if (esClima && !cart.some(x => x.id === 'p3') && p.id !== 'p3') {
-                    setTimeout(() => {
-                        if(!chatOpen) toggleChatbot();
-                        chatMessages.push({ sender: 'bot', text: 'Sugerencia: Añade un Protector V199 para cuidar tu equipo nuevo.', isCombo: true, comboId: 'p3' });
-                        renderChat();
-                    }, 1000);
-                }
-            } else { toggleCart(); }
-        }
-        
-        window.updateQty = (cartId, change) => {
-            const idx = cart.findIndex(x => String(x.cartId) === String(cartId));
-            if (idx === -1) return;
-            cart[idx].qty += change;
-            if (cart[idx].qty <= 0) cart.splice(idx, 1);
-            saveCart(); renderCartItems(); renderGrid();
-        }
-
-        function saveCart() { localStorage.setItem('elecpro_cart', JSON.stringify(cart)); updateCartUI(); }
-
-        function updateCartUI() {
-            const count = cart.reduce((a, b) => a + b.qty, 0);
-            document.getElementById('header-cart-count').innerText = count;
-            document.getElementById('cart-badge-title').innerText = count;
-        }
-
-        function renderCartItems() {
-            const container = document.getElementById('cart-items-container');
-            if (cart.length === 0) {
-                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-zinc-400"><i data-lucide="shopping-bag" class="w-12 h-12 mb-4 opacity-50"></i><p class="font-medium text-sm">Tu carrito está vacío</p></div>`;
-                document.getElementById('cart-total').innerText = 'C$ 0'; lucide.createIcons(); return;
-            }
-            
-            let total = 0;
-            container.innerHTML = cart.map((item) => {
-                total += (parseFloat(item.price) || 0) * item.qty;
-                return `
-                <div class="flex gap-4 bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800">
-                    <div class="w-16 h-16 bg-white dark:bg-zinc-800 rounded-xl p-2 flex-shrink-0 flex items-center justify-center border border-zinc-100 dark:border-zinc-700">
-                        ${item.image ? `<img src="${item.image}" class="w-full h-full object-contain">` : `<i data-lucide="image" class="w-5 h-5 text-zinc-300"></i>`}
-                    </div>
-                    <div class="flex-grow flex flex-col justify-center">
-                        <h4 class="font-bold text-sm text-zinc-900 dark:text-white leading-tight line-clamp-2">${item.title}</h4>
-                        <div class="font-display font-bold text-brand-blue text-sm mt-1">C$ ${Number(item.price).toLocaleString('en-US')}</div>
-                    </div>
-                    <div class="flex flex-col items-center justify-between bg-white dark:bg-zinc-800 rounded-xl w-8 py-1 shadow-sm">
-                        <button onclick="updateQty('${item.cartId}', 1)" class="w-full text-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white">+</button>
-                        <span class="font-bold text-xs">${item.qty}</span>
-                        <button onclick="updateQty('${item.cartId}', -1)" class="w-full text-center text-zinc-400 hover:text-red-500">-</button>
-                    </div>
-                </div>`;
-            }).join('');
-            document.getElementById('cart-total').innerText = 'C$ ' + total.toLocaleString();
-            lucide.createIcons();
-        }
-
-        // GENERADOR DE PDF
-        window.downloadPDF = () => {
-            if (cart.length === 0) { showToast("Carrito vacío"); return; }
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFillColor(0, 85, 255); doc.rect(0, 0, 210, 35, 'F');
-            doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.setFont('helvetica', 'bold'); doc.text("ELECPRO", 15, 22);
-            doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text("Cotización de Suministros", 15, 28);
-            
-            doc.setFontSize(9); doc.setTextColor(240, 240, 240);
-            doc.text("Fecha: " + new Date().toLocaleDateString(), 150, 22);
-            doc.text("Validez: 15 días", 150, 28);
-
-            const tableRows = []; let grandTotal = 0;
-            cart.forEach(item => {
-                const itemT = (parseFloat(item.price) || 0) * item.qty; grandTotal += itemT;
-                tableRows.push([item.qty.toString(), item.title, (parseFloat(item.price)||0).toLocaleString(), itemT.toLocaleString()]);
-            });
-
-            doc.autoTable({ startY: 45, head: [["Cant.", "Descripción", "P. Unitario", "Total"]], body: tableRows, theme: 'plain', headStyles: { fillColor: [240, 240, 240], textColor: 0 }, styles: { fontSize: 10, cellPadding: 5 } });
-            
-            const finalY = doc.lastAutoTable.finalY;
-            doc.setFontSize(14); doc.setTextColor(0, 0, 0); doc.setFont('helvetica', 'bold'); 
-            doc.text(`TOTAL A PAGAR: C$ ${grandTotal.toLocaleString()}`, 15, finalY + 15);
-            
-            doc.setFontSize(9); doc.setTextColor(100, 100, 100); doc.setFont('helvetica', 'normal');
-            doc.text("Términos y Condiciones:", 15, finalY + 30);
-            doc.text("- La disponibilidad de los equipos está sujeta a existencias en bodega.", 15, finalY + 35);
-            doc.text("- Para confirmar el pedido, envíe este documento a su asesor al +505 8760-0225.", 15, finalY + 40);
-            doc.text("- Los precios mostrados están expresados en moneda local (C$).", 15, finalY + 45);
-
-            doc.save(`Cotizacion_ELECPRO.pdf`); showToast("PDF Guardado");
-        };
-
-        window.checkoutWhatsApp = () => {
-            if (cart.length === 0) return;
-            let msg = "*COTIZACIÓN ELECPRO:*\n\n"; let total = 0;
-            cart.forEach(i => { const sub = (parseFloat(i.price) || 0) * i.qty; total += sub; msg += `🔸 ${i.qty}x ${i.title}\n`; });
-            msg += `\n*TOTAL: C$ ${total.toLocaleString()}*`;
-            window.open(`https://wa.me/50587600225?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        // --- GESTIÓN ADMIN ---
-        window.updateAdminStats = () => {
-            if(!products.length) return;
-            const elItems = document.getElementById('stat-total-items'); if(elItems) elItems.innerText = products.length;
-            const elValue = document.getElementById('stat-total-value'); if(elValue) elValue.innerText = `C$ ${products.reduce((acc, p) => acc + (parseFloat(p.price) || 0), 0).toLocaleString()}`;
-        }
-
-        window.login = () => {
-            if (prompt("Clave Admin:") === "elecpro50") {
-                document.getElementById('admin-dashboard').classList.remove('hidden');
-                document.getElementById('admin-dashboard').classList.add('grid');
-                document.body.classList.add('is-admin'); 
-                renderGrid(); updateAdminStats(); showToast("Modo Admin Activado");
-            }
-        }
-        
-        // Corrige la apertura del modal Añadir asegurando que el overlay aparezca
-        window.openNewProduct = () => {
-            const m = document.getElementById('product-modal'); 
-            const overlay = document.getElementById('modal-overlay');
-            
-            overlay.classList.remove('hidden');
-            m.classList.remove('hidden');
-            
-            setTimeout(() => { 
-                overlay.classList.remove('opacity-0');
-                m.querySelector('div').classList.remove('scale-95', 'opacity-0'); 
-            }, 10);
-            
-            ['edit-id', 'edit-brand', 'edit-title', 'edit-price', 'edit-desc', 'edit-image', 'edit-variants'].forEach(i => document.getElementById(i).value = '');
-            document.getElementById('edit-bestseller').checked = false;
-            document.getElementById('edit-out-of-stock').checked = false;
-        }
-
-        // Lógica para abrir el modal de Vista Rápida (Quick View)
-        window.openQuickView = (id) => {
-            const p = products.find(x => String(x.id) === String(id));
-            if (!p) return;
-            const m = document.getElementById('quickview-modal');
-            const overlay = document.getElementById('modal-overlay');
-            
-            document.getElementById('qv-title').innerText = p.title;
-            document.getElementById('qv-brand').innerText = p.brand || 'Elecpro';
-            document.getElementById('qv-category').innerText = getCategoryLabel(p.category);
-            document.getElementById('qv-price').innerText = 'C$ ' + Number(p.price).toLocaleString('en-US');
-            document.getElementById('qv-desc').innerText = p.desc || 'Sin descripción detallada. Comunícate para más información.';
-            
-            const img = document.getElementById('qv-image');
-            const noImg = document.getElementById('qv-no-image');
-            if(p.image) {
-                img.src = p.image; img.classList.remove('hidden'); noImg.classList.add('hidden');
-            } else {
-                img.classList.add('hidden'); noImg.classList.remove('hidden');
-            }
-
-            const btn = document.getElementById('qv-add-btn');
-            if(p.outOfStock) {
-                btn.className = "w-full bg-zinc-300 dark:bg-zinc-800 text-zinc-500 py-3.5 rounded-2xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2";
-                btn.innerHTML = '<i data-lucide="ban" class="w-4 h-4"></i> Producto Agotado';
-                btn.onclick = null;
-            } else {
-                btn.className = "w-full bg-brand-blue text-white py-3.5 rounded-2xl font-bold text-sm shadow-md hover:bg-blue-600 transition-colors flex items-center justify-center gap-2";
-                btn.innerHTML = '<i data-lucide="shopping-bag" class="w-4 h-4"></i> Añadir al Carrito';
-                btn.onclick = () => { addToCart(p.id); closeAllModals(); };
-            }
-
-            overlay.classList.remove('hidden');
-            m.classList.remove('hidden');
-            setTimeout(() => { 
-                overlay.classList.remove('opacity-0');
-                m.querySelector('div').classList.remove('scale-95', 'opacity-0'); 
-            }, 10);
-            lucide.createIcons();
-        }
-
-        // Corrige la apertura del modal Editar asegurando que el overlay aparezca
-        window.editItem = (id) => {
-            const p = products.find(x => String(x.id) === String(id)); if(!p) return;
-            const m = document.getElementById('product-modal'); 
-            const overlay = document.getElementById('modal-overlay');
-            
-            overlay.classList.remove('hidden');
-            m.classList.remove('hidden');
-            
-            setTimeout(() => { 
-                overlay.classList.remove('opacity-0');
-                m.querySelector('div').classList.remove('scale-95', 'opacity-0'); 
-            }, 10);
-            
-            document.getElementById('edit-id').value = id; document.getElementById('edit-brand').value = p.brand || '';
-            document.getElementById('edit-title').value = p.title || ''; document.getElementById('edit-price').value = p.price || '';
-            document.getElementById('edit-category').value = p.category || ''; document.getElementById('edit-desc').value = p.desc || '';
-            document.getElementById('edit-bestseller').checked = p.bestseller || false;
-            document.getElementById('edit-out-of-stock').checked = p.outOfStock || false;
-        }
-
-        window.deleteItem = async (id) => {
-            if(confirm("¿Eliminar producto?")) {
-                try { await deleteDoc(doc(db, 'products', id)); showToast("Eliminado"); } catch(e) { showToast("Error al eliminar"); }
-            }
-        }
-
-        window.saveProduct = async () => {
-            const btn = document.getElementById('btn-save'); btn.innerText = "Guardando..."; btn.disabled = true;
-            try {
-                const id = document.getElementById('edit-id').value;
-                const file = document.getElementById('edit-image').files[0];
-                let img = null; if (file) img = await compressImage(file);
-
-                const item = {
-                    brand: document.getElementById('edit-brand').value, title: document.getElementById('edit-title').value,
-                    price: document.getElementById('edit-price').value.replace(/,/g, ''), category: document.getElementById('edit-category').value,
-                    desc: document.getElementById('edit-desc').value, variants: document.getElementById('edit-variants').value,
-                    bestseller: document.getElementById('edit-bestseller').checked, 
-                    outOfStock: document.getElementById('edit-out-of-stock').checked,
-                    updated: new Date().toISOString()
-                };
-
-                if (id) { if (img) item.image = img; await updateDoc(doc(db, 'products', id), item); } 
-                else { if (img) item.image = img; await addDoc(collection(db, 'products'), item); }
-                
-                closeAllModals(); showToast("Guardado con éxito");
-            } catch (error) { showToast("Error de conexión"); } finally { btn.innerText = "Guardar"; btn.disabled = false; }
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = msg;
-            t.classList.remove('translate-y-[-20px]', 'opacity-0');
-            setTimeout(() => t.classList.add('translate-y-[-20px]', 'opacity-0'), 3000);
-        }
-
-        function getCategoryLabel(id) { return CATEGORIES.find(c => c.id === id)?.label || id; }
-        
-        function compressImage(file) {
-            return new Promise(resolve => {
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = e => {
-                    const img = new Image(); img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const scale = 800 / img.width; canvas.width = scale < 1 ? 800 : img.width; canvas.height = scale < 1 ? img.height * scale : img.height;
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height); resolve(canvas.toDataURL('image/jpeg', 0.8));
-                    }
-                }
-            });
-        }
-
-        init();
-    </script>
+    window.restoreBaseStores = async () => {
+      if(confirm("¿Restaurar todas las tiendas a sus datos originales?")) {
+        localStorage.removeItem('closeout_local_stores'); showToast("Restaurando tiendas originales..."); setTimeout(() => location.reload(), 800);
+      }
+    };
+  </script>
 </body>
 </html>
